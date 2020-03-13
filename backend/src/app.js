@@ -10,21 +10,21 @@ const app = express();
 // Settings
 /*------------------------------------------------------------------*/
 
-app.set('port', process.env.PORT || 4200);  //* Definir el puerto
+app.set('port', process.env.PORT || 4000);  //* Definir el puerto
 
 /*------------------------------------------------------------------*/
 // Middlewares
 /*------------------------------------------------------------------*/
 
 app.use(morgan('dev'));     //* Escuchar las peticiones HTTP
-// app.use(cors());            //* Permitir enviar datos entre frontend & backend
+app.use(cors());            //* Permitir enviar datos entre frontend & backend
 app.use(express.json());    //* Permite el uso de Json
 
 /*------------------------------------------------------------------*/
 // Routes
 /*------------------------------------------------------------------*/
 
-// app.use('/api', require('./routes/api.routes'));
+app.use('/api', require('./routes/api.routes'));
 
 /*------------------------------------------------------------------*/
 
