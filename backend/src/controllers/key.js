@@ -136,7 +136,7 @@ const keyController = {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.id) return res.status(400).send({ error: 'Bad Request' });
         const id = req.body.id;
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5 },
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5, 'image.img': { $ne: null }, 'image.public': { $ne: null } },
             { $set: { 'image.$.img': null, 'image.$.public': null } },
             async (err, imageDeleted) => {
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
