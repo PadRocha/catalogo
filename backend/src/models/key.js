@@ -12,7 +12,6 @@ const keySchema = new Schema({
     code: {
         type: String,
         trim: true,
-        // minlength: 4,
         maxlength: 4,
         uppercase: true,
         required: true
@@ -29,9 +28,20 @@ const keySchema = new Schema({
     },
     image: {
         type: [{
+            id: {
+                type: Number,
+                min: 0,
+                max: 2
+            },
+            public: {
+                type: String,
+                default: null,
+                required: true
+            },
             img: {
                 type: String,
-                required: () => { return this.status === 5; }
+                default: null,
+                required: true
             },
             status: {
                 type: Number,
@@ -41,6 +51,7 @@ const keySchema = new Schema({
                 required: true
             }
         }],
+        _id: false,
         maxlength: 3
     },
     conf: {
@@ -49,6 +60,8 @@ const keySchema = new Schema({
         required: true
     }
 });
+
+keySchema.index({ code: 1, line: 1 });
 
 /*------------------------------------------------------------------*/
 

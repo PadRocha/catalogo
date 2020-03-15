@@ -53,6 +53,17 @@ router.route('/key/:id')
     .put(keyController.updateKey)
     .delete(keyController.deleteKey);
 
+router.route('/key/status/:id')
+    .post(keyController.saveStatus)
+    .put(keyController.updateStatus)
+    .delete(keyController.deleteStatus);
+
+router.route('/key/image/:id')
+    .get(keyController.getImage)
+    .post(keyController.saveImage)
+    .put(keyController.updateImage)
+    .delete(keyController.deleteImage);
+
 /*------------------------------------------------------------------*/
 
 module.exports = router;

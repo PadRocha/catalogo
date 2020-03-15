@@ -42,7 +42,7 @@ const lineController = {
     },
     deleteLine(req, res) {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
-        Line.findOneAndDelete(req.params.id, (err, lineDeleted) => {
+        Line.findByIdAndDelete(req.params.id, (err, lineDeleted) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!lineDeleted) return res.status(404).send({ error: 'Line Not Found' });
             return res.status(200).send({ data: lineDeleted });
