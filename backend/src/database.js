@@ -16,4 +16,4 @@ mongoose.connect(URI, {
 }, err => {
     if (err) console.log('Error > ', err);
     else console.log('DB Connected');
-});
+}, { config: { autoIndex: false } });

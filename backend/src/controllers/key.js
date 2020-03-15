@@ -20,14 +20,19 @@ const keyController = {
     saveKey(req, res) {
         if (!req.body) return res.status(400).send({ error: 'Bad Request' });
         const newKey = new Key(req.body);
-        newKey.save((err, keyStored) => {
+        const Line = require('../models/line'); //* Calls line.js model
+        Line.findOne({ '_id': newKey.line }).select('_id').exec((err, line) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
-            if (!keyStored) return res.status(204).send({ error: 'Key No Content' });
-            return res.status(200).send({ data: keyStored });
+            if (!line) return res.status(404).send({ error: 'Line Not Found' });
+            newKey.save((err, keyStored) => {
+                if (err) return res.status(500).send({ error: 'Internal Server Error' });
+                if (!keyStored) return res.status(204).send({ error: 'Key No Content' });
+                return res.status(200).send({ data: keyStored });
+            });
         });
     },
     listKey(req, res) {
-        Key.find({}).populate({ path: 'line', select: '_id' }).exec((err, key) => {
+        Key.find({}).exec((err, key) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!key) return res.status(404).send({ error: 'Key Not Found' });
             return res.status(200).send({ data: key });
@@ -85,8 +90,8 @@ const keyController = {
             });
     },
     getImage(req, res) {
-        const image = req.params.image,
-            pathFile = './uploads/' + image;
+        const image = req.params.image;
+        const pathFile = './uploads/' + image;
         fs.exists(pathFile, (exists) => {
             if (exists) {
                 return res.sendFile(path.resolve(pathFile));
@@ -101,7 +106,7 @@ const keyController = {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.id && !req.file) return res.status(400).send({ error: 'Bad Request' });
         const result = await cloudinary.v2.uploader.upload(req.file.path);
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.status': 5 },
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.status': 5, 'image.img': null, 'image.public': null },
             { $set: { 'image.$.img': result.url, 'image.$.public': result.public_id } },
             async (err, imageStored) => {
                 if (err || !imageStored) await cloudinary.v2.uploader.destroy(result.public_id);
@@ -115,13 +120,14 @@ const keyController = {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.id && !req.file) return res.status(400).send({ error: 'Bad Request' });
         const result = await cloudinary.v2.uploader.upload(req.file.path);
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.status': 5 },
+        const id = Number(req.body.id);
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5, 'image.img': { $ne: null }, 'image.public': { $ne: null } },
             { $set: { 'image.$.img': result.url, 'image.$.public': result.public_id } },
             async (err, imageUpdated) => {
                 if (err || !imageUpdated) await cloudinary.v2.uploader.destroy(result.public_id);
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageUpdated) return res.status(404).send({ error: 'Key Not Found' });
-                await cloudinary.v2.uploader.destroy(imageUpdated.image.find(x => x.id === req.body.id).public);
+                await cloudinary.v2.uploader.destroy(imageUpdated.image.find(x => x.id === id).public);
                 await fs.unlink(req.file.path)
                 return res.status(200).send({ data: imageUpdated });
             });
@@ -129,12 +135,13 @@ const keyController = {
     deleteImage(req, res) {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.id) return res.status(400).send({ error: 'Bad Request' });
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.status': 5 },
+        const id = req.body.id;
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5 },
             { $set: { 'image.$.img': null, 'image.$.public': null } },
             async (err, imageDeleted) => {
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageDeleted) return res.status(404).send({ error: 'Key Not Found' });
-                await cloudinary.v2.uploader.destroy(imageDeleted.image.find(x => x.id === req.body.id).public);
+                await cloudinary.v2.uploader.destroy(imageDeleted.image.find(x => x.id === id).public);
                 return res.status(200).send({ data: imageDeleted });
             });
     },
@@ -143,6 +150,9 @@ const keyController = {
         Key.findByIdAndDelete(req.params.id, (err, keyDeleted) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!keyDeleted) return res.status(404).send({ error: 'Key Not Found' });
+            keyDeleted.image.forEach(async e => {
+                await cloudinary.v2.uploader.destroy(e.public);
+            });
             return res.status(200).send({ data: keyDeleted });
         });
     },

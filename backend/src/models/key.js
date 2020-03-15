@@ -31,7 +31,9 @@ const keySchema = new Schema({
             id: {
                 type: Number,
                 min: 0,
-                max: 2
+                max: 2,
+                required: true,
+                unique: true
             },
             public: {
                 type: String,
@@ -61,7 +63,7 @@ const keySchema = new Schema({
     }
 });
 
-keySchema.index({ code: 1, line: 1 });
+keySchema.index({ code: 1, line: 1 }, { unique: true });
 
 /*------------------------------------------------------------------*/
 
