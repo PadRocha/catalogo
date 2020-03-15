@@ -112,7 +112,7 @@ const keyController = {
                 if (err || !imageStored) await cloudinary.v2.uploader.destroy(result.public_id);
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageStored) return res.status(404).send({ error: 'Key Not Found' });
-                await fs.unlink(req.file.path)
+                await fs.unlink(req.file.path);
                 return res.status(200).send({ data: imageStored });
             });
     },
@@ -128,7 +128,7 @@ const keyController = {
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageUpdated) return res.status(404).send({ error: 'Key Not Found' });
                 await cloudinary.v2.uploader.destroy(imageUpdated.image.find(x => x.id === id).public);
-                await fs.unlink(req.file.path)
+                await fs.unlink(req.file.path);
                 return res.status(200).send({ data: imageUpdated });
             });
     },
