@@ -51,6 +51,7 @@ const lineController = {
             Line.findByIdAndDelete(id, (err, lineDeleted) => {
                 if (err) return res.status(500).send({ error: 'Replace 1 Internal Server Error' });
                 if (!lineDeleted) return res.status(404).send({ error: 'Line Not Found' });
+                newLine.started = lineDeleted.started;
                 newLine.save((err, lineStored) => {
                     if (err) return res.status(500).send({ error: 'Replace 2 Internal Server Error' });
                     if (!lineStored) return res.status(204).send({ error: 'Line No Content' });
