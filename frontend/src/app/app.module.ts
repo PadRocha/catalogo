@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { AppComponent } from './app.component';
@@ -11,7 +12,6 @@ import { AuthService } from './services/auth.service';
 import { ErrorComponent } from './components/error/error.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
-
 
 @NgModule({
   declarations: [
@@ -24,7 +24,7 @@ import { HomeComponent } from './components/home/home.component';
     BrowserModule,
     HttpClientModule,
     FormsModule,
-    // NgbModule,
+    NgbModule,
     routing
   ],
   providers: [
