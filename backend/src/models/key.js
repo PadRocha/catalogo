@@ -32,10 +32,9 @@ const keySchema = new Schema({
                 type: Number,
                 min: 0,
                 max: 2,
-                required: true,
-                unique: true
+                required: true
             },
-            public: {
+            publicId: {
                 type: String,
                 default: null,
                 required: true
@@ -59,6 +58,11 @@ const keySchema = new Schema({
     conf: {
         type: Boolean,
         default: false,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now,
         required: true
     }
 });

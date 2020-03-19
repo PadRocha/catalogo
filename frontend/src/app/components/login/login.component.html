@@ -7,16 +7,21 @@
 <div class="main">
     <div class="col-md-6 col-sm-12">
         <div class="login-form">
-            <form autocomplete="off">
+            <form (ngSubmit)="onSubmit(userForm)" #userForm="ngForm" autocomplete="off">
                 <div class="form-group">
                     <label>Usuario</label>
-                    <input type="text" class="form-control" placeholder="User Name">
+                    <input type="text" class="form-control" name="nickname" #nickname="ngModel"
+                        placeholder="Nick usuario" [(ngModel)]="user.nickname">
                 </div>
                 <div class="form-group">
                     <label>Contraseña</label>
-                    <input type="password" class="form-control" placeholder="Password">
+                    <input type="password" class="form-control" name="password" #password="ngModel"
+                        placeholder="Contraseña" [(ngModel)]="user.password">
                 </div>
-                <button type="submit" class="btn btn-black">Entrar</button>
+                <button type="submit" class="btn btn-black" [disabled]="!userForm.form.valid">Entrar</button>
+                <ngb-alert *ngIf="!status" type="danger" [dismissible]="false">
+                    <strong>¡Error!</strong> No se ha podido ingresar
+                </ngb-alert>
             </form>
         </div>
     </div>

@@ -1,1 +1,82 @@
-<p>home works!</p>
+<nav class="menu" tabindex="0">
+    <div class="smartphone-menu-trigger"></div>
+    <header class="avatar">
+        <!-- <img src="https://s3.amazonaws.com/uifaces/faces/twitter/kolage/128.jpg" /> -->
+        <h2>John D.</h2>
+    </header>
+    <ul>
+        <li tabindex="0" class="icon-dashboard"><span>Dashboard</span></li>
+        <li tabindex="0" class="icon-customers"><span>Customers</span></li>
+        <li tabindex="0" class="icon-users"><span>Users</span></li>
+        <li tabindex="0" class="icon-settings"><span>Settings</span></li>
+    </ul>
+</nav>
+<nav class="menu-right">
+    <ul>
+        <li>Todas</li>
+        <li data-tooltip="Aumento de resorte" data-tooltip-location="bottom">ADRPVH
+            <span>Aumento de resorte</span>
+        </li>
+    </ul>
+</nav>
+<main class="container">
+    <div class="container">
+        <table class="table table-fit">
+            <thead>
+                <tr>
+                    <th>Registros</th>
+                    <th>Registros</th>
+                    <th>Registros</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let key of Keys; let index = index; let ultimo = last;" [id]="key._id">
+                    <td width="40"><input type="checkbox" class="form-control"></td>
+                    <td width="130">{{key.line}}{{key.code}}</td>
+                    <td width="250">
+                        <div class="input-group">
+                            <span name="images">
+                                <div class="case">[<i class="fas fa-circle"></i>]</div>
+                            </span>
+                            <select class="form-control {{statusClass(statusImage(key.image, 0))}}" name="0"
+                                [value]="statusImage(key.image, 0)"
+                                [disabled]="disabledImage(statusImage(key.image, 0))">
+                                <option value="" class="white"></option>
+                                <option value="0" class="white">0</option>
+                                <option value="1" class="gray">1</option>
+                                <option value="2" class="brown">2</option>
+                                <option value="3" class="blue">3</option>
+                                <option value="4" class="purple">4</option>
+                                <option value="5" class="green">5</option>
+                            </select>
+                            <select class="form-control {{statusClass(statusImage(key.image, 1))}}" name="1"
+                                [value]="statusImage(key.image, 1)"
+                                [disabled]="disabledImage(statusImage(key.image, 1))">
+                                <option value="" class="white"></option>
+                                <option value="0" class="white">0</option>
+                                <option value="1" class="gray">1</option>
+                                <option value="2" class="brown">2</option>
+                                <option value="3" class="blue">3</option>
+                                <option value="4" class="purple">4</option>
+                                <option value="5" class="green">5</option>
+                            </select>
+                            <select class="form-control {{statusClass(statusImage(key.image, 2))}}" name="2"
+                                [value]="statusImage(key.image, 2)"
+                                [disabled]="disabledImage(statusImage(key.image, 2))">
+                                <option value="" class="white"></option>
+                                <option value="0" class="white">0</option>
+                                <option value="1" class="gray">1</option>
+                                <option value="2" class="brown">2</option>
+                                <option value="3" class="blue">3</option>
+                                <option value="4" class="purple">4</option>
+                                <option value="5" class="green">5</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>{{key.desc}}</td>
+                    {{onLoad(ultimo)}}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>

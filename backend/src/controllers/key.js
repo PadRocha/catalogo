@@ -69,19 +69,25 @@ const keyController = {
         if (!req.body && !req.body.id && !req.body.status) return res.status(400).send({ error: 'Bad Request' });
         Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id }, { $set: { 'image.$.status': req.body.status } }, (err, statusUpdated) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
-            if (!statusUpdated) return res.status(404).send({ error: 'Key Not Found' });
-            return res.status(200).send({ data: statusUpdated });
+            if (statusUpdated) return res.status(200).send({ data: statusUpdated });
+            else {
+                Key.findOneAndUpdate({ '_id': req.params.id }, { $push: { 'image': { 'id': req.body.id, 'status': req.body.status } } }, (err, statusStored) => {
+                    if (err) return res.status(500).send({ error: 'Internal Server Error' });
+                    if (!statusStored) return res.status(404).send({ error: 'Key Not Found' });
+                    return res.status(200).send({ data: statusStored });
+                });
+            }
         });
     },
     deleteStatus(req, res) {
-        if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
-        if (!req.body && !req.body.id) return res.status(400).send({ error: 'Bad Request' });
-        Key.findOneAndUpdate({ '_id': req.params.id }, { $pull: { 'image': { 'id': req.body.id, 'status': { $gte: 0, $lte: 4 } } } },
+        if (!req.params._id && !req.params.id) return res.status(400).send({ error: 'Bad Request' });
+        let id = Number(req.params.id);
+        Key.findOneAndUpdate({ '_id': req.params._id }, { $pull: { 'image': { 'id': id, 'status': { $gte: 0, $lte: 4 } } } },
             (err, statusDeleted) => {
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!statusDeleted) return res.status(404).send({ error: 'Key Not Found' });
                 try {
-                    const deleted = statusDeleted.image.find(x => x.id === req.body.id).status;
+                    const deleted = statusDeleted.image.find(x => x.id === id).status;
                     if (deleted == 5) return res.status(404).send({ error: 'Key -> image Not Found' });
                 } catch (error) {
                     return res.status(404).send({ error: 'Key -> image Not Found' });
@@ -106,8 +112,8 @@ const keyController = {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.id && !req.file) return res.status(400).send({ error: 'Bad Request' });
         const result = await cloudinary.v2.uploader.upload(req.file.path);
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.status': 5, 'image.img': null, 'image.public': null },
-            { $set: { 'image.$.img': result.url, 'image.$.public': result.public_id } },
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.status': 5, 'image.img': null, 'image.publicId': null },
+            { $set: { 'image.$.img': result.url, 'image.$.publicId': result.public_id } },
             async (err, imageStored) => {
                 if (err || !imageStored) await cloudinary.v2.uploader.destroy(result.public_id);
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
@@ -121,13 +127,13 @@ const keyController = {
         if (!req.body && !req.body.id && !req.file) return res.status(400).send({ error: 'Bad Request' });
         const result = await cloudinary.v2.uploader.upload(req.file.path);
         const id = Number(req.body.id);
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5, 'image.img': { $ne: null }, 'image.public': { $ne: null } },
-            { $set: { 'image.$.img': result.url, 'image.$.public': result.public_id } },
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5, 'image.img': { $ne: null }, 'image.publicId': { $ne: null } },
+            { $set: { 'image.$.img': result.url, 'image.$.publicId': result.public_id } },
             async (err, imageUpdated) => {
                 if (err || !imageUpdated) await cloudinary.v2.uploader.destroy(result.public_id);
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageUpdated) return res.status(404).send({ error: 'Key Not Found' });
-                await cloudinary.v2.uploader.destroy(imageUpdated.image.find(x => x.id === id).public);
+                await cloudinary.v2.uploader.destroy(imageUpdated.image.find(x => x.id === id).publicId);
                 await fs.unlink(req.file.path);
                 return res.status(200).send({ data: imageUpdated });
             });
@@ -136,12 +142,12 @@ const keyController = {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.id) return res.status(400).send({ error: 'Bad Request' });
         const id = req.body.id;
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5, 'image.img': { $ne: null }, 'image.public': { $ne: null } },
-            { $set: { 'image.$.img': null, 'image.$.public': null } },
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5, 'image.img': { $ne: null }, 'image.publicId': { $ne: null } },
+            { $set: { 'image.$.img': null, 'image.$.publicId': null } },
             async (err, imageDeleted) => {
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageDeleted) return res.status(404).send({ error: 'Key Not Found' });
-                await cloudinary.v2.uploader.destroy(imageDeleted.image.find(x => x.id === id).public);
+                await cloudinary.v2.uploader.destroy(imageDeleted.image.find(x => x.id === id).publicId);
                 return res.status(200).send({ data: imageDeleted });
             });
     },
@@ -151,7 +157,7 @@ const keyController = {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!keyDeleted) return res.status(404).send({ error: 'Key Not Found' });
             keyDeleted.image.forEach(async e => {
-                await cloudinary.v2.uploader.destroy(e.public);
+                await cloudinary.v2.uploader.destroy(e.publicId);
             });
             return res.status(200).send({ data: keyDeleted });
         });

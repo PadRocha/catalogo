@@ -1,14 +1,14 @@
 'use strict'
 
 /*------------------------------------------------------------------*/
-// Modelo de user.ts
+// Modelo de image.ts
 /*------------------------------------------------------------------*/
 
-export class User {
+export class Image {
     constructor(
-        public _id: String,
-        public nickname: String,
-        public password: String,
-        public role: String
+        public id: Number,
+        public img: String,
+        public publicId: String,
+        public status: Number
     ) { }
 };

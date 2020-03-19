@@ -55,7 +55,9 @@ router.route('/key/:id')
 
 router.route('/key/status/:id')
     .post(keyController.saveStatus)
-    .put(keyController.updateStatus)
+    .put(keyController.updateStatus);
+
+router.route('/key/status/:_id/delete/:id')
     .delete(keyController.deleteStatus);
 
 router.route('/key/image/:id')

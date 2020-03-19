@@ -7,13 +7,19 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ArrivalsService {
-  public url: string;
+  private url: string;
 
   constructor(
-    public _http: HttpClient
+    private _http: HttpClient
   ) {
     this.url = environment.url;
   }
 
+  getKeys(): Observable<any> {
+    return this._http.get(this.url + 'key');
+  }
 
+  getLines(): Observable<any> {
+    return this._http.get(this.url + 'line');
+  }
 }
