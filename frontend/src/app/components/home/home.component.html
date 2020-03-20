@@ -1,3 +1,45 @@
+<ng-template #imageModal id="imageModal" let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Clave {{codeImageModal}} - Image {{nImage}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <form (ngSubmit)="onSubmitImage(file.files[0], warning, danger, success, submit)" class="col-6">
+                <div class="form-group">
+                    <input #file type="file" accept='image/*' (change)="preview(file.files);" />
+                </div>
+                <div class="form-group">
+                    <div #warning class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+                        <button type="button" class="close" aria-label="Close" (click)="closeAlert(warning)">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>¡Ten cuidado!</strong> No se ha insertado imagen alguna.
+                    </div>
+                    <div #danger class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+                        <button type="button" class="close" aria-label="Close" (click)="closeAlert(danger)">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>¡Esto es malo!</strong> Error en servidor.
+                    </div>
+                    <div #success class="alert alert-success alert-dismissible fade show d-none" role="alert">
+                        <button type="button" class="close" aria-label="Close" (click)="closeAlert(success)">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <strong>¡Excelente!</strong> La imagen se ha subido
+                    </div>
+                    <button #submit type="submit" class="btn btn-info btn-block">Charge Image</button>
+                </div>
+            </form>
+            <div class="col-6">
+                <img [src]="imageSrc" width="100%" *ngIf="imageSrc">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="resImgMod ? modal.close() : false">Cerrar</button>
+        <!-- <button type="submit" class="btn btn-primary">Guardar cambios</button> -->
+    </div>
+</ng-template>
 <nav class="menu" tabindex="0">
     <div class="smartphone-menu-trigger"></div>
     <header class="avatar">
@@ -14,8 +56,8 @@
 <nav class="menu-right">
     <ul>
         <li>Todas</li>
-        <li data-tooltip="Aumento de resorte" data-tooltip-location="bottom">ADRPVH
-            <span>Aumento de resorte</span>
+        <li *ngFor="let line of Lines;" data-tooltip="Aumento de resorte" data-tooltip-location="bottom">{{line._id}}
+            <span>{{line.name}}</span>
         </li>
     </ul>
 </nav>

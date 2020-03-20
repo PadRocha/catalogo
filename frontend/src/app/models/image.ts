@@ -7,8 +7,8 @@
 export class Image {
     constructor(
         public id: Number,
-        public img: String,
-        public publicId: String,
+        // public img: any,
+        // public publicId: String,
         public status: Number
     ) { }
 };

@@ -16,9 +16,7 @@ export class ShippingService {
     this.url = environment.url;
   }
 
-  sendStatus(status: Image): Observable<any> {
-    const params = JSON.stringify(status),
-      headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(this.url + 'vehiculo', params, { headers: headers });
+  updateImage(id: String, image: FormData): Observable<any> {
+    return this._http.post(this.url + 'key/image/' + id, image);
   }
 }

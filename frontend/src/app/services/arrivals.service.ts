@@ -22,4 +22,8 @@ export class ArrivalsService {
   getLines(): Observable<any> {
     return this._http.get(this.url + 'line');
   }
+
+  getKey(id: String): Observable<any> {
+    return this._http.get(this.url + 'key/' + id);
+  }
 }

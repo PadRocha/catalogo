@@ -112,10 +112,14 @@ const keyController = {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.id && !req.file) return res.status(400).send({ error: 'Bad Request' });
         const result = await cloudinary.v2.uploader.upload(req.file.path);
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.status': 5, 'image.img': null, 'image.publicId': null },
-            { $set: { 'image.$.img': result.url, 'image.$.publicId': result.public_id } },
+        //?  'image.status': { $ne: null }, 
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': req.body.id, 'image.img': null, 'image.publicId': null },
+            { $set: { 'image.$.status': 5, 'image.$.img': result.url, 'image.$.publicId': result.public_id } }, { new: true },
             async (err, imageStored) => {
-                if (err || !imageStored) await cloudinary.v2.uploader.destroy(result.public_id);
+                if (err || !imageStored) {
+                    await cloudinary.v2.uploader.destroy(result.public_id);
+                    await fs.unlink(req.file.path)
+                }
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageStored) return res.status(404).send({ error: 'Key Not Found' });
                 await fs.unlink(req.file.path);
@@ -130,7 +134,10 @@ const keyController = {
         Key.findOneAndUpdate({ '_id': req.params.id, 'image.id': id, 'image.status': 5, 'image.img': { $ne: null }, 'image.publicId': { $ne: null } },
             { $set: { 'image.$.img': result.url, 'image.$.publicId': result.public_id } },
             async (err, imageUpdated) => {
-                if (err || !imageUpdated) await cloudinary.v2.uploader.destroy(result.public_id);
+                if (err || !imageStored) {
+                    await cloudinary.v2.uploader.destroy(result.public_id);
+                    await fs.unlink(req.file.path)
+                }
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageUpdated) return res.status(404).send({ error: 'Key Not Found' });
                 await cloudinary.v2.uploader.destroy(imageUpdated.image.find(x => x.id === id).publicId);
