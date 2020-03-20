@@ -1,3 +1,15 @@
+<ng-template #showModal id="showModal" let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Clave {{codeImageModal}}</h4>
+    </div>
+    <div class="modal-body">
+        <img *ngFor="let image of showImage;" [src]="image.img" alt="image n° {{image.id}}">
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+        <!-- <button type="submit" class="btn btn-primary">Guardar cambios</button> -->
+    </div>
+</ng-template>
 <ng-template #imageModal id="imageModal" let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Clave {{codeImageModal}} - Image {{nImage}}</h4>

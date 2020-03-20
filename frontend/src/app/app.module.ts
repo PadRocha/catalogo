@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
+import { NgxGalleryModule } from 'ngx-gallery';
 import { routing, appRoutingProviders } from './app.routing';
 import { AppComponent } from './app.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -25,7 +25,8 @@ import { HomeComponent } from './components/home/home.component';
     HttpClientModule,
     FormsModule,
     NgbModule,
-    routing
+    routing,
+    NgxGalleryModule
   ],
   providers: [
     {

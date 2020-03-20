@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+
 import { AuthService } from 'src/app/services/auth.service';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { ShippingService } from 'src/app/services/shipping.service';
@@ -28,11 +30,12 @@ export class HomeComponent implements OnInit {
   public nBeforeImage: String;
   public nImage: Number;
   public codeImageModal: String;
+  public showImage: Array<Image>;
   public selectModal: any;
   // public closeResult: String;
   public resImgMod: Boolean = false;
   @ViewChild('imageModal') imgMod: ElementRef;
-  @ViewChild('showImg') sImg: ElementRef;
+  @ViewChild('showModal') showModal: ElementRef;
 
   constructor(
     private _auth: AuthService,
@@ -41,7 +44,7 @@ export class HomeComponent implements OnInit {
     private _shippings: ShippingService,
     private _exchanges: ExchangeService
   ) {
-    this.Image = new Image(undefined, undefined);
+    this.Image = new Image(undefined, undefined, undefined, undefined);
   }
 
   public ngOnInit(): void {
@@ -57,7 +60,7 @@ export class HomeComponent implements OnInit {
       let tr = Array.from($('tr', 'tbody'));
       tr.forEach(tr => {
         let _id = tr['id'];
-        let select = Array.from($('select', tr))
+        let select = Array.from($('select', tr));
         select.forEach(select => {
           const that = this;
           $(select).focus(e => {
@@ -96,8 +99,27 @@ export class HomeComponent implements OnInit {
               });
             }
           });
-        })
+        });
+        let span = Array.from($('span', tr));
+        span.forEach(span => {
+          $(span).click(e => {
+            this.idImageModal = _id;
+            this.getKeyCode(this.idImageModal);
+            if (this.tryImage(this.showImage) > 0) {
+              this.open(this.showModal, e => {
+                this.destructImg();
+              }, e => {
+                this.destructImg();
+              });
+            }
+          });
+        });
       });
+      var mySwiper = new mySwiper('#swiper-container', {
+        // Optional parameters
+        direction: 'vertical',
+        loop: true
+      })
     }
   }
 
@@ -115,9 +137,18 @@ export class HomeComponent implements OnInit {
   public getKeyCode(id: String): void {
     this._arrivals.getKey(id).subscribe(res => {
       this.codeImageModal = res.data['line']._id + res.data.code;
+      this.showImage = res.data['image'];
     }, err => {
       console.log(<any>err);
     });
+  }
+
+  private tryImage(images): Number {
+    let cont = 0;
+    images.forEach(e => {
+      if (e.status === 5) ++cont;
+    });
+    return cont;
   }
 
   public getLines(): void {
@@ -165,6 +196,7 @@ export class HomeComponent implements OnInit {
     this.idImageModal = undefined;
     this.nImage = undefined;
     this.codeImageModal = undefined;
+    this.showImage = undefined;
     this.selectModal = undefined;
     this.resImgMod = false;
   }
