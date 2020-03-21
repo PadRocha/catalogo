@@ -3,7 +3,11 @@
         <h4 class="modal-title">Clave {{codeImageModal}}</h4>
     </div>
     <div class="modal-body">
-        <img *ngFor="let image of showImage;" [src]="image.img" alt="image n° {{image.id}}">
+        <swiper class="swiper-container" [config]="config">
+            <div *ngFor="let slide of slides" class="swiper-slide">
+                <img [src]="slide" alt="">
+            </div>
+        </swiper>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>

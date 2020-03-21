@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { SwiperComponent, SwiperDirective, SwiperConfigInterface } from 'ngx-swiper-wrapper';
+
 import { AuthService } from 'src/app/services/auth.service';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { ShippingService } from 'src/app/services/shipping.service';
@@ -9,7 +11,7 @@ import { Key } from 'src/app/models/key';
 import { Line } from 'src/app/models/line';
 import { Image } from 'src/app/models/image';
 
-declare const $: any;
+import * as $ from 'jquery';
 declare const alertify: any;
 
 @Component({
@@ -18,6 +20,39 @@ declare const alertify: any;
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  public slides = [
+    'https://picsum.photos/700/250/?image=27',
+    'https://picsum.photos/700/250/?image=22',
+    'https://picsum.photos/700/250/?image=61',
+    'https://picsum.photos/700/250/?image=23',
+    'https://picsum.photos/700/250/?image=24',
+    'https://picsum.photos/700/250/?image=26',
+    'https://picsum.photos/700/250/?image=41',
+    'https://picsum.photos/700/250/?image=28',
+    'https://picsum.photos/700/250/?image=21',
+    'https://picsum.photos/700/250/?image=20',
+    'https://picsum.photos/400/250/?image=75'
+  ];
+
+  public config: SwiperConfigInterface = {
+    effect: 'coverflow',
+    grabCursor: true,
+    centeredSlides: true,
+    slidesPerView: 'auto',
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+    },
+  };
+
+  /*------------------------------------------------------------------*/
+
   public Keys: Array<Key>;
   public Lines: Array<Line>;
   private lastDone: Boolean = false;
@@ -114,11 +149,6 @@ export class HomeComponent implements OnInit {
           });
         });
       });
-      var mySwiper = new mySwiper('#swiper-container', {
-        // Optional parameters
-        direction: 'vertical',
-        loop: true
-      })
     }
   }
 
