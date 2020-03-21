@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-
 import { AuthService } from 'src/app/services/auth.service';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { ShippingService } from 'src/app/services/shipping.service';

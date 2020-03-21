@@ -20,8 +20,7 @@ export class LoginComponent implements OnInit {
     this.status = true;
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   public onSubmit(form): void {
     this._auth.loginUser(this.user).subscribe(
