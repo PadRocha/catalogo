@@ -1,8 +1,6 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-import { SwiperComponent, SwiperDirective, SwiperConfigInterface } from 'ngx-swiper-wrapper';
-
+import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { AuthService } from 'src/app/services/auth.service';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { ShippingService } from 'src/app/services/shipping.service';
@@ -20,20 +18,6 @@ declare const alertify: any;
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  public slides = [
-    'https://picsum.photos/700/250/?image=27',
-    'https://picsum.photos/700/250/?image=22',
-    'https://picsum.photos/700/250/?image=61',
-    'https://picsum.photos/700/250/?image=23',
-    'https://picsum.photos/700/250/?image=24',
-    'https://picsum.photos/700/250/?image=26',
-    'https://picsum.photos/700/250/?image=41',
-    'https://picsum.photos/700/250/?image=28',
-    'https://picsum.photos/700/250/?image=21',
-    'https://picsum.photos/700/250/?image=20',
-    'https://picsum.photos/400/250/?image=75'
-  ];
-
   public config: SwiperConfigInterface = {
     effect: 'coverflow',
     grabCursor: true,
@@ -48,14 +32,14 @@ export class HomeComponent implements OnInit {
     },
     pagination: {
       el: '.swiper-pagination',
-    },
+    }, keyboard: {
+      enabled: true,
+      onlyInViewport: false
+    }
   };
-
-  /*------------------------------------------------------------------*/
 
   public Keys: Array<Key>;
   public Lines: Array<Line>;
-  private lastDone: Boolean = false;
   public imagePath: any;
   public imageSrc: String | ArrayBuffer;
   public imgMessage: String;
@@ -67,11 +51,15 @@ export class HomeComponent implements OnInit {
   public showImage: Array<Image>;
   public selectModal: any;
   // public closeResult: String;
-  public resImgMod: Boolean = false;
-  @ViewChild('imageModal') imgMod: ElementRef;
+  public resimageModal: Boolean = false;
+  private confirmModalService: any;
+  @ViewChildren('tr') tr !: QueryList<ElementRef>;
+  @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
+  @ViewChild('confirmModal') confirmModal: ElementRef;
 
   constructor(
+    private _doc: ElementRef,
     private _auth: AuthService,
     private _modalService: NgbModal,
     private _arrivals: ArrivalsService,
@@ -86,70 +74,60 @@ export class HomeComponent implements OnInit {
     this.getLines();
   }
 
-  public ngAfterViewInit(): void { }
-
-  public onLoad(ultimo): void {
-    if (ultimo && !this.lastDone) {
-      this.lastDone = true;
-      let tr = Array.from($('tr', 'tbody'));
-      tr.forEach(tr => {
-        let _id = tr['id'];
-        let select = Array.from($('select', tr));
+  public ngAfterViewInit(): void {
+    this.tr.changes.subscribe(tr => {
+      tr.toArray().forEach(tr => {
+        tr = tr.nativeElement;
+        let _id = tr.id;
+        let select = tr.querySelectorAll('select');
         select.forEach(select => {
-          const that = this;
-          $(select).focus(e => {
-            this.nBeforeImage = select['value'];
+          select.addEventListener('focus', e => {
+            this.nBeforeImage = select.value;
           });
-          $(select).change(e => {
-            if (select['value'] === '5') {
+          select.addEventListener('change', e => {
+            if (select.value === '5') {
               this.idImageModal = _id;
               this.getKeyCode(this.idImageModal);
               this.selectModal = select;
-              this.nImage = Number(this.selectModal['name']) + 1;
+              this.nImage = Number(this.selectModal.name) + 1;
               let before = this.nBeforeImage;
-              this.open(this.imgMod, result => {
+              this.open(this.imageModal, result => {
                 this.destructImg();
               }, dismiss => {
-                if (!this.resImgMod) this.selectModal['value'] = before;
+                if (!this.resimageModal) this.selectModal.value = before;
                 this.destructImg();
               });
-            } else if (select['value'] !== '') {
-              that.Image.id = Number(select['name']);
-              that.Image.status = Number(select['value']);
-              that._exchanges.updateStatus(_id, that.Image).subscribe(res => {
-                if (select['value'] == 5) select['disabled'] = true;
-                var color = $('option:selected', select).attr('class');
-                $(select).attr('class', color).addClass('form-control');
-                alertify.success(`Status ${that.Image.status}, Image ${Number(select['name']) + 1} - key ${_id}`);
-              }, err => {
-                alertify.error('Error Status [reload]');
-              });
-            } else {
-              that._exchanges.deleteStatus(_id, Number(select['name'])).subscribe(res => {
-                $(select).attr('class', 'white').addClass('form-control');
-                alertify.success(`Status removed, Image ${Number(select['name'])} - key ${_id}`);
+              this.nBeforeImage = before;
+            } else if (select.value !== '') {
+              this.Image.id = Number(select.name);
+              this.Image.status = Number(select.value);
+              this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
+                if (select.value === '5') select.disabled = true;
+                let color = select.options[select.selectedIndex].className;
+                select.className = 'form-control ' + color;
+                alertify.success(`Status ${this.Image.status}, Image ${Number(select.name) + 1} - key ${_id}`);
               }, err => {
                 alertify.error('Error Status [reload]');
               });
             }
           });
-        });
-        let span = Array.from($('span', tr));
+        })
+        let span = tr.querySelectorAll('span');
         span.forEach(span => {
-          $(span).click(e => {
+          span.addEventListener('click', e => {
             this.idImageModal = _id;
             this.getKeyCode(this.idImageModal);
-            if (this.tryImage(this.showImage) > 0) {
-              this.open(this.showModal, e => {
+            if (this.showImage.length > 0) {
+              this.open(this.showModal, result => {
                 this.destructImg();
-              }, e => {
+              }, dismiss => {
                 this.destructImg();
-              });
+              })
             }
           });
         });
       });
-    }
+    });
   }
 
   public getKeys(): void {
@@ -164,20 +142,16 @@ export class HomeComponent implements OnInit {
   }
 
   public getKeyCode(id: String): void {
-    this._arrivals.getKey(id).subscribe(res => {
-      this.codeImageModal = res.data['line']._id + res.data.code;
-      this.showImage = res.data['image'];
+    this._arrivals.getKey(id).subscribe(async res => {
+      this.codeImageModal = await res.data['line']._id + res.data.code;
+      let cont = new Array();
+      res.data['image'].forEach(e => {
+        if (e.status == 5) cont.push(e);
+      });
+      this.showImage = await cont;
     }, err => {
       console.log(<any>err);
     });
-  }
-
-  private tryImage(images): Number {
-    let cont = 0;
-    images.forEach(e => {
-      if (e.status === 5) ++cont;
-    });
-    return cont;
   }
 
   public getLines(): void {
@@ -211,7 +185,7 @@ export class HomeComponent implements OnInit {
   }
 
   private open(target, callbackResult, callbackDismiss): void {
-    this._modalService.open(target, { size: 'lg', backdrop: 'static' }).result.then((result) => { callbackResult(result); }, (reason) => { callbackDismiss(reason) });
+    this._modalService.open(target, { size: 'lg', backdrop: 'static' }).result.then((result) => { callbackResult(result); }, (reason) => { callbackDismiss(reason); });
   }
 
   public closeAlert(alert): void {
@@ -227,7 +201,7 @@ export class HomeComponent implements OnInit {
     this.codeImageModal = undefined;
     this.showImage = undefined;
     this.selectModal = undefined;
-    this.resImgMod = false;
+    this.resimageModal = false;
   }
 
   public onSubmitImage(file, warning, danger, success, submit): void {
@@ -243,7 +217,7 @@ export class HomeComponent implements OnInit {
         warning.classList.add('d-none');
         danger.classList.add('d-none');
         this.selectModal['disabled'] = true;
-        this.resImgMod = true;
+        this.resimageModal = true;
         var color = $('option:selected', this.selectModal).attr('class');
         $(this.selectModal).attr('class', color).addClass('form-control');
       }, err => {
@@ -266,5 +240,14 @@ export class HomeComponent implements OnInit {
     reader.onload = _event => {
       this.imageSrc = reader.result;
     }
+  }
+
+  public configImg(): void {
+    this.confirmModalService = this._modalService.open(this.confirmModal, { size: 'sm' });
+  }
+
+  public deleteImg(confirm): void {
+    // this.confirmModalService.close();
+    confirm.classList.remove('d-none');
   }
 }

@@ -1,20 +1,65 @@
-<ng-template #showModal id="showModal" let-modal>
+<ng-template #confirmModal let-modal>
+    <div class="modal-body">
+        <div class="form-group">
+            <button class="form-control btn btn-outline-secondary">Editar</button>
+        </div>
+        <div class="form-group">
+            <button class="form-control btn btn-outline-danger" (click)="deleteImg(confirm)">Eliminar</button>
+        </div>
+        <div class="d-none" #confirm>
+            <div class="row">
+                <div class="col-6">
+                    <div class="pretty p-icon p-toggle p-plain">
+                        <input type="checkbox" />
+                        <div class="state p-on">
+                            <i class="fas fa-lock-open"></i>
+                            <label>Unlocked</label>
+                        </div>
+                        <div class="state p-off">
+                            <i class="fas fa-lock"></i>
+                            <label>Locked</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="pretty p-icon p-toggle p-plain">
+                        <input type="checkbox" />
+                        <div class="state p-on">
+                            <i class="fas fa-lock-open"></i>
+                            <label>Unlocked</label>
+                        </div>
+                        <div class="state p-off">
+                            <i class="fas fa-lock"></i>
+                            <label>Locked</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="form-control btn btn-danger">Confirmar eliminar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cancelar</button>
+    </div>
+</ng-template>
+<ng-template #showModal let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Clave {{codeImageModal}}</h4>
     </div>
     <div class="modal-body">
         <swiper class="swiper-container" [config]="config">
-            <div *ngFor="let slide of slides" class="swiper-slide">
-                <img [src]="slide" alt="">
+            <div *ngFor="let image of showImage" class="swiper-slide">
+                <img [src]="image.img" title="Image N° {{image.id}}" alt="Image N° {{image.id}}" (click)="configImg()">
             </div>
         </swiper>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
-        <!-- <button type="submit" class="btn btn-primary">Guardar cambios</button> -->
     </div>
 </ng-template>
-<ng-template #imageModal id="imageModal" let-modal>
+<ng-template #imageModal let-modal>
     <div class="modal-header">
         <h4 class="modal-title">Clave {{codeImageModal}} - Image {{nImage}}</h4>
     </div>
@@ -52,14 +97,12 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="resImgMod ? modal.close() : false">Cerrar</button>
-        <!-- <button type="submit" class="btn btn-primary">Guardar cambios</button> -->
+        <button type="button" class="btn btn-secondary" (click)="resimageModal ? modal.close() : false">Cerrar</button>
     </div>
 </ng-template>
 <nav class="menu" tabindex="0">
     <div class="smartphone-menu-trigger"></div>
     <header class="avatar">
-        <!-- <img src="https://s3.amazonaws.com/uifaces/faces/twitter/kolage/128.jpg" /> -->
         <h2>John D.</h2>
     </header>
     <ul>
@@ -70,6 +113,7 @@
     </ul>
 </nav>
 <nav class="menu-right">
+    <input type="text" class="form-control" placeholder="Linea..." name="" id="">
     <ul>
         <li>Todas</li>
         <li *ngFor="let line of Lines;" data-tooltip="Aumento de resorte" data-tooltip-location="bottom">{{line._id}}
@@ -88,7 +132,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let key of Keys; let index = index; let ultimo = last;" [id]="key._id">
+                <tr *ngFor="let key of Keys; let index = index;" [id]="key._id" #tr>
                     <td width="40"><input type="checkbox" class="form-control"></td>
                     <td width="130">{{key.line}}{{key.code}}</td>
                     <td width="250">
@@ -132,7 +176,6 @@
                         </div>
                     </td>
                     <td>{{key.desc}}</td>
-                    {{onLoad(ultimo)}}
                 </tr>
             </tbody>
         </table>

@@ -52,8 +52,7 @@ const keySchema = new Schema({
                 required: true
             }
         }],
-        _id: false,
-        maxlength: 3
+        _id: false
     },
     conf: {
         type: Boolean,

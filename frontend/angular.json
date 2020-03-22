@@ -35,7 +35,8 @@
               "./node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-brands.css",
               "./node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-solid.css",
               "./node_modules/alertifyjs/build/css/alertify.min.css",
-              "./node_modules/alertifyjs/build/css/themes/bootstrap.min.css"
+              "./node_modules/alertifyjs/build/css/themes/bootstrap.min.css",
+              "./node_modules/pretty-checkbox/src/pretty-checkbox.scss"
             ],
             "scripts": [
               "./node_modules/jquery/dist/jquery.min.js",

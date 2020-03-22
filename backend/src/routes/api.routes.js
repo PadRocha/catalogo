@@ -53,6 +53,9 @@ router.route('/key/:id')
     .put(keyController.updateKey)
     .delete(keyController.deleteKey);
 
+router.route('/key/line/:line')
+    .get(keyController.listKeyLine);
+
 router.route('/key/status/:id')
     .post(keyController.saveStatus)
     .put(keyController.updateStatus);

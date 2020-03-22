@@ -231,6 +231,11 @@ main {
   color: white;
   overflow: auto;
 
+  input {
+    margin: 15px 10px 0px 11px;
+    width: 90%;
+  }
+
   ul {
     margin: 0;
     padding: 0;
@@ -349,6 +354,11 @@ main {
 .swiper-slide {
   background-position: center !important;
   background-size: cover !important;
-  width: 300px !important;
+  width: 424.8px !important;
   height: 300px !important;
+
+  img {
+    width: 424.8px;
+    height: 300px;
+  }
 }
