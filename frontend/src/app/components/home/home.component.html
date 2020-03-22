@@ -1,16 +1,16 @@
 <ng-template #confirmModal let-modal>
     <div class="modal-body">
         <div class="form-group">
-            <button class="form-control btn btn-outline-secondary">Editar</button>
+            <button class="form-control btn btn-outline-secondary" (click)="editImg()">Editar</button>
         </div>
         <div class="form-group">
             <button class="form-control btn btn-outline-danger" (click)="deleteImg(confirm)">Eliminar</button>
         </div>
-        <div class="d-none" #confirm>
+        <div #confirm class="d-none">
             <div class="row">
                 <div class="col-6">
                     <div class="pretty p-icon p-toggle p-plain">
-                        <input type="checkbox" />
+                        <input #k1 type="checkbox" (click)="clench(k1, k2, lock)" />
                         <div class="state p-on">
                             <i class="fas fa-lock-open"></i>
                             <label>Unlocked</label>
@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-6">
                     <div class="pretty p-icon p-toggle p-plain">
-                        <input type="checkbox" />
+                        <input #k2 type="checkbox" (click)="clench(k1, k2, lock)" />
                         <div class="state p-on">
                             <i class="fas fa-lock-open"></i>
                             <label>Unlocked</label>
@@ -36,11 +36,13 @@
                 </div>
             </div>
             <div class="form-group">
-                <button class="form-control btn btn-danger">Confirmar eliminar</button>
+                <button #lock class="form-control btn btn-danger" (click)="confirmDelete()" disabled>
+                    Confirmar eliminar
+                </button>
             </div>
         </div>
     </div>
-    <div class="modal-footer">
+    <div class=" modal-footer">
         <button type="button" class="btn btn-secondary" (click)="modal.close()">Cancelar</button>
     </div>
 </ng-template>
@@ -132,7 +134,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let key of Keys; let index = index;" [id]="key._id" #tr>
+                <tr #tr *ngFor="let key of Keys; let index = index;" [id]="key._id">
                     <td width="40"><input type="checkbox" class="form-control"></td>
                     <td width="130">{{key.line}}{{key.code}}</td>
                     <td width="250">

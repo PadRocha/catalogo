@@ -9,7 +9,6 @@ import { Key } from 'src/app/models/key';
 import { Line } from 'src/app/models/line';
 import { Image } from 'src/app/models/image';
 
-import * as $ from 'jquery';
 declare const alertify: any;
 
 @Component({
@@ -23,20 +22,19 @@ export class HomeComponent implements OnInit {
   public imagePath: any;
   public imageSrc: String | ArrayBuffer;
   public imgMessage: String;
-  public Image: Image;
-  public idImageModal: String;
-  public nBeforeImage: String;
+  private Image: Image;
+  private idImageModal: String;
+  private nBeforeImage: String;
   public nImage: Number;
   public codeImageModal: String;
   public showImage: Array<Image>;
-  public selectModal: any;
-  // public closeResult: String;
+  private currentSelect: any;
   public resimageModal: Boolean = false;
   private confirmModalService: any;
-  @ViewChildren('tr') tr !: QueryList<ElementRef>;
   @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
   @ViewChild('confirmModal') confirmModal: ElementRef;
+  @ViewChildren('tr') tr !: QueryList<ElementRef>;
 
   public config: SwiperConfigInterface = {
     effect: 'coverflow',
@@ -59,7 +57,6 @@ export class HomeComponent implements OnInit {
   };
 
   constructor(
-    private _doc: ElementRef,
     private _auth: AuthService,
     private _modalService: NgbModal,
     private _arrivals: ArrivalsService,
@@ -88,13 +85,13 @@ export class HomeComponent implements OnInit {
             if (select.value === '5') {
               this.idImageModal = _id;
               this.getKeyCode(this.idImageModal);
-              this.selectModal = select;
-              this.nImage = Number(this.selectModal.name) + 1;
+              this.currentSelect = select;
+              this.nImage = Number(this.currentSelect.name) + 1;
               let before = this.nBeforeImage;
               this.open(this.imageModal, result => {
                 this.destructImg();
               }, dismiss => {
-                if (!this.resimageModal) this.selectModal.value = before;
+                if (!this.resimageModal) this.currentSelect.value = before;
                 this.destructImg();
               });
               this.nBeforeImage = before;
@@ -137,7 +134,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public getKeys(): void {
+  private getKeys(): void {
     this._arrivals.getKeys().subscribe(res => {
       if (res.data) {
         this.Keys = res.data;
@@ -148,7 +145,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public getKeyCode(id: String): void {
+  private getKeyCode(id: String): void {
     this._arrivals.getKey(id).subscribe(async res => {
       this.codeImageModal = await res.data['line']._id + res.data.code;
       let cont = new Array();
@@ -161,7 +158,7 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  public getLines(): void {
+  private getLines(): void {
     this._arrivals.getLines().subscribe(res => {
       if (res.data) {
         this.Lines = res.data;
@@ -207,28 +204,27 @@ export class HomeComponent implements OnInit {
     this.nImage = undefined;
     this.codeImageModal = undefined;
     this.showImage = undefined;
-    this.selectModal = undefined;
+    this.currentSelect = undefined;
     this.resimageModal = false;
   }
 
   public onSubmitImage(file, warning, danger, success, submit): void {
-    const id = Number(this.selectModal['name']);
+    const id = Number(this.currentSelect.name);
     if (!file) warning.classList.remove('d-none');
     else {
       let fd: any = new FormData();
       fd.append('id', id);
       fd.append('image', file, file.name);
-      submit.disabled = true;
+      submit.classList.add('disabled');
       this._shippings.updateImage(this.idImageModal, fd).subscribe(async res => {
         await success.classList.remove('d-none');
         warning.classList.add('d-none');
         danger.classList.add('d-none');
-        this.selectModal['disabled'] = true;
+        this.currentSelect.disabled = true;
         this.resimageModal = true;
-        var color = $('option:selected', this.selectModal).attr('class');
-        $(this.selectModal).attr('class', color).addClass('form-control');
+        this.currentSelect.className = 'form-control green';
       }, err => {
-        submit.disabled = false;
+        submit.classList.remove('disabled');
         danger.classList.remove('d-none');
       });
     }
@@ -253,8 +249,20 @@ export class HomeComponent implements OnInit {
     this.confirmModalService = this._modalService.open(this.confirmModal, { size: 'sm' });
   }
 
+  public editImg(): void {
+
+  }
+
   public deleteImg(confirm): void {
-    // this.confirmModalService.close();
     confirm.classList.remove('d-none');
+  }
+
+  public clench(key1, key2, lock): void {
+    if (key1.checked && key2.checked) lock.disabled = false;
+    else lock.disabled = true;
+  }
+
+  public confirmDelete(): void {
+    alert('hola')
   }
 }
