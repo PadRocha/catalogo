@@ -9,7 +9,6 @@ import { Key } from 'src/app/models/key';
 import { Line } from 'src/app/models/line';
 import { Image } from 'src/app/models/image';
 
-import * as $ from 'jquery';
 declare const alertify: any;
 
 @Component({
