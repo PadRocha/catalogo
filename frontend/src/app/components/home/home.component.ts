@@ -18,26 +18,6 @@ declare const alertify: any;
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  public config: SwiperConfigInterface = {
-    effect: 'coverflow',
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: 'auto',
-    coverflowEffect: {
-      rotate: 50,
-      stretch: 0,
-      depth: 100,
-      modifier: 1,
-      slideShadows: true,
-    },
-    pagination: {
-      el: '.swiper-pagination',
-    }, keyboard: {
-      enabled: true,
-      onlyInViewport: false
-    }
-  };
-
   public Keys: Array<Key>;
   public Lines: Array<Line>;
   public imagePath: any;
@@ -57,6 +37,26 @@ export class HomeComponent implements OnInit {
   @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
   @ViewChild('confirmModal') confirmModal: ElementRef;
+
+  public config: SwiperConfigInterface = {
+    effect: 'coverflow',
+    grabCursor: true,
+    centeredSlides: true,
+    slidesPerView: 'auto',
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+    }, keyboard: {
+      enabled: true,
+      onlyInViewport: false
+    }
+  };
 
   constructor(
     private _doc: ElementRef,
@@ -106,6 +106,13 @@ export class HomeComponent implements OnInit {
                 let color = select.options[select.selectedIndex].className;
                 select.className = 'form-control ' + color;
                 alertify.success(`Status ${this.Image.status}, Image ${Number(select.name) + 1} - key ${_id}`);
+              }, err => {
+                alertify.error('Error Status [reload]');
+              });
+            } else {
+              this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
+                select.className = 'form-control white';
+                alertify.success(`Status removed, Image ${Number(select['name'])} - key ${_id}`);
               }, err => {
                 alertify.error('Error Status [reload]');
               });
