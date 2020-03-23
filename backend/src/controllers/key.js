@@ -87,13 +87,15 @@ const keyController = {
     updateStatus(req, res) {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         if (!req.body && !req.body.idN && !req.body.status) return res.status(400).send({ error: 'Bad Request' });
-        Key.findOneAndUpdate({ '_id': req.params.id, 'image.idN': req.body.idN },
+        const id = Number(req.body.idN);
+        Key.findOneAndUpdate({ '_id': req.params.id, 'image.idN': id },
             { $set: { 'image.$.status': req.body.status } }, (err, statusUpdated) => {
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (statusUpdated) return res.status(200).send({ data: statusUpdated });
                 else {
-                    Key.findOneAndUpdate({ '_id': req.params.id, 'image.idN': { $ne: req.body.idN } },
-                        { $push: { 'image': { 'idN': req.body.idN, 'status': req.body.status } } }, (err, statusStored) => {
+                    Key.findOneAndUpdate({ '_id': req.params.id, 'image.idN': { $ne: id } },
+                        { $push: { 'image': { 'idN': id, 'status': req.body.status } } }, (err, statusStored) => {
+                            console.log("updateStatus -> err", err)
                             if (err) return res.status(500).send({ error: 'Internal Server Error' });
                             if (!statusStored) return res.status(404).send({ error: 'Key Not Found' });
                             return res.status(200).send({ data: statusStored });

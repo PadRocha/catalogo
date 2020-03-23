@@ -1,45 +1,37 @@
-<nav class="navbar fixed-top navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">
-        <img src="../assets/image/simbavector.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-        Catalogo
-    </a>
+<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
+    <div *ngIf="_authService.loggedIn()" class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Líneas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="//codeply.com">Agregar clave</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+            </li>
+        </ul>
+    </div>
+    <div [ngClass]="{'mx-auto order-0': _authService.loggedIn()}">
+        <a class="navbar-brand mx-auto" [routerLink]="['/home']">
+            <img src="../assets/image/simbavector.svg" width="30" height="30" class="d-inline-block align-top">
+            Catalogo
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+    <div *ngIf="_authService.loggedIn()" class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li style="cursor: pointer;" class="nav-link" (click)="_authService.logoutUser()">Salir</li>
+        </ul>
+    </div>
 </nav>
-<div id="live-chat">
-    <header class="clearfix">
-        <a href="#" class="chat-close">x</a>
-        <h4>Mehmet Mert</h4>
-        <span class="chat-message-counter">3</span>
-    </header>
-    <div class="chat">
-        <div class="chat-history">
-            <div class="chat-message clearfix">
-                <span class="chat-time">13:35</span>
-                <h5>John Doe</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, explicabo quasi ratione odio
-                    dolorum harum.</p>
-            </div> <!-- end chat-message -->
-            <hr>
-            <div class="chat-message clearfix">
-                <span class="chat-time">13:37</span>
-                <h5>Marco Biedermann</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis, nulla accusamus magni vel
-                    debitis numquam qui tempora rem voluptatem delectus!</p>
-            </div> <!-- end chat-message -->
-            <hr>
-            <div class="chat-message clearfix">
-                <span class="chat-time">13:38</span>
-                <h5>John Doe</h5>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing.</p>
-            </div> <!-- end chat-message -->
-            <hr>
-        </div> <!-- end chat-history -->
-        <p class="chat-feedback">Yazıyor Está escribiendo...</p>
-        <form action="#" method="post">
-            <fieldset>
-                <input type="text" placeholder="Mesajınızı Yazın" autofocus>
-                <input type="hidden">
-            </fieldset>
-        </form>
-    </div> <!-- end chat -->
-</div> <!-- end live-chat -->
+<app-chat *ngIf="_authService.loggedIn()"></app-chat>
 <router-outlet></router-outlet>

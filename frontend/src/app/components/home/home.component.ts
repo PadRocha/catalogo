@@ -106,18 +106,18 @@ export class HomeComponent implements OnInit {
               this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
                 if (select.value === '5') select.disabled = true;
                 const color = select.options[select.selectedIndex].className;
-                select.className = 'form-control ' + color;
-                alertify.success(`Status ${this.Image.status}, Image ${Number(select.name) + 1} - key ${_id}`);
+                select.className = 'form-control btn-sm ' + color;
+                alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
                 this.nBeforeImage = select.value;
               }, err => {
-                alertify.error('Error Status [reload]');
+                alertify.error('Error Status<br/>[reload]');
               });
             } else {
               this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
-                select.className = 'form-control white';
+                select.className = 'form-control btn-sm white';
                 alertify.success(`Status removed, Image ${Number(select['name']) + 1} - key ${_id}`);
               }, err => {
-                alertify.error('Error Status [reload]');
+                alertify.error('Error Status<br/>[reload]');
               });
             }
           });
@@ -200,7 +200,7 @@ export class HomeComponent implements OnInit {
 
   private open(target, callbackResult, callbackDismiss): any {
     this.currentModal = this._modalService.open(target, { size: 'lg', backdrop: 'static' });
-    this.currentModal.result.then((result) => { callbackResult(result); }, (reason) => { callbackDismiss(reason); });
+    this.currentModal.result.then(result => callbackResult(result), reason => callbackDismiss(reason));
   }
 
   public closeAlert(alert): void {
@@ -233,7 +233,7 @@ export class HomeComponent implements OnInit {
         danger.classList.add('d-none');
         this.currentSelect.disabled = true;
         this.resimageModal = true;
-        this.currentSelect.className = 'form-control green';
+        this.currentSelect.className = 'form-control btn-sm green';
       }, err => {
         submit.disabled = false;
         danger.classList.remove('d-none');
@@ -289,12 +289,12 @@ export class HomeComponent implements OnInit {
         await this.currentModal.close();
       } else await this.confirmModalService.close();
       let select = this.trElement.find(tr => tr.nativeElement.id === _id).nativeElement.querySelector(`select[name="${idN}"]`);
-      select.className = 'form-control white';
+      select.className = 'form-control btn-sm white';
       select.value = '';
       select.disabled = false;
-      alertify.success(`${code} [id: ${idN}] [Eliminada con éxito]`);
+      alertify.success(`${code} [id: ${idN}]<br/>[Eliminada con éxito]`);
     }, err => {
-
+      alertify.error(`${code} [id: ${idN}]<br/>[Error]`);
     });
   }
 }

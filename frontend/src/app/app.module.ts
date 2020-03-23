@@ -15,6 +15,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { EditImageComponent } from './components/edit-image/edit-image.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   observer: true,
@@ -31,7 +32,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ErrorComponent,
     LoginComponent,
     HomeComponent,
-    EditImageComponent
+    EditImageComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,

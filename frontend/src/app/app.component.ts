@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-import * as $ from 'jquery';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,22 +9,9 @@ import * as $ from 'jquery';
 export class AppComponent implements OnInit {
   title = 'frontend';
 
-  public ngOnInit(): void {
-    $('.chat').slideToggle(300, 'swing');
-    $('.chat-message-counter').slideToggle(300, 'swing');
-    $('#live-chat header').on('click', function () {
+  constructor(
+    public _authService: AuthService
+  ) { }
 
-      $('.chat').slideToggle(300, 'swing');
-      $('.chat-message-counter').fadeToggle(300, 'swing');
-
-    });
-
-    $('.chat-close').on('click', function (e) {
-
-      e.preventDefault();
-      $('#live-chat').fadeOut(300);
-
-    });
-
-  }
+  public ngOnInit(): void { }
 }

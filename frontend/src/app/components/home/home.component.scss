@@ -245,6 +245,7 @@ main {
       text-align: center;
       font-size: 25px;
       padding: 5px 10px;
+      cursor: pointer;
 
       span {
         display: none;
@@ -280,15 +281,17 @@ main {
     td {
       span {
         background: rgb(122, 122, 122);
-        padding: 0px 5px;
-        font-size: 25px;
+        padding: 2.5px 5px;
+        height: 35px;
+        font-size: 20px;
         border-radius: 5px 0px 0px 5px;
+        cursor: pointer;
 
         .case {
           margin-top: -3px;
           i {
             color: #000;
-            font-size: 20px;
+            font-size: 15px;
           }
         }
 
@@ -350,15 +353,65 @@ main {
   width: 100%;
   padding-top: 50px;
   padding-bottom: 50px;
-}
-.swiper-slide {
-  background-position: center !important;
-  background-size: cover !important;
-  width: 424.8px !important;
-  height: 300px !important;
 
-  img {
-    width: 424.8px;
-    height: 300px;
+  .swiper-slide {
+    background-position: center !important;
+    background-size: cover !important;
+    width: 424.8px !important;
+    height: 300px !important;
+
+    img {
+      width: 424.8px;
+      height: 300px;
+    }
+  }
+}
+
+.double-button {
+  position: relative;
+  display: inline-block;
+
+  a {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset;
+    background-color: #6f17aa;
+    border-color: #aa14e6;
+    border-width: 1px;
+    border-style: solid;
+    display: block;
+    float: left;
+    cursor: pointer;
+    padding: 5px;
+    text-decoration: none;
+    font-size: 13px;
+    position: relative;
+    color: #fff;
+
+    &:hover {
+      background-color: #000000;
+      border-color: #202020;
+    }
+  }
+
+  #left,
+  #right {
+    padding-right: 17px;
+    padding-left: 15px;
+  }
+
+  #left {
+    border-radius: 18px 0 0 18px;
+  }
+
+  #right {
+    box-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4) inset;
+    border-radius: 0 18px 18px 0;
+    padding-left: 17px;
+    padding-right: 15px;
+    border-left: 0;
+
+    &:hover:after {
+      left: auto;
+      right: 0;
+    }
   }
 }
