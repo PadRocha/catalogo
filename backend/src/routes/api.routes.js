@@ -60,13 +60,15 @@ router.route('/key/status/:id')
     .post(keyController.saveStatus)
     .put(keyController.updateStatus);
 
-router.route('/key/status/:_id/delete/:id')
+router.route('/key/status/:_id/delete/:idN')
     .delete(keyController.deleteStatus);
 
 router.route('/key/image/:id')
     .get(keyController.getImage)
     .post(keyController.saveImage)
-    .put(keyController.updateImage)
+    .put(keyController.updateImage);
+
+router.route('/key/image/:_id/delete/:idN')
     .delete(keyController.deleteImage);
 
 /*------------------------------------------------------------------*/

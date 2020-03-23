@@ -30,7 +30,11 @@ export class HomeComponent implements OnInit {
   public showImage: Array<Image>;
   private currentSelect: any;
   public resimageModal: Boolean = false;
+  public imageId: Number;
+  private currentModal: any;
+  private showSearched: Boolean = false;
   private confirmModalService: any;
+  private trElement: Array<any>;
   @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
   @ViewChild('confirmModal') confirmModal: ElementRef;
@@ -73,10 +77,11 @@ export class HomeComponent implements OnInit {
 
   public ngAfterViewInit(): void {
     this.tr.changes.subscribe(tr => {
-      tr.toArray().forEach(tr => {
+      this.trElement = tr.toArray();
+      this.trElement.forEach(tr => {
         tr = tr.nativeElement;
-        let _id = tr.id;
-        let select = tr.querySelectorAll('select');
+        const _id = tr.id;
+        const select = tr.querySelectorAll('select');
         select.forEach(select => {
           select.addEventListener('focus', e => {
             this.nBeforeImage = select.value;
@@ -96,32 +101,37 @@ export class HomeComponent implements OnInit {
               });
               this.nBeforeImage = before;
             } else if (select.value !== '') {
-              this.Image.id = Number(select.name);
+              this.Image.idN = Number(select.name);
               this.Image.status = Number(select.value);
               this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
                 if (select.value === '5') select.disabled = true;
-                let color = select.options[select.selectedIndex].className;
+                const color = select.options[select.selectedIndex].className;
                 select.className = 'form-control ' + color;
                 alertify.success(`Status ${this.Image.status}, Image ${Number(select.name) + 1} - key ${_id}`);
+                this.nBeforeImage = select.value;
               }, err => {
                 alertify.error('Error Status [reload]');
               });
             } else {
               this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
                 select.className = 'form-control white';
-                alertify.success(`Status removed, Image ${Number(select['name'])} - key ${_id}`);
+                alertify.success(`Status removed, Image ${Number(select['name']) + 1} - key ${_id}`);
               }, err => {
                 alertify.error('Error Status [reload]');
               });
             }
           });
         })
-        let span = tr.querySelectorAll('span');
+        const span = tr.querySelectorAll('span');
         span.forEach(span => {
           span.addEventListener('click', e => {
             this.idImageModal = _id;
-            this.getKeyCode(this.idImageModal);
+            if (!this.showSearched) {
+              this.getKeyCode(this.idImageModal);
+              this.showSearched = true;
+            }
             if (this.showImage.length > 0) {
+              this.showSearched = false;
               this.open(this.showModal, result => {
                 this.destructImg();
               }, dismiss => {
@@ -150,9 +160,9 @@ export class HomeComponent implements OnInit {
       this.codeImageModal = await res.data['line']._id + res.data.code;
       let cont = new Array();
       res.data['image'].forEach(e => {
-        if (e.status == 5) cont.push(e);
+        if (e.status === 5) cont[e.idN] = e;
       });
-      this.showImage = await cont;
+      this.showImage = await cont.filter(() => { return true });
     }, err => {
       console.log(<any>err);
     });
@@ -170,8 +180,8 @@ export class HomeComponent implements OnInit {
   }
 
   public statusImage(image, id): Number {
-    if (!image.find(e => e.id == id)) return 6;
-    return image.find(e => e.id == id).status;
+    if (!image.find(e => e.idN == id)) return 6;
+    return image.find(e => e.idN == id).status;
   }
 
   public statusClass(n: Number): String {
@@ -188,8 +198,9 @@ export class HomeComponent implements OnInit {
     return n === 5;
   }
 
-  private open(target, callbackResult, callbackDismiss): void {
-    this._modalService.open(target, { size: 'lg', backdrop: 'static' }).result.then((result) => { callbackResult(result); }, (reason) => { callbackDismiss(reason); });
+  private open(target, callbackResult, callbackDismiss): any {
+    this.currentModal = this._modalService.open(target, { size: 'lg', backdrop: 'static' });
+    this.currentModal.result.then((result) => { callbackResult(result); }, (reason) => { callbackDismiss(reason); });
   }
 
   public closeAlert(alert): void {
@@ -209,13 +220,13 @@ export class HomeComponent implements OnInit {
   }
 
   public onSubmitImage(file, warning, danger, success, submit): void {
-    const id = Number(this.currentSelect.name);
+    const idN = Number(this.currentSelect.name);
     if (!file) warning.classList.remove('d-none');
     else {
       let fd: any = new FormData();
-      fd.append('id', id);
+      fd.append('idN', idN);
       fd.append('image', file, file.name);
-      submit.classList.add('disabled');
+      submit.disabled = true;
       this._shippings.updateImage(this.idImageModal, fd).subscribe(async res => {
         await success.classList.remove('d-none');
         warning.classList.add('d-none');
@@ -224,7 +235,7 @@ export class HomeComponent implements OnInit {
         this.resimageModal = true;
         this.currentSelect.className = 'form-control green';
       }, err => {
-        submit.classList.remove('disabled');
+        submit.disabled = false;
         danger.classList.remove('d-none');
       });
     }
@@ -245,7 +256,8 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  public configImg(): void {
+  public configImg(idN): void {
+    this.imageId = idN;
     this.confirmModalService = this._modalService.open(this.confirmModal, { size: 'sm' });
   }
 
@@ -263,6 +275,26 @@ export class HomeComponent implements OnInit {
   }
 
   public confirmDelete(): void {
-    alert('hola')
+    let _id = this.idImageModal;
+    let idN = this.imageId;
+    let code = this.codeImageModal;
+    this._exchanges.deleteImage(_id, idN).subscribe(async res => {
+      let cont = new Array();
+      await res.data['image'].forEach(e => {
+        if (e.status == 5) cont.push(e);
+      });
+      this.getKeyCode(this.idImageModal);
+      if (cont.length <= 1) {
+        await this.confirmModalService.close();
+        await this.currentModal.close();
+      } else await this.confirmModalService.close();
+      let select = this.trElement.find(tr => tr.nativeElement.id === _id).nativeElement.querySelector(`select[name="${idN}"]`);
+      select.className = 'form-control white';
+      select.value = '';
+      select.disabled = false;
+      alertify.success(`${code} [id: ${idN}] [Eliminada con éxito]`);
+    }, err => {
+
+    });
   }
 }

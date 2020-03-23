@@ -6,7 +6,7 @@
 
 export class Image {
     constructor(
-        public id: Number,
+        public idN: Number,
         public img: String,
         public publicId: String,
         public status: Number

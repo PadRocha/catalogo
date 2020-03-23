@@ -28,11 +28,10 @@ const keySchema = new Schema({
     },
     image: {
         type: [{
-            id: {
+            idN: {
                 type: Number,
-                min: 0,
-                max: 2,
-                required: true
+                required: true,
+                unique: true
             },
             publicId: {
                 type: String,
@@ -52,7 +51,8 @@ const keySchema = new Schema({
                 required: true
             }
         }],
-        _id: false
+        _id: false,
+        idN: true
     },
     conf: {
         type: Boolean,

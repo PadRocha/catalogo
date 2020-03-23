@@ -1,4 +1,7 @@
 <ng-template #confirmModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Delete {{codeImageModal}} id {{imageId}}</h4>
+    </div>
     <div class="modal-body">
         <div class="form-group">
             <button class="form-control btn btn-outline-secondary" (click)="editImg()">Editar</button>
@@ -53,7 +56,8 @@
     <div class="modal-body">
         <swiper class="swiper-container" [config]="config">
             <div *ngFor="let image of showImage" class="swiper-slide">
-                <img [src]="image.img" title="Image N° {{image.id}}" alt="Image N° {{image.id}}" (click)="configImg()">
+                <img [src]="image.img" title="Image N° {{image.idN}}" alt="Image N° {{image.idN}}"
+                    (click)="configImg(image.idN)">
             </div>
         </swiper>
     </div>
@@ -133,7 +137,7 @@
                     <th>Registros</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody #tbody>
                 <tr #tr *ngFor="let key of Keys; let index = index;" [id]="key._id">
                     <td width="40"><input type="checkbox" class="form-control"></td>
                     <td width="130">{{key.line}}{{key.code}}</td>
