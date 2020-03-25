@@ -173,6 +173,7 @@
     [scrollWindow]="false">
     <input #searchLine type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
         placeholder="Linea...">
+    <span class="container">Total: {{LinesInfo.totalDocs}}</span>
     <ul class="search-results">
         <li #every>Todas</li>
         <li #lines *ngFor="let line of Lines" [id]="line._id">

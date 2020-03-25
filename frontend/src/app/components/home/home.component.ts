@@ -7,8 +7,6 @@ import { ShippingService } from 'src/app/services/shipping.service';
 import { ExchangeService } from 'src/app/services/exchange.service';
 import { ModalService } from 'src/app/services/modal.service';
 import { User } from 'src/app/models/user';
-import { Key } from 'src/app/models/key';
-import { Line } from 'src/app/models/line';
 import { Image } from 'src/app/models/image';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FunctionsService } from 'src/app/services/functions.service';
@@ -22,10 +20,15 @@ declare const alertify: any;
 })
 export class HomeComponent implements OnInit {
   private User: User;
+  public Keys = [];
+  private actualKeyPage: Number;
+  private KeyRegex: String = '';
+  private KeySearched: Boolean = false;
+  private KeyInfo: Object;
+  public Lines = [];
   private actualLinePage: Number;
   private LineRegex: Boolean = false;
-  public Keys: Array<Key>;
-  public Lines = [];
+  public LinesInfo: Object;
   public imagePath: any;
   public imageSrc: String | ArrayBuffer;
   public imgMessage: String;
@@ -86,6 +89,7 @@ export class HomeComponent implements OnInit {
   ) {
     this.Image = new Image(undefined, undefined, undefined, undefined);
     this.actualLinePage = 1;
+    this.actualKeyPage = 1;
   }
 
   public ngOnInit(): void {
@@ -266,12 +270,16 @@ export class HomeComponent implements OnInit {
 
   private getLines = () => this._arrivals.getLinesPage(this.actualLinePage).subscribe(res => {
     if (res.data) this.Lines = this.Lines.concat(res.data.docs);
+    delete res.data.docs;
+    this.LinesInfo = res.data;
   }, err => console.log(<any>err));
 
   private getLinesRegex = (regex: String) => this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(res => {
     if (res.data) this.Lines = this.Lines.concat(res.data.docs);
-    if (res.data.length === 0) this.ifExistLine.nativeElement.className = 'show';
+    if (res.data.docs.length === 0) this.ifExistLine.nativeElement.className = 'show';
     else this.ifExistLine.nativeElement.className = 'd-none';
+    delete res.data.docs;
+    this.LinesInfo = res.data;
   }, err => console.log(<any>err));
 
   public onScrollLine(e): void {

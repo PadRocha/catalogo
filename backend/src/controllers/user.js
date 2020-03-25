@@ -36,6 +36,8 @@ const userController = {
 
         try {
             var payload = jsonwebtoken.verify(token, process.env.SECRET_KEY);
+            delete payload.iat;
+            delete payload.exp;
             return res.status(200).send({ _id: payload.sub, nickname: payload.nickname, role: payload.role });
         } catch (error) {
             return res.status(409).send({ error: 'The request could not be processed because of conflict in the current state of the resourcess' });
