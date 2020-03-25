@@ -38,6 +38,13 @@ const keyController = {
             return res.status(200).send({ data: key });
         });
     },
+    listKeyPage(req, res) {
+        Key.find({}).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
+            if (err) return res.status(500).send({ error: 'Internal Server Error' });
+            if (!key) return res.status(404).send({ error: 'Key Not Found' });
+            return res.status(200).send({ data: key });
+        });
+    },
     listKeyRegex(req, res) {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
         const id = req.params.id;

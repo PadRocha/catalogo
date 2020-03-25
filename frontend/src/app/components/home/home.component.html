@@ -196,7 +196,7 @@
                 <th>Registros</th>
             </tr>
         </thead>
-        <tbody #tbody>
+        <tbody #tbody infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollKey()" [scrollWindow]="false">
             <tr #tr *ngFor="let key of Keys" [id]="key._id">
                 <td width="34" class="buttons">
                     <button *ngIf="allowed()" type="button" id="config" class="btn btn-primary btn-sm">

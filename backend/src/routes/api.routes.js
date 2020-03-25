@@ -57,6 +57,10 @@ router.route('/key')
     .get(keyController.listKey)
     .post(keyController.saveKey);
 
+
+router.route('/key/page/:page')
+    .get(keyController.listKeyPage);
+
 router.route('/key/:id')
     .get(keyController.getKey)
     .put(keyController.updateKey)

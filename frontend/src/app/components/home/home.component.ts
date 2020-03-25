@@ -23,12 +23,12 @@ export class HomeComponent implements OnInit {
   public Keys = [];
   private actualKeyPage: Number;
   private KeyRegex: String = '';
-  private KeySearched: Boolean = false;
-  private KeyInfo: Object;
+  private KeySelected: String = '';
+  public KeyInfo: any;
   public Lines = [];
   private actualLinePage: Number;
   private LineRegex: Boolean = false;
-  public LinesInfo: Object;
+  public LinesInfo: any;
   public imagePath: any;
   public imageSrc: String | ArrayBuffer;
   public imgMessage: String;
@@ -177,24 +177,14 @@ export class HomeComponent implements OnInit {
         });
       });
     });
-    this._f.childrenForEach(this.lines, line => {
-      const _id = line.id;
-      line.addEventListener('click', e => {
-        this._arrivals.getKeysLine(_id).subscribe(res => {
-          if (res.data.length === 0) this.getKeys();
-          this.Keys = res.data;
-          this.search.nativeElement.value = _id;
-        }, err => {
-          console.log(<any>err);
-          this.getKeys();
-        });
-      });
-    });
-    this._f.event(this.every, 'click', e => {
+    this._f.childrenForEach(this.lines, line => this._f.event(line, 'click', () => {
+      this.getKeySelected(line.id)
+    }));
+    this._f.event(this.every, 'click', () => {
       this.search.nativeElement.value = '';
       this.getKeys();
     });
-    this._f.event(this.icon, 'click', e => {
+    this._f.event(this.icon, 'click', () => {
       const search = this.search.nativeElement;
       if (search.classList.contains('search-anim')) search.classList.remove('search-anim');
       else {
@@ -268,6 +258,13 @@ export class HomeComponent implements OnInit {
     }
   }, err => console.log(<any>err));
 
+  private getKeySelected = (_id: String) => this._arrivals.getKeysLine(_id).subscribe(res => {
+    if (res.data.length === 0) this.getKeys();
+    this.Keys = res.data;
+    this.KeySelected = _id;
+    this.search.nativeElement.value = _id;
+  }, err => console.log(<any>err));
+
   private getLines = () => this._arrivals.getLinesPage(this.actualLinePage).subscribe(res => {
     if (res.data) this.Lines = this.Lines.concat(res.data.docs);
     delete res.data.docs;
@@ -285,6 +282,11 @@ export class HomeComponent implements OnInit {
   public onScrollLine(e): void {
     this.actualLinePage = +this.actualLinePage + 1;
     !this.LineRegex ? this.getLines() : this.getLinesRegex(e.value);
+  }
+
+  public onScrollKey(): void {
+    console.log('hola');
+
   }
 
   public allowed(): Boolean {
