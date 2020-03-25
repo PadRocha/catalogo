@@ -169,12 +169,13 @@
         <li tabindex="0" class="icon-settings"><span>Settings</span></li>
     </ul>
 </nav>
-<nav class="menu-right">
+<nav class="menu-right" infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollLine(searchLine)"
+    [scrollWindow]="false">
     <input #searchLine type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
         placeholder="Linea...">
-    <ul>
+    <ul class="search-results">
         <li #every>Todas</li>
-        <li #lines *ngFor="let line of Lines;" [id]="line._id">
+        <li #lines *ngFor="let line of Lines" [id]="line._id">
             {{line._id}}
             <span>{{line.name}}</span>
         </li>

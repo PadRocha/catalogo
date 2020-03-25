@@ -9,7 +9,7 @@ const Key = require('../models/key'); //* Calls key.js model
 
 const cloudinary = require('cloudinary'); //* Calls cloudinary
 
-const perPage = 10;
+const perPage = 20;
 
 cloudinary.config({
     cloud_name: process.env.C_NAME,

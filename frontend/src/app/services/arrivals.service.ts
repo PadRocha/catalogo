@@ -23,6 +23,10 @@ export class ArrivalsService {
     return this._http.get(this.url + 'line');
   }
 
+  getLinesPage(page: Number): Observable<any> {
+    return this._http.get(this.url + 'line/page/' + page);
+  }
+
   getKey(id: String): Observable<any> {
     return this._http.get(this.url + 'key/' + id);
   }
@@ -33,6 +37,10 @@ export class ArrivalsService {
 
   getLinesRegex(id: String): Observable<any> {
     return this._http.get(this.url + 'line/regex/' + id);
+  }
+
+  getLinesRegexPage(id: String, page: Number): Observable<any> {
+    return this._http.get(this.url + 'line/regex/' + id + '/page/' + page);
   }
 
   getKeysRegex(id: String): Observable<any> {

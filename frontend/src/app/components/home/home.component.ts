@@ -22,8 +22,10 @@ declare const alertify: any;
 })
 export class HomeComponent implements OnInit {
   private User: User;
+  private actualLinePage: Number;
+  private LineRegex: Boolean = false;
   public Keys: Array<Key>;
-  public Lines: Array<Line>;
+  public Lines = [];
   public imagePath: any;
   public imageSrc: String | ArrayBuffer;
   public imgMessage: String;
@@ -83,6 +85,7 @@ export class HomeComponent implements OnInit {
     private _modal: ModalService
   ) {
     this.Image = new Image(undefined, undefined, undefined, undefined);
+    this.actualLinePage = 1;
   }
 
   public ngOnInit(): void {
@@ -219,13 +222,15 @@ export class HomeComponent implements OnInit {
       typingTimer = setTimeout(() => {
         const regex = e.target.value;
         if (regex !== '') {
-          this._arrivals.getLinesRegex(regex).subscribe(res => {
-            this.Lines = res.data;
-            if (res.data.length === 0) this.ifExistLine.nativeElement.className = 'show';
-            else this.ifExistLine.nativeElement.className = 'd-none';
-          }, err => console.log(<any>err));
+          this.actualLinePage = 1;
+          this.Lines = [];
+          this.LineRegex = true;
+          this.getLinesRegex(regex);
         } else {
           this.ifExistLine.nativeElement.className = 'd-none';
+          this.actualLinePage = 1;
+          this.Lines = [];
+          this.LineRegex = false;
           this.getLines();
         }
       }, 500);
@@ -259,9 +264,20 @@ export class HomeComponent implements OnInit {
     }
   }, err => console.log(<any>err));
 
-  private getLines = () => this._arrivals.getLines().subscribe(res => {
-    if (res.data) this.Lines = res.data;
+  private getLines = () => this._arrivals.getLinesPage(this.actualLinePage).subscribe(res => {
+    if (res.data) this.Lines = this.Lines.concat(res.data.docs);
   }, err => console.log(<any>err));
+
+  private getLinesRegex = (regex: String) => this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(res => {
+    if (res.data) this.Lines = this.Lines.concat(res.data.docs);
+    if (res.data.length === 0) this.ifExistLine.nativeElement.className = 'show';
+    else this.ifExistLine.nativeElement.className = 'd-none';
+  }, err => console.log(<any>err));
+
+  public onScrollLine(e): void {
+    this.actualLinePage = +this.actualLinePage + 1;
+    !this.LineRegex ? this.getLines() : this.getLinesRegex(e.value);
+  }
 
   public allowed(): Boolean {
     return this.User.role === 'admin';

@@ -12,4 +12,7 @@ export class EditImageComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onScroll() {
+    console.log('scrolled!!');
+  }
 }
