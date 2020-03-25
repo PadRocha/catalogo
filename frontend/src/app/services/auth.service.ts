@@ -51,13 +51,18 @@ export class AuthService {
     }
   }
 
-  public verifyAdmin(err): void {
-    if (err instanceof HttpErrorResponse) {
-      if (err.status === 423) {
-        this._router.navigate(['/home']);
-      } else if (err.status === 403 || err.status === 409) {
-        this.logoutUser();
-      }
-    }
+  //? This function was removed
+  // public verifyAdmin(err): void {
+  //   if (err instanceof HttpErrorResponse) {
+  //     if (err.status === 423) {
+  //       this._router.navigate(['/home']);
+  //     } else if (err.status === 403 || err.status === 409) {
+  //       this.logoutUser();
+  //     }
+  //   }
+  // }
+
+  public getUser(): Observable<any> {
+    return this._http.get(this.url + '');
   }
 }

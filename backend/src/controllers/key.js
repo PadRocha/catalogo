@@ -38,6 +38,18 @@ const keyController = {
             return res.status(200).send({ data: key });
         });
     },
+    listKeyRegex(req, res) {
+        if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
+        const id = req.params.id;
+        let findKey = id.length < 7
+            ? Key.find({ 'line': { $regex: id, $options: 'i' } })
+            : Key.find({ 'line': id.slice(0, 6), 'code': { $regex: id.slice(6), $options: 'i' } });
+        findKey.sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
+            if (err) return res.status(500).send({ error: 'Internal Server Error' });
+            if (!key) return res.status(404).send({ error: 'Key Not Found' });
+            return res.status(200).send({ data: key });
+        });
+    },
     listKeyLine(req, res) {
         if (!req.params.line) return res.status(400).send({ error: 'Bad Request' });
         Key.find({ 'line': req.params.line }).sort('code').exec((err, key) => {

@@ -26,4 +26,16 @@ export class ArrivalsService {
   getKey(id: String): Observable<any> {
     return this._http.get(this.url + 'key/' + id);
   }
+
+  getKeysLine(id: String): Observable<any> {
+    return this._http.get(this.url + 'key/line/' + id);
+  }
+
+  getLinesRegex(id: String): Observable<any> {
+    return this._http.get(this.url + 'line/regex/' + id);
+  }
+
+  getKeysRegex(id: String): Observable<any> {
+    return this._http.get(this.url + 'key/regex/' + id);
+  }
 }

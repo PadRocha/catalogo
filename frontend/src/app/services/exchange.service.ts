@@ -29,4 +29,8 @@ export class ExchangeService {
   deleteImage(_id: String, idN: Number): Observable<any> {
     return this._http.delete(this.url + 'key/image/' + _id + '/delete/' + idN);
   }
+
+  deleteKey(_id: String): Observable<any> {
+    return this._http.delete(this.url + 'key/' + _id);
+  }
 }

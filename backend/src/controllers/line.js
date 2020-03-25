@@ -9,11 +9,14 @@ const Key = require('../models/key'); //* Calls key.js model
 
 const cloudinary = require('cloudinary'); //* Calls cloudinary
 
+const perPage = 10;
+
 cloudinary.config({
     cloud_name: process.env.C_NAME,
     api_key: process.env.C_KEY,
     api_secret: process.env.C_SECRET
 });
+
 
 const lineController = {
     saveLine(req, res) {
@@ -27,11 +30,38 @@ const lineController = {
         });
     },
     listLine(req, res) {
-        Line.find({}).exec((err, line) => {
+        Line.find({}).sort('_id').exec((err, line) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!line) return res.status(404).send({ error: 'Line Not Found' });
             return res.status(200).send({ data: line });
         });
+    },
+    listLinePage(req, res) {
+        if (!req.params.page) return res.status(400).send({ error: 'Bad Request' });
+        const pag = Number(req.params.page);
+        Line.paginate({}, { page: pag, limit: perPage, sort: '_id' }, (err, line) => {
+            if (err) return res.status(500).send({ error: 'Internal Server Error' });
+            if (!line) return res.status(404).send({ error: 'Line Not Found' });
+            return res.status(200).send({ data: line });
+        });
+    },
+    listLineRegex(req, res) {
+        if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });
+        Line.find({ '_id': { $regex: req.params.id, $options: 'i' } }).sort('_id').exec((err, line) => {
+            if (err) return res.status(500).send({ error: 'Internal Server Error' });
+            if (!line) return res.status(404).send({ error: 'Line Not Found' });
+            return res.status(200).send({ data: line });
+        });
+    },
+    listLineRegexPage(req, res) {
+        if (!req.params.id && !req.params.page) return res.status(400).send({ error: 'Bad Request' });
+        const pag = Number(req.params.page);
+        Line.paginate({ '_id': { $regex: req.params.id, $options: 'i' } }, { page: pag, limit: perPage, sort: '_id' },
+            (err, line) => {
+                if (err) return res.status(500).send({ error: 'Internal Server Error' });
+                if (!line) return res.status(404).send({ error: 'Line Not Found' });
+                return res.status(200).send({ data: line });
+            });
     },
     getLine(req, res) {
         if (!req.params.id) return res.status(400).send({ error: 'Bad Request' });

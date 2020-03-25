@@ -5,18 +5,17 @@
 /*------------------------------------------------------------------*/
 
 const mongoose = require('mongoose'); //* Calls mongoose
+const mongoosePaginate = require('mongoose-paginate-v2'); //* Calls mongoose-paginate-v2
 
 const Schema = mongoose.Schema;
 
 const lineSchema = new Schema({
     _id: {
         type: String,
-        // required: true,
         trim: true,
         minlength: 6,
         maxlength: 6,
         uppercase: true
-        // unique: true
     },
     name: {
         type: String,
@@ -32,6 +31,8 @@ const lineSchema = new Schema({
         type: Date
     }
 });
+
+lineSchema.plugin(mongoosePaginate);
 
 /*------------------------------------------------------------------*/
 

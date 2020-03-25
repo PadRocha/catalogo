@@ -1,11 +1,11 @@
 <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
     <div *ngIf="_authService.loggedIn()" class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Líneas</a>
+            <li class="nav-item">
+                <a class="nav-link">Líneas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="//codeply.com">Agregar clave</a>
+                <a class="nav-link" [routerLink]="['/key']" [routerLinkActive]="['active']">Agregar clave</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Link</a>
@@ -29,7 +29,8 @@
     </div>
     <div *ngIf="_authService.loggedIn()" class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
-            <li style="cursor: pointer;" class="nav-link" (click)="_authService.logoutUser()">Salir</li>
+            <li style="cursor: pointer;" class="nav-link" (click)="_authService.logoutUser()">Salir <i
+                    class="fas fa-sign-out-alt"></i></li>
         </ul>
     </div>
 </nav>

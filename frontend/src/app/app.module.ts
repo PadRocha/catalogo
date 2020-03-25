@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { SwiperModule, SwiperConfigInterface, SWIPER_CONFIG } from 'ngx-swiper-wrapper';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { AppComponent } from './app.component';
@@ -16,6 +17,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { EditImageComponent } from './components/edit-image/edit-image.component';
 import { ChatComponent } from './components/chat/chat.component';
+import { AddKeyComponent } from './components/add-key/add-key.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   observer: true,
@@ -33,7 +35,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     LoginComponent,
     HomeComponent,
     EditImageComponent,
-    ChatComponent
+    ChatComponent,
+    AddKeyComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +44,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     FormsModule,
     NgbModule,
     routing,
-    SwiperModule
+    SwiperModule,
+    InfiniteScrollModule
   ],
   providers: [
     {

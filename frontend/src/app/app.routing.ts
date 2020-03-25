@@ -19,6 +19,7 @@ import { LoginGuard } from './guards/login.guard';
 import { ErrorComponent } from './components/error/error.component';
 import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
+import { AddKeyComponent } from './components/add-key/add-key.component';
 
 /*------------------------------------------------------------------*/
 // Array de Rutas
@@ -28,6 +29,8 @@ const app: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+    { path: 'home/:line', component: HomeComponent, canActivate: [AuthGuard] },
+    { path: 'key', component: AddKeyComponent, canActivate: [AuthGuard] },
     { path: '**', component: ErrorComponent }
 ];
 

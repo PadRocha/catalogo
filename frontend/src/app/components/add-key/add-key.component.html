@@ -1,0 +1,53 @@
+<main class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <form class="container">
+                <h1 class="title">Creación de nuevas claves</h1>
+                <hr>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Clave</div>
+                    </div>
+                    <input #line type="text" class="form-control" maxlength="6"
+                        oninput="this.value = this.value.toUpperCase()" [ngbTypeahead]="search"
+                        placeholder="Línea..." />
+                    <input #code type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
+                        placeholder="Código..." />
+                </div>
+                <div class="form-group">
+                    <div class="pretty p-default p-thick p-pulse">
+                        <input type="checkbox" />
+                        <div class="state p-warning-o">
+                            <label>Por lotes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group text-right">
+                    <button type="submit" class="btn-info btn">Crear</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div *ngIf="Keys" class="container keys">
+                <div class="card text-center">
+                    <div class="card-header">
+                        Featured
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Cras justo odio</li>
+                            <li class="list-group-item">Dapibus ac facilisis in</li>
+                            <li class="list-group-item">Vestibulum at eros</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-muted">
+                        2 days ago
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!Keys" class="container alert alert-dark" role="alert">
+                Ninguna clave ha sido creada por el momento
+            </div>
+        </div>
+    </div>
+</main>

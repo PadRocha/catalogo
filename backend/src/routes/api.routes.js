@@ -15,7 +15,7 @@ const mdAuth = require('../middlewares/auth'); //* Calls Security
 /*------------------------------------------------------------------*/
 
 router.route('/')
-    .get();
+    .get(userController.returnUser);
 
 /*------------------------------------------------------------------*/
 // User Routes
@@ -35,10 +35,19 @@ router.route('/line')
     .get(lineController.listLine)
     .post(lineController.saveLine);
 
+router.route('/line/page/:page')
+    .get(lineController.listLinePage);
+
 router.route('/line/:id')
     .get(lineController.getLine)
     .put(lineController.updateLine)
     .delete(lineController.deleteLine);
+
+router.route('/line/regex/:id')
+    .get(lineController.listLineRegex);
+
+router.route('/line/regex/:id/page/:page')
+    .get(lineController.listLineRegexPage);
 
 /*------------------------------------------------------------------*/
 // Key routes
@@ -52,6 +61,9 @@ router.route('/key/:id')
     .get(keyController.getKey)
     .put(keyController.updateKey)
     .delete(keyController.deleteKey);
+
+router.route('/key/regex/:id')
+    .get(keyController.listKeyRegex);
 
 router.route('/key/line/:line')
     .get(keyController.listKeyLine);

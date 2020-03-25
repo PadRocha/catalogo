@@ -1,13 +1,13 @@
-<ng-template #confirmModal let-modal>
+<ng-template #deleteModal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Delete {{codeImageModal}} id {{imageId}}</h4>
+        <h4 class="modal-title">Config {{codeImageModal}}</h4>
     </div>
     <div class="modal-body">
         <div class="form-group">
-            <button class="form-control btn btn-outline-secondary" (click)="editImg()">Editar</button>
+            <button class="form-control btn btn-outline-secondary" (click)="editKey()">Editar</button>
         </div>
         <div class="form-group">
-            <button class="form-control btn btn-outline-danger" (click)="deleteImg(confirm)">Eliminar</button>
+            <button class="form-control btn btn-outline-danger" (click)="confirmDisplay(confirm)">Eliminar</button>
         </div>
         <div #confirm class="d-none">
             <div class="row">
@@ -39,7 +39,58 @@
                 </div>
             </div>
             <div class="form-group">
-                <button #lock class="form-control btn btn-danger" (click)="confirmDelete()" disabled>
+                <button #lock class="form-control btn btn-danger" (click)="confirmDeleteKey()" disabled>
+                    Confirmar eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class=" modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cancelar</button>
+    </div>
+</ng-template>
+<ng-template #confirmModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">{{codeImageModal}} id {{imageId}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <button class="form-control btn btn-outline-secondary" (click)="editImg()">Editar</button>
+        </div>
+        <div class="form-group">
+            <button class="form-control btn btn-outline-danger" (click)="confirmDisplay(confirm)">Eliminar</button>
+        </div>
+        <div #confirm class="d-none">
+            <div class="row">
+                <div class="col-6">
+                    <div class="pretty p-icon p-toggle p-plain">
+                        <input #k1 type="checkbox" (click)="clench(k1, k2, lock)" />
+                        <div class="state p-on">
+                            <i class="fas fa-lock-open"></i>
+                            <label>Unlocked</label>
+                        </div>
+                        <div class="state p-off">
+                            <i class="fas fa-lock"></i>
+                            <label>Locked</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="pretty p-icon p-toggle p-plain">
+                        <input #k2 type="checkbox" (click)="clench(k1, k2, lock)" />
+                        <div class="state p-on">
+                            <i class="fas fa-lock-open"></i>
+                            <label>Unlocked</label>
+                        </div>
+                        <div class="state p-off">
+                            <i class="fas fa-lock"></i>
+                            <label>Locked</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button #lock class="form-control btn btn-danger" (click)="confirmDeleteImg()" disabled>
                     Confirmar eliminar
                 </button>
             </div>
@@ -56,7 +107,7 @@
     <div class="modal-body">
         <swiper class="swiper-container" [config]="config">
             <div *ngFor="let image of showImage" class="swiper-slide">
-                <img [src]="image.img" title="Image N° {{+image.idN + 1}}" alt="Image N° {{+image.idN + 1}}"
+                <img [src]="image.img" title="Image N° {{image.idN}}" alt="Image N° {{image.idN}}"
                     (click)="configImg(image.idN)">
             </div>
         </swiper>
@@ -119,76 +170,82 @@
     </ul>
 </nav>
 <nav class="menu-right">
-    <input type="text" class="form-control" placeholder="Linea..." name="" id="">
+    <input #searchLine type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
+        placeholder="Linea...">
     <ul>
-        <li>Todas</li>
-        <li *ngFor="let line of Lines;" data-tooltip="Aumento de resorte" data-tooltip-location="bottom">{{line._id}}
+        <li #every>Todas</li>
+        <li #lines *ngFor="let line of Lines;" [id]="line._id">
+            {{line._id}}
             <span>{{line.name}}</span>
         </li>
+        <li #ifExistLine class="d-none">No existe línea</li>
     </ul>
 </nav>
 <main class="container">
-    <div class="container">
-        <table class="table table-fit">
-            <thead>
-                <tr>
-                    <th>Registros</th>
-                    <th>Registros</th>
-                    <th>Registros</th>
-                </tr>
-            </thead>
-            <tbody #tbody>
-                <tr #tr *ngFor="let key of Keys" [id]="key._id">
-                    <td width="91" style="padding: 10px 0px;">
-                        <div class="double-button">
-                            <a title="Eliminar clave" id="left"><i class="fas fa-trash-alt"></i></a>
-                            <a title="Enviar peticion" id="right"><i class="fas fa-sticky-note"></i></a>
-                        </div>
-                    </td>
-                    <td width="130">{{key.line}}{{key.code}}</td>
-                    <td width="250">
-                        <div class="input-group">
-                            <span title="Ver imagen" name="images">
-                                <div class="case">[<i class="fas fa-circle"></i>]</div>
-                            </span>
-                            <select class="form-control btn-sm {{statusClass(statusImage(key.image, 0))}}" name="0"
-                                [value]="statusImage(key.image, 0)"
-                                [disabled]="disabledImage(statusImage(key.image, 0))">
-                                <option value="" class="white"></option>
-                                <option value="0" class="white">0</option>
-                                <option value="1" class="gray">1</option>
-                                <option value="2" class="brown">2</option>
-                                <option value="3" class="blue">3</option>
-                                <option value="4" class="purple">4</option>
-                                <option value="5" class="green">5</option>
-                            </select>
-                            <select class="form-control btn-sm {{statusClass(statusImage(key.image, 1))}}" name="1"
-                                [value]="statusImage(key.image, 1)"
-                                [disabled]="disabledImage(statusImage(key.image, 1))">
-                                <option value="" class="white"></option>
-                                <option value="0" class="white">0</option>
-                                <option value="1" class="gray">1</option>
-                                <option value="2" class="brown">2</option>
-                                <option value="3" class="blue">3</option>
-                                <option value="4" class="purple">4</option>
-                                <option value="5" class="green">5</option>
-                            </select>
-                            <select class="form-control btn-sm {{statusClass(statusImage(key.image, 2))}}" name="2"
-                                [value]="statusImage(key.image, 2)"
-                                [disabled]="disabledImage(statusImage(key.image, 2))">
-                                <option value="" class="white"></option>
-                                <option value="0" class="white">0</option>
-                                <option value="1" class="gray">1</option>
-                                <option value="2" class="brown">2</option>
-                                <option value="3" class="blue">3</option>
-                                <option value="4" class="purple">4</option>
-                                <option value="5" class="green">5</option>
-                            </select>
-                        </div>
-                    </td>
-                    <td>{{key.desc}}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <table class="table table-fit">
+        <thead>
+            <tr>
+                <th>
+                    <span #icon class="icon"><i class="fa fa-search"></i></span>
+                    <input #search type="search" id="search" oninput="this.value = this.value.toUpperCase()"
+                        placeholder="Search..." />
+                </th>
+                <th>Registros</th>
+                <th>Registros</th>
+            </tr>
+        </thead>
+        <tbody #tbody>
+            <tr #tr *ngFor="let key of Keys" [id]="key._id">
+                <td width="34" class="buttons">
+                    <button *ngIf="allowed()" type="button" id="config" class="btn btn-primary btn-sm">
+                        <i class="fas fa-cogs"></i>
+                    </button>
+                    <button *ngIf="!allowed()" type="button" class="btn btn-primary btn-sm">
+                        <i class="fas fa-sticky-note"></i>
+                    </button>
+                </td>
+                <td width="130">{{key.line}}{{key.code}}</td>
+                <td width="250">
+                    <div class="input-group">
+                        <span title="Ver imagen" name="images">
+                            <div class="case">[<i class="fas fa-circle"></i>]</div>
+                        </span>
+                        <select class="form-control btn-sm {{statusClass(statusImage(key.image, 0))}}" name="0"
+                            [value]="statusImage(key.image, 0)" [disabled]="disabledImage(statusImage(key.image, 0))">
+                            <option value="" class="white"></option>
+                            <option value="0" class="white">0</option>
+                            <option value="1" class="gray">1</option>
+                            <option value="2" class="brown">2</option>
+                            <option value="3" class="blue">3</option>
+                            <option value="4" class="purple">4</option>
+                            <option value="5" class="green">5</option>
+                        </select>
+                        <select class="form-control btn-sm {{statusClass(statusImage(key.image, 1))}}" name="1"
+                            [value]="statusImage(key.image, 1)" [disabled]="disabledImage(statusImage(key.image, 1))">
+                            <option value="" class="white"></option>
+                            <option value="0" class="white">0</option>
+                            <option value="1" class="gray">1</option>
+                            <option value="2" class="brown">2</option>
+                            <option value="3" class="blue">3</option>
+                            <option value="4" class="purple">4</option>
+                            <option value="5" class="green">5</option>
+                        </select>
+                        <select class="form-control btn-sm {{statusClass(statusImage(key.image, 2))}}" name="2"
+                            [value]="statusImage(key.image, 2)" [disabled]="disabledImage(statusImage(key.image, 2))">
+                            <option value="" class="white"></option>
+                            <option value="0" class="white">0</option>
+                            <option value="1" class="gray">1</option>
+                            <option value="2" class="brown">2</option>
+                            <option value="3" class="blue">3</option>
+                            <option value="4" class="purple">4</option>
+                            <option value="5" class="green">5</option>
+                        </select>
+                    </div>
+                </td>
+                <td>{{key.desc}}</td>
+            </tr>
+            <tr #ifExistKey class="d-none">
+                <td ngNonBindable>{{ No existe Clave }}</td>
+            </tr>
+    </table>
 </main>
