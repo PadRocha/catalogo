@@ -10,6 +10,8 @@ const fs = require('fs-extra'); //* Calls fs-extra
 const path = require('path'); //* Calls path
 const cloudinary = require('cloudinary'); //* Calls cloudinary
 
+const perPage = 15;
+
 cloudinary.config({
     cloud_name: process.env.C_NAME,
     api_key: process.env.C_KEY,
@@ -39,7 +41,9 @@ const keyController = {
         });
     },
     listKeyPage(req, res) {
-        Key.find({}).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
+        if (!req.params.page) return res.status(400).send({ error: 'Bad Request' });
+        const pag = Number(req.params.page);
+        Key.paginate({}, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, (err, key) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!key) return res.status(404).send({ error: 'Key Not Found' });
             return res.status(200).send({ data: key });
@@ -60,6 +64,15 @@ const keyController = {
     listKeyLine(req, res) {
         if (!req.params.line) return res.status(400).send({ error: 'Bad Request' });
         Key.find({ 'line': req.params.line }).sort('code').exec((err, key) => {
+            if (err) return res.status(500).send({ error: 'Internal Server Error' });
+            if (!key) return res.status(404).send({ error: 'Key Not Found' });
+            return res.status(200).send({ data: key });
+        });
+    },
+    listKeyLinePage(req, res) {
+        if (!req.params.line && !req.params.page) return res.status(400).send({ error: 'Bad Request' });
+        const pag = Number(req.params.page);
+        Key.paginate({ 'line': req.params.line }, { page: pag, limit: perPage, sort: 'code' }, (err, key) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!key) return res.status(404).send({ error: 'Key Not Found' });
             return res.status(200).send({ data: key });

@@ -19,12 +19,8 @@ export class ArrivalsService {
     return this._http.get(this.url + 'key');
   }
 
-  getLines(): Observable<any> {
-    return this._http.get(this.url + 'line');
-  }
-
-  getLinesPage(page: Number): Observable<any> {
-    return this._http.get(this.url + 'line/page/' + page);
+  getKeysPage(page: Number): Observable<any> {
+    return this._http.get(this.url + 'key/page/' + page);
   }
 
   getKey(id: String): Observable<any> {
@@ -35,15 +31,31 @@ export class ArrivalsService {
     return this._http.get(this.url + 'key/line/' + id);
   }
 
+  getKeysLinePage(id: String, page: Number): Observable<any> {
+    return this._http.get(this.url + 'key/line/' + id + '/page/' + page);
+  }
+
+  getKeysRegex(id: String): Observable<any> {
+    return this._http.get(this.url + 'key/regex/' + id);
+  }
+
+  getKeysRegexPage(id: String, page: Number): Observable<any> {
+    return this._http.get(this.url + 'key/regex/' + id + '/page/' + page);
+  }
+
+  getLines(): Observable<any> {
+    return this._http.get(this.url + 'line');
+  }
+
+  getLinesPage(page: Number): Observable<any> {
+    return this._http.get(this.url + 'line/page/' + page);
+  }
+
   getLinesRegex(id: String): Observable<any> {
     return this._http.get(this.url + 'line/regex/' + id);
   }
 
   getLinesRegexPage(id: String, page: Number): Observable<any> {
     return this._http.get(this.url + 'line/regex/' + id + '/page/' + page);
-  }
-
-  getKeysRegex(id: String): Observable<any> {
-    return this._http.get(this.url + 'key/regex/' + id);
   }
 }

@@ -180,6 +180,9 @@
             {{line._id}}
             <span>{{line.name}}</span>
         </li>
+        <li #waitLine class="text-center" style="cursor: wait;">
+            <img src="../../../assets/image/wait5.gif" alt="Wait Line" height="100">
+        </li>
         <li #ifExistLine class="d-none">No existe línea</li>
     </ul>
 </nav>
@@ -245,6 +248,11 @@
                     </div>
                 </td>
                 <td>{{key.desc}}</td>
+            </tr>
+            <tr #waitKey class="d-none" style="cursor: wait;">
+                <td class="text-center">
+                    <img src="../../../assets/image/wait2.gif" alt="Wait Key" height="100">
+                </td>
             </tr>
             <tr #ifExistKey class="d-none">
                 <td ngNonBindable>{{ No existe Clave }}</td>

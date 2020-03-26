@@ -23,8 +23,8 @@ export class HomeComponent implements OnInit {
   public Keys = [];
   private actualKeyPage: Number;
   private KeyRegex: String = '';
-  private KeySelected: String = '';
-  public KeyInfo: any;
+  private LineSelected: String = '';
+  public KeysInfo: any;
   public Lines = [];
   private actualLinePage: Number;
   private LineRegex: Boolean = false;
@@ -51,9 +51,11 @@ export class HomeComponent implements OnInit {
   @ViewChild('deleteModal') deleteModal: ElementRef;
   @ViewChild('every') every: ElementRef;
   @ViewChild('icon') icon: ElementRef;
-  @ViewChild('search') search: ElementRef;
+  @ViewChild('search') search !: ElementRef;
   @ViewChild('searchLine') searchLine: ElementRef;
+  @ViewChild('waitLine', { static: true }) waitLine !: ElementRef;
   @ViewChild('ifExistLine') ifExistLine: ElementRef;
+  @ViewChild('waitKey', { static: true }) waitKey !: ElementRef;
   @ViewChild('ifExistKey') ifExistKey: ElementRef;
   @ViewChildren('tr') tr !: QueryList<ElementRef>;
   @ViewChildren('lines') lines !: QueryList<ElementRef>;
@@ -80,11 +82,11 @@ export class HomeComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
-    private _f: FunctionsService,
     private _auth: AuthService,
     private _arrivals: ArrivalsService,
     private _shippings: ShippingService,
     private _exchanges: ExchangeService,
+    private _f: FunctionsService,
     private _modal: ModalService
   ) {
     this.Image = new Image(undefined, undefined, undefined, undefined);
@@ -111,6 +113,7 @@ export class HomeComponent implements OnInit {
 
   public ngAfterViewInit(): void {
     this.tr.changes.subscribe(trs => {
+      console.log("HomeComponent -> ngAfterViewInit -> trs", trs)
       this.trElement = trs.toArray();
       this.trElement.forEach(tr => {
         tr = tr.nativeElement;
@@ -177,14 +180,20 @@ export class HomeComponent implements OnInit {
         });
       });
     });
-    this._f.childrenForEach(this.lines, line => this._f.event(line, 'click', () => {
-      this.getKeySelected(line.id)
+    this._f.childrenForEach(this.lines, line => this._f.event(line, 'click', e => {
+      this.actualLinePage = 1;
+      this.Lines = [];
+      this.LineSelected = line.id;
+      this.getLineSelected(line.id)
     }));
-    this._f.event(this.every, 'click', () => {
+    this._f.event(this.every, 'click', e => {
+      this.actualLinePage = 1;
+      this.Lines = [];
+      this.LineSelected = '';
       this.search.nativeElement.value = '';
       this.getKeys();
     });
-    this._f.event(this.icon, 'click', () => {
+    this._f.event(this.icon, 'click', e => {
       const search = this.search.nativeElement;
       if (search.classList.contains('search-anim')) search.classList.remove('search-anim');
       else {
@@ -193,7 +202,7 @@ export class HomeComponent implements OnInit {
       }
     });
     let typingTimer;
-    this._f.denyAlphanumeric(this.search, () => clearTimeout(typingTimer));
+    this._f.denyAlphanumeric(this.search, e => clearTimeout(typingTimer));
     this._f.event(this.search, 'keyup', e => {
       clearTimeout(typingTimer);
       typingTimer = setTimeout(() => {
@@ -210,10 +219,10 @@ export class HomeComponent implements OnInit {
         }
       }, 500);
     });
-    this._f.denyAlphanumeric(this.searchLine, () => clearTimeout(typingTimer));
+    this._f.denyAlphanumeric(this.searchLine, e => clearTimeout(typingTimer));
     this._f.event(this.searchLine, 'keyup', e => {
       clearTimeout(typingTimer);
-      typingTimer = setTimeout(() => {
+      typingTimer = setTimeout(e => {
         const regex = e.target.value;
         if (regex !== '') {
           this.actualLinePage = 1;
@@ -243,9 +252,16 @@ export class HomeComponent implements OnInit {
     }
   });
 
-  private getKeys = () => this._arrivals.getKeys().subscribe(res => {
-    if (res.data) this.Keys = res.data;
-  }, err => console.log(<any>err));
+  private getKeys(): void {
+    this.waitKey.nativeElement.classList.remove('d-none');
+    this._arrivals.getKeysPage(this.actualKeyPage).subscribe(async res => {
+      await this.waitKey.nativeElement.classList.add('d-none');
+      if (res.data) this.Keys = this.Keys.concat(res.data.docs);
+      delete res.data.docs;
+      this.KeysInfo = res.data;
+
+    }, err => console.log(<any>err));
+  }
 
   private getKeyCode = (id: String) => this._arrivals.getKey(id).subscribe(async res => {
     if (res.data) {
@@ -258,18 +274,22 @@ export class HomeComponent implements OnInit {
     }
   }, err => console.log(<any>err));
 
-  private getKeySelected = (_id: String) => this._arrivals.getKeysLine(_id).subscribe(res => {
+  private getLineSelected = (_id: String) => this._arrivals.getKeysLine(_id).subscribe(res => {
     if (res.data.length === 0) this.getKeys();
     this.Keys = res.data;
-    this.KeySelected = _id;
+    this.LineSelected = _id;
     this.search.nativeElement.value = _id;
   }, err => console.log(<any>err));
 
-  private getLines = () => this._arrivals.getLinesPage(this.actualLinePage).subscribe(res => {
-    if (res.data) this.Lines = this.Lines.concat(res.data.docs);
-    delete res.data.docs;
-    this.LinesInfo = res.data;
-  }, err => console.log(<any>err));
+  private getLines(): void {
+    this.waitLine.nativeElement.classList.remove('d-none');
+    this._arrivals.getLinesPage(this.actualLinePage).subscribe(async res => {
+      await this.waitLine.nativeElement.classList.add('d-none');
+      if (res.data) this.Lines = this.Lines.concat(res.data.docs);
+      delete res.data.docs;
+      this.LinesInfo = res.data;
+    }, err => console.log(<any>err));
+  }
 
   private getLinesRegex = (regex: String) => this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(res => {
     if (res.data) this.Lines = this.Lines.concat(res.data.docs);
@@ -285,8 +305,8 @@ export class HomeComponent implements OnInit {
   }
 
   public onScrollKey(): void {
-    console.log('hola');
-
+    this.actualKeyPage = +this.actualKeyPage + 1;
+    if (this.LineSelected === '') this.getKeys();
   }
 
   public allowed(): Boolean {
