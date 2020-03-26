@@ -35,6 +35,7 @@ export class HomeComponent implements OnInit {
   private Image: Image;
   private idKey: String;
   private nBeforeImage: String;
+  private nBeforeClass: String;
   public nImage: Number;
   public codeImageModal: String;
   public showImage: Array<Image>;
@@ -113,8 +114,35 @@ export class HomeComponent implements OnInit {
       this._f.eachQuery(tr, 'select', select => {
         this._f.event(select, 'focus', e => {
           this.nBeforeImage = select.value;
+          this.nBeforeClass = select.classList[2];
         });
         this._f.event(select, 'change', e => {
+          if (this.nBeforeImage === '' || (select.value !== '' && select.value !== '5')) {
+            this.Image.idN = Number(select.name);
+            this.Image.status = Number(select.value);
+            this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
+              if (select.value === '5') select.disabled = true;
+              const color = select.options[select.selectedIndex].className;
+              select.className = 'form-control btn-sm ' + color;
+              ++this.KeysInfo.status[color];
+              let c: any = this.nBeforeClass;
+              if (this.nBeforeImage !== '') --this.KeysInfo.status[c];
+              alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
+              this.nBeforeImage = select.value;
+            }, err => {
+              alertify.error('Error Status<br/>[reload]');
+            });
+          } else if (select.value !== '5') this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
+            let c: any = this.nBeforeClass;
+            --this.KeysInfo.status[c];
+            select.className = 'form-control btn-sm white';
+            alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${_id}`);
+          }, err => {
+            alertify.error('Error Status<br/>[reload]');
+          });
+          select.blur();
+        });
+        this._f.event(select, 'blur', e => {
           if (select.value === '5') {
             this.idKey = _id;
             this.codeImageModal = tr.querySelectorAll('td')[1].textContent;
@@ -127,26 +155,6 @@ export class HomeComponent implements OnInit {
               if (!this.resimageModal) this.currentHTML.value = before;
               this.destructImg();
             }, { size: 'lg', backdrop: 'static' });
-            this.nBeforeImage = before;
-          } else if (select.value !== '') {
-            this.Image.idN = Number(select.name);
-            this.Image.status = Number(select.value);
-            this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
-              if (select.value === '5') select.disabled = true;
-              const color = select.options[select.selectedIndex].className;
-              select.className = 'form-control btn-sm ' + color;
-              alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
-              this.nBeforeImage = select.value;
-            }, err => {
-              alertify.error('Error Status<br/>[reload]');
-            });
-          } else {
-            this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
-              select.className = 'form-control btn-sm white';
-              alertify.success(`Status removed, Image ${Number(select['name']) + 1} - key ${_id}`);
-            }, err => {
-              alertify.error('Error Status<br/>[reload]');
-            });
           }
         });
       })
@@ -248,11 +256,30 @@ export class HomeComponent implements OnInit {
     }
   });
 
+  private totalStatus(docs: []): Object {
+    let info = { white: 0, gray: 0, brown: 0, blue: 0, purple: 0, green: 0 };
+    docs.forEach((d: any) => d.image.forEach(i => {
+      switch (i.status) {
+        case 0: ++info.white; break;
+        case 1: ++info.gray; break;
+        case 2: ++info.brown; break;
+        case 3: ++info.blue; break;
+        case 4: ++info.purple; break;
+        case 5: ++info.green; break;
+        default:
+          alertify.error(`Status extra ${d.line + d.code}<br/>[${i.id} No debe existi]`);
+          break;
+      }
+    }));
+    return info;
+  }
+
   private getKeys(): void {
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysPage(this.actualKeyPage).subscribe(async res => {
       await this.waitKey.nativeElement.classList.add('d-none');
       if (res.data) this.Keys = this.Keys.concat(res.data.docs);
+      res.data.status = this.totalStatus(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
     }, err => console.log(<any>err));
@@ -276,6 +303,7 @@ export class HomeComponent implements OnInit {
       if (res.data.docs) this.Keys = this.Keys.concat(res.data.docs);
       this.LineSelected = _id;
       this.search.nativeElement.value = _id;
+      res.data.status = this.totalStatus(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
     }, err => console.log(<any>err));
@@ -291,6 +319,7 @@ export class HomeComponent implements OnInit {
       }
       if (res.data.docs.length === 0) this.ifExistKey.nativeElement.className = 'show';
       else this.ifExistKey.nativeElement.className = 'd-none';
+      res.data.status = this.totalStatus(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
     }, err => console.log(<any>err));
@@ -385,6 +414,7 @@ export class HomeComponent implements OnInit {
         this.currentHTML.disabled = true;
         this.resimageModal = true;
         this.currentHTML.className = 'form-control btn-sm green';
+        ++this.KeysInfo.status.green;
       }, err => {
         submit.disabled = false;
         danger.classList.remove('d-none');

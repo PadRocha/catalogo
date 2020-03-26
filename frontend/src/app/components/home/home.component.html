@@ -190,13 +190,23 @@
     <table class="table table-fit">
         <thead>
             <tr>
-                <th>
+                <th class="block">
                     <span #icon class="icon"><i class="fa fa-search"></i></span>
                     <input #search type="search" id="search" oninput="this.value = this.value.toUpperCase()"
                         placeholder="Search..." />
                 </th>
-                <th>Total: {{KeysInfo.totalDocs}}</th>
-                <th>Registros</th>
+                <th class="block">Total: {{KeysInfo.totalDocs}}</th>
+                <th class="block">
+                    <span><i class="fas fa-exclamation-triangle"></i> [{{KeysInfo.status.white}}]</span>&nbsp;
+                    <span style="color: gray;"><i class="fas fa-list-alt"></i> [{{KeysInfo.status.gray}}]</span>&nbsp;
+                    <span style="color: brown;">
+                        <i class="fas fa-camera-retro"></i>
+                        [{{KeysInfo.status.brown}}]
+                    </span>&nbsp;
+                    <span style="color: blue;"><i class="fas fa-expand"></i> [{{KeysInfo.status.blue}}]</span>&nbsp;
+                    <span style="color: purple;"><i class="fas fa-edit"></i> [{{KeysInfo.status.purple}}]</span>&nbsp;
+                    <span style="color: green;"><i class="fas fa-save"></i> [{{KeysInfo.status.green}}]</span>&nbsp;
+                </th>
             </tr>
         </thead>
         <tbody #tbody infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollKey()" [scrollWindow]="false">
@@ -247,7 +257,7 @@
                         </select>
                     </div>
                 </td>
-                <td>{{key.desc}}</td>
+                <td class="block">{{key.desc}}</td>
             </tr>
             <tr #waitKey class="d-none" style="cursor: wait;">
                 <td class="text-center">
