@@ -61,6 +61,19 @@ const keyController = {
             return res.status(200).send({ data: key });
         });
     },
+    listKeyRegexPage(req, res) {
+        if (!req.params.id && !req.params.page) return res.status(400).send({ error: 'Bad Request' });
+        const id = req.params.id;
+        const pag = Number(req.params.page);
+        let findKey = id.length < 7
+            ? { 'line': { $regex: id, $options: 'i' } }
+            : { 'line': id.slice(0, 6), 'code': { $regex: id.slice(6), $options: 'i' } };
+        Key.paginate(findKey, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, (err, key) => {
+            if (err) return res.status(500).send({ error: 'Internal Server Error' });
+            if (!key) return res.status(404).send({ error: 'Key Not Found' });
+            return res.status(200).send({ data: key });
+        });
+    },
     listKeyLine(req, res) {
         if (!req.params.line) return res.status(400).send({ error: 'Bad Request' });
         Key.find({ 'line': req.params.line }).sort('code').exec((err, key) => {

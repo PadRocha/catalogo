@@ -21,7 +21,6 @@ declare const alertify: any;
 export class HomeComponent implements OnInit {
   private User: User;
   public Keys = [];
-  private ifKeyChanged: Boolean = false;
   private actualKeyPage: Number;
   private KeyRegex: String = '';
   private LineSelected: String = '';
@@ -52,7 +51,7 @@ export class HomeComponent implements OnInit {
   @ViewChild('deleteModal') deleteModal: ElementRef;
   @ViewChild('every') every: ElementRef;
   @ViewChild('icon') icon: ElementRef;
-  @ViewChild('search') search !: ElementRef;
+  @ViewChild('search', { static: true }) search !: ElementRef;
   @ViewChild('searchLine') searchLine: ElementRef;
   @ViewChild('waitLine', { static: true }) waitLine !: ElementRef;
   @ViewChild('ifExistLine') ifExistLine: ElementRef;
@@ -98,15 +97,10 @@ export class HomeComponent implements OnInit {
   public ngOnInit(): void {
     this.getUser();
     this._route.paramMap.subscribe(params => {
-      const _id = params.get('line');
-      if (_id) {
-        this._arrivals.getKeysLine(_id).subscribe(res => {
-          if (res.data.length === 0) this.getKeys();
-          this.Keys = res.data;
-        }, err => {
-          console.log(<any>err);
-          this.getKeys();
-        });
+      const line = params.get('line');
+      if (line) {
+        console.log("HomeComponent -> ngOnInit -> line", line)
+        this.getKeyLineSelected(line);
       } else this.getKeys();
     })
     this.getLines();
@@ -184,7 +178,7 @@ export class HomeComponent implements OnInit {
     this.lines.toArray().forEach(line => this._f.event(line, 'click', e => {
       this.actualKeyPage = 1;
       this.Keys = [];
-      this.getLineSelected(line.nativeElement.id)
+      this.getKeyLineSelected(line.nativeElement.id)
     }));
     this._f.event(this.every, 'click', e => {
       this.actualKeyPage = 1;
@@ -208,13 +202,15 @@ export class HomeComponent implements OnInit {
       typingTimer = setTimeout(() => {
         const regex = e.target.value;
         if (regex !== '') {
-          this._arrivals.getKeysRegex(regex).subscribe(res => {
-            this.Keys = res.data;
-            if (res.data.length === 0) this.ifExistKey.nativeElement.className = 'show';
-            else this.ifExistKey.nativeElement.className = 'd-none';
-          }, err => console.log(<any>err));
+          this.actualKeyPage = 1;
+          this.Keys = [];
+          this.KeyRegex = '';
+          this.getKeyRegex(regex);
         } else {
           this.ifExistKey.nativeElement.className = 'd-none';
+          this.actualKeyPage = 1;
+          this.Keys = [];
+          this.KeyRegex = '';
           this.getKeys();
         }
       }, 500);
@@ -259,7 +255,6 @@ export class HomeComponent implements OnInit {
       if (res.data) this.Keys = this.Keys.concat(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
-
     }, err => console.log(<any>err));
   }
 
@@ -274,15 +269,30 @@ export class HomeComponent implements OnInit {
     }
   }, err => console.log(<any>err));
 
-  private getLineSelected(_id: String): void {
+  private getKeyLineSelected(_id: String): void {
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysLinePage(_id, this.actualKeyPage).subscribe(async res => {
-      console.log("HomeComponent -> getLineSelected -> res", res, _id)
       await this.waitKey.nativeElement.classList.add('d-none');
-      // if (res.data.docs.length === 0) this.getKeys();
       if (res.data.docs) this.Keys = this.Keys.concat(res.data.docs);
       this.LineSelected = _id;
       this.search.nativeElement.value = _id;
+      delete res.data.docs;
+      this.KeysInfo = res.data;
+    }, err => console.log(<any>err));
+  }
+
+  private getKeyRegex(regex: String): void {
+    this.waitKey.nativeElement.classList.remove('d-none');
+    this._arrivals.getKeysRegexPage(regex, this.actualKeyPage).subscribe(async res => {
+      await this.waitKey.nativeElement.classList.add('d-none');
+      if (res.data) {
+        this.Keys = this.Keys.concat(res.data.docs);
+        this.KeyRegex = regex;
+      }
+      if (res.data.docs.length === 0) this.ifExistKey.nativeElement.className = 'show';
+      else this.ifExistKey.nativeElement.className = 'd-none';
+      delete res.data.docs;
+      this.KeysInfo = res.data;
     }, err => console.log(<any>err));
   }
 
@@ -296,13 +306,17 @@ export class HomeComponent implements OnInit {
     }, err => console.log(<any>err));
   }
 
-  private getLinesRegex = (regex: String) => this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(res => {
-    if (res.data) this.Lines = this.Lines.concat(res.data.docs);
-    if (res.data.docs.length === 0) this.ifExistLine.nativeElement.className = 'show';
-    else this.ifExistLine.nativeElement.className = 'd-none';
-    delete res.data.docs;
-    this.LinesInfo = res.data;
-  }, err => console.log(<any>err));
+  private getLinesRegex(regex: String): void {
+    this.waitLine.nativeElement.classList.remove('d-none');
+    this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(async res => {
+      await this.waitLine.nativeElement.classList.add('d-none');
+      if (res.data) this.Lines = this.Lines.concat(res.data.docs);
+      if (res.data.docs.length === 0) this.ifExistLine.nativeElement.className = 'show';
+      else this.ifExistLine.nativeElement.className = 'd-none';
+      delete res.data.docs;
+      this.LinesInfo = res.data;
+    }, err => console.log(<any>err));
+  }
 
   public onScrollLine(e): void {
     this.actualLinePage = +this.actualLinePage + 1;
@@ -311,8 +325,9 @@ export class HomeComponent implements OnInit {
 
   public onScrollKey(): void {
     this.actualKeyPage = +this.actualKeyPage + 1;
-    if (this.LineSelected === '') this.getKeys();
-    else if (this.KeyRegex === '') this.getLineSelected(this.LineSelected);
+    if (this.LineSelected === '' && this.KeyRegex === '') this.getKeys();
+    else if (this.KeyRegex === '') this.getKeyLineSelected(this.LineSelected);
+    else this.getKeyRegex(this.KeyRegex);
   }
 
   public allowed(): Boolean {

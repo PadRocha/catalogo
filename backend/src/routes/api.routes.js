@@ -68,6 +68,9 @@ router.route('/key/page/:page')
 router.route('/key/regex/:id')
     .get(keyController.listKeyRegex);
 
+router.route('/key/regex/:id/page/:page')
+    .get(keyController.listKeyRegexPage);
+
 router.route('/key/line/:line')
     .get(keyController.listKeyLine);
 
