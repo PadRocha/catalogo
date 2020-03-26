@@ -21,6 +21,7 @@ declare const alertify: any;
 export class HomeComponent implements OnInit {
   private User: User;
   public Keys = [];
+  private ifKeyChanged: Boolean = false;
   private actualKeyPage: Number;
   private KeyRegex: String = '';
   private LineSelected: String = '';
@@ -111,84 +112,83 @@ export class HomeComponent implements OnInit {
     this.getLines();
   }
 
-  public ngAfterViewInit(): void {
-    this.tr.changes.subscribe(trs => {
-      console.log("HomeComponent -> ngAfterViewInit -> trs", trs)
-      this.trElement = trs.toArray();
-      this.trElement.forEach(tr => {
-        tr = tr.nativeElement;
-        const _id = tr.id;
-        this._f.eachQuery(tr, 'select', select => {
-          this._f.event(select, 'focus', e => {
-            this.nBeforeImage = select.value;
-          });
-          this._f.event(select, 'change', e => {
-            if (select.value === '5') {
-              this.idKey = _id;
-              this.codeImageModal = tr.querySelectorAll('td')[1].textContent;
-              this.currentHTML = select;
-              this.nImage = Number(this.currentHTML.name) + 1;
-              let before = this.nBeforeImage;
-              this._modal.open(this.imageModal, result => {
-                this.destructImg();
-              }, dismiss => {
-                if (!this.resimageModal) this.currentHTML.value = before;
-                this.destructImg();
-              }, { size: 'lg', backdrop: 'static' });
-              this.nBeforeImage = before;
-            } else if (select.value !== '') {
-              this.Image.idN = Number(select.name);
-              this.Image.status = Number(select.value);
-              this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
-                if (select.value === '5') select.disabled = true;
-                const color = select.options[select.selectedIndex].className;
-                select.className = 'form-control btn-sm ' + color;
-                alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
-                this.nBeforeImage = select.value;
-              }, err => {
-                alertify.error('Error Status<br/>[reload]');
-              });
-            } else {
-              this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
-                select.className = 'form-control btn-sm white';
-                alertify.success(`Status removed, Image ${Number(select['name']) + 1} - key ${_id}`);
-              }, err => {
-                alertify.error('Error Status<br/>[reload]');
-              });
-            }
-          });
-        })
-        this._f.eventQuery(tr, 'span', 'click', e => {
-          this.idKey = _id;
-          if (!this.showSearched) {
-            this.getKeyCode(this.idKey);
-            this.showSearched = true;
-          }
-          if (this.showImage.length > 0) {
-            this.showSearched = false;
-            this.currentModal = this._modal.open(this.showModal, result => {
+  private initTr(element: any): void {
+    element.forEach(tr => {
+      tr = tr.nativeElement;
+      const _id = tr.id;
+      this._f.eachQuery(tr, 'select', select => {
+        this._f.event(select, 'focus', e => {
+          this.nBeforeImage = select.value;
+        });
+        this._f.event(select, 'change', e => {
+          if (select.value === '5') {
+            this.idKey = _id;
+            this.codeImageModal = tr.querySelectorAll('td')[1].textContent;
+            this.currentHTML = select;
+            this.nImage = Number(this.currentHTML.name) + 1;
+            let before = this.nBeforeImage;
+            this._modal.open(this.imageModal, result => {
               this.destructImg();
             }, dismiss => {
+              if (!this.resimageModal) this.currentHTML.value = before;
               this.destructImg();
-            }, { size: 'lg', backdrop: 'static' })
+            }, { size: 'lg', backdrop: 'static' });
+            this.nBeforeImage = before;
+          } else if (select.value !== '') {
+            this.Image.idN = Number(select.name);
+            this.Image.status = Number(select.value);
+            this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
+              if (select.value === '5') select.disabled = true;
+              const color = select.options[select.selectedIndex].className;
+              select.className = 'form-control btn-sm ' + color;
+              alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
+              this.nBeforeImage = select.value;
+            }, err => {
+              alertify.error('Error Status<br/>[reload]');
+            });
+          } else {
+            this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
+              select.className = 'form-control btn-sm white';
+              alertify.success(`Status removed, Image ${Number(select['name']) + 1} - key ${_id}`);
+            }, err => {
+              alertify.error('Error Status<br/>[reload]');
+            });
           }
         });
-        this._f.eventQuery(tr, '#config', 'click', e => {
-          this.idKey = _id;
-          this.codeImageModal = tr.querySelectorAll('td')[1].textContent;
-          this.currentModal = this._modal.open(this.deleteModal, null, null, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
-        });
+      })
+      this._f.eventQuery(tr, 'span', 'click', e => {
+        this.idKey = _id;
+        if (!this.showSearched) {
+          this.getKeyCode(this.idKey);
+          this.showSearched = true;
+        }
+        if (this.showImage.length > 0) {
+          this.showSearched = false;
+          this.currentModal = this._modal.open(this.showModal, result => {
+            this.destructImg();
+          }, dismiss => {
+            this.destructImg();
+          }, { size: 'lg', backdrop: 'static' })
+        }
+      });
+      this._f.eventQuery(tr, '#config', 'click', e => {
+        this.idKey = _id;
+        this.codeImageModal = tr.querySelectorAll('td')[1].textContent;
+        this.currentModal = this._modal.open(this.deleteModal, null, null, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
       });
     });
-    this._f.childrenForEach(this.lines, line => this._f.event(line, 'click', e => {
-      this.actualLinePage = 1;
-      this.Lines = [];
-      this.LineSelected = line.id;
-      this.getLineSelected(line.id)
+  }
+
+  public ngAfterViewInit(): void {
+    this.initTr(this.tr.toArray());
+    this.lines.toArray().forEach(line => this._f.event(line, 'click', e => {
+      this.actualKeyPage = 1;
+      this.Keys = [];
+      this.getLineSelected(line.nativeElement.id)
     }));
     this._f.event(this.every, 'click', e => {
-      this.actualLinePage = 1;
-      this.Lines = [];
+      this.actualKeyPage = 1;
+      this.Keys = [];
       this.LineSelected = '';
       this.search.nativeElement.value = '';
       this.getKeys();
@@ -222,7 +222,7 @@ export class HomeComponent implements OnInit {
     this._f.denyAlphanumeric(this.searchLine, e => clearTimeout(typingTimer));
     this._f.event(this.searchLine, 'keyup', e => {
       clearTimeout(typingTimer);
-      typingTimer = setTimeout(e => {
+      typingTimer = setTimeout(() => {
         const regex = e.target.value;
         if (regex !== '') {
           this.actualLinePage = 1;
@@ -274,12 +274,17 @@ export class HomeComponent implements OnInit {
     }
   }, err => console.log(<any>err));
 
-  private getLineSelected = (_id: String) => this._arrivals.getKeysLine(_id).subscribe(res => {
-    if (res.data.length === 0) this.getKeys();
-    this.Keys = res.data;
-    this.LineSelected = _id;
-    this.search.nativeElement.value = _id;
-  }, err => console.log(<any>err));
+  private getLineSelected(_id: String): void {
+    this.waitKey.nativeElement.classList.remove('d-none');
+    this._arrivals.getKeysLinePage(_id, this.actualKeyPage).subscribe(async res => {
+      console.log("HomeComponent -> getLineSelected -> res", res, _id)
+      await this.waitKey.nativeElement.classList.add('d-none');
+      // if (res.data.docs.length === 0) this.getKeys();
+      if (res.data.docs) this.Keys = this.Keys.concat(res.data.docs);
+      this.LineSelected = _id;
+      this.search.nativeElement.value = _id;
+    }, err => console.log(<any>err));
+  }
 
   private getLines(): void {
     this.waitLine.nativeElement.classList.remove('d-none');
@@ -307,6 +312,7 @@ export class HomeComponent implements OnInit {
   public onScrollKey(): void {
     this.actualKeyPage = +this.actualKeyPage + 1;
     if (this.LineSelected === '') this.getKeys();
+    else if (this.KeyRegex === '') this.getLineSelected(this.LineSelected);
   }
 
   public allowed(): Boolean {

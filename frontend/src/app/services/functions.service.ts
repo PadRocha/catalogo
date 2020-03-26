@@ -58,11 +58,8 @@ export class FunctionsService {
       }
       keypress(e, theEvent, key);
     }
-    if (element.nativeElement) element.nativeElement.attachEvent
+    element.nativeElement.attachEvent
       ? element.nativeElement.attachEvent('on' + event, callbackEvent)
       : element.nativeElement.addEventListener(event, callbackEvent, !!0);
-    else element.attachEvent
-      ? element.attachEvent('on' + event, callbackEvent)
-      : element.addEventListener(event, callbackEvent, !!0);
   }
 }
