@@ -321,6 +321,7 @@ main {
   tbody tr {
     display: table;
     width: 100%;
+    min-width: 850px;
     table-layout: fixed;
     overflow: hidden;
 
