@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList, Renderer2 } from '@angular/core';
 import { ActivatedRoute, ChildActivationStart, Router } from '@angular/router';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { AuthService } from 'src/app/services/auth.service';
@@ -45,7 +45,6 @@ export class HomeComponent implements OnInit {
   private currentModal: any;
   private showSearched: Boolean = false;
   private confirmModalService: any;
-  private trElement: Array<any>;
   @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
   @ViewChild('confirmModal') confirmModal: ElementRef;
@@ -59,7 +58,6 @@ export class HomeComponent implements OnInit {
   @ViewChild('waitKey', { static: true }) waitKey !: ElementRef;
   @ViewChild('ifExistKey') ifExistKey: ElementRef;
   @ViewChildren('tr') tr !: QueryList<ElementRef>;
-  @ViewChildren('lines') lines !: QueryList<ElementRef>;
   public config: SwiperConfigInterface = {
     effect: 'coverflow',
     grabCursor: true,
@@ -107,87 +105,7 @@ export class HomeComponent implements OnInit {
     this.getLines();
   }
 
-  private initTr(element: any): void {
-    element.forEach(tr => {
-      tr = tr.nativeElement;
-      const _id = tr.id;
-      this._f.eachQuery(tr, 'select', select => {
-        this._f.event(select, 'focus', e => {
-          this.nBeforeImage = select.value;
-          this.nBeforeClass = select.classList[2];
-        });
-        this._f.event(select, 'change', e => {
-          if (this.nBeforeImage === '' || (select.value !== '' && select.value !== '5')) {
-            this.Image.idN = Number(select.name);
-            this.Image.status = Number(select.value);
-            this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
-              if (select.value === '5') select.disabled = true;
-              const color = select.options[select.selectedIndex].className;
-              select.className = 'form-control btn-sm ' + color;
-              ++this.KeysInfo.status[color];
-              let c: any = this.nBeforeClass;
-              if (this.nBeforeImage !== '') --this.KeysInfo.status[c];
-              alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
-              this.nBeforeImage = select.value;
-            }, err => {
-              alertify.error('Error Status<br/>[reload]');
-            });
-          } else if (select.value !== '5') this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
-            let c: any = this.nBeforeClass;
-            --this.KeysInfo.status[c];
-            select.className = 'form-control btn-sm white';
-            alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${_id}`);
-          }, err => {
-            alertify.error('Error Status<br/>[reload]');
-          });
-          select.blur();
-        });
-        this._f.event(select, 'blur', e => {
-          if (select.value === '5') {
-            this.idKey = _id;
-            this.codeImageModal = tr.querySelectorAll('td')[1].textContent;
-            this.currentHTML = select;
-            this.nImage = Number(this.currentHTML.name) + 1;
-            let before = this.nBeforeImage;
-            this._modal.open(this.imageModal, result => {
-              this.destructImg();
-            }, dismiss => {
-              if (!this.resimageModal) this.currentHTML.value = before;
-              this.destructImg();
-            }, { size: 'lg', backdrop: 'static' });
-          }
-        });
-      })
-      this._f.eventQuery(tr, 'span', 'click', e => {
-        this.idKey = _id;
-        if (!this.showSearched) {
-          this.getKeyCode(this.idKey);
-          this.showSearched = true;
-        }
-        if (this.showImage.length > 0) {
-          this.showSearched = false;
-          this.currentModal = this._modal.open(this.showModal, result => {
-            this.destructImg();
-          }, dismiss => {
-            this.destructImg();
-          }, { size: 'lg', backdrop: 'static' })
-        }
-      });
-      this._f.eventQuery(tr, '#config', 'click', e => {
-        this.idKey = _id;
-        this.codeImageModal = tr.querySelectorAll('td')[1].textContent;
-        this.currentModal = this._modal.open(this.deleteModal, null, null, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
-      });
-    });
-  }
-
   public ngAfterViewInit(): void {
-    this.initTr(this.tr.toArray());
-    this.lines.toArray().forEach(line => this._f.event(line, 'click', e => {
-      this.actualKeyPage = 1;
-      this.Keys = [];
-      this.getKeyLineSelected(line.nativeElement.id)
-    }));
     this._f.event(this.every, 'click', e => {
       this.actualKeyPage = 1;
       this.Keys = [];
@@ -244,6 +162,10 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  /*------------------------------------------------------------------*/
+  // Query Functions
+  /*------------------------------------------------------------------*/
+
   private getUser = () => this._auth.getUser().subscribe(res => {
     this.User = res;
   }, err => {
@@ -279,7 +201,6 @@ export class HomeComponent implements OnInit {
     this._arrivals.getKeysPage(this.actualKeyPage).subscribe(async res => {
       await this.waitKey.nativeElement.classList.add('d-none');
       if (res.data) this.Keys = this.Keys.concat(res.data.docs);
-      res.data.status = this.totalStatus(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
     }, err => console.log(<any>err));
@@ -303,7 +224,6 @@ export class HomeComponent implements OnInit {
       if (res.data.docs) this.Keys = this.Keys.concat(res.data.docs);
       this.LineSelected = _id;
       this.search.nativeElement.value = _id;
-      res.data.status = this.totalStatus(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
     }, err => console.log(<any>err));
@@ -312,14 +232,14 @@ export class HomeComponent implements OnInit {
   private getKeyRegex(regex: String): void {
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysRegexPage(regex, this.actualKeyPage).subscribe(async res => {
+      // console.log("HomeComponent -> getKeyRegex -> res", res)
       await this.waitKey.nativeElement.classList.add('d-none');
       if (res.data) {
         this.Keys = this.Keys.concat(res.data.docs);
         this.KeyRegex = regex;
+        if (res.data.docs.length === 0) this.ifExistKey.nativeElement.className = 'show';
+        else this.ifExistKey.nativeElement.className = 'd-none';
       }
-      if (res.data.docs.length === 0) this.ifExistKey.nativeElement.className = 'show';
-      else this.ifExistKey.nativeElement.className = 'd-none';
-      res.data.status = this.totalStatus(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
     }, err => console.log(<any>err));
@@ -347,9 +267,78 @@ export class HomeComponent implements OnInit {
     }, err => console.log(<any>err));
   }
 
-  public onScrollLine(e): void {
-    this.actualLinePage = +this.actualLinePage + 1;
-    !this.LineRegex ? this.getLines() : this.getLinesRegex(e.value);
+  /*------------------------------------------------------------------*/
+  // Event Functions
+  /*------------------------------------------------------------------*/
+
+  public clickConfig(_id, text): void {
+    this.idKey = _id;
+    this.codeImageModal = text
+    this.currentModal = this._modal.open(this.deleteModal, null, null, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
+  }
+
+  public clickSpan(_id): void {
+    this.idKey = _id;
+    if (!this.showSearched) {
+      this.getKeyCode(this.idKey);
+      this.showSearched = true;
+    }
+    if (this.showImage.length > 0) {
+      this.showSearched = false;
+      this.currentModal = this._modal.open(this.showModal, result => {
+        this.destructImg();
+      }, dismiss => {
+        this.destructImg();
+      }, { size: 'lg', backdrop: 'static' })
+    }
+  }
+
+  public focusSelect(select): void {
+    this.nBeforeImage = select.value;
+    this.nBeforeClass = select.classList[2];
+  }
+
+  public changeSelect(select, _id): void {
+    if ((this.nBeforeImage === '' || select.value !== '') && select.value !== '5') {
+      this.Image.idN = Number(select.name);
+      this.Image.status = Number(select.value);
+      this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
+        if (select.value === '5') select.disabled = true;
+        const color = select.options[select.selectedIndex].className;
+        select.className = 'form-control btn-sm ' + color;
+        ++this.KeysInfo.status[color];
+        let c: any = this.nBeforeClass;
+        if (this.nBeforeImage !== '') --this.KeysInfo.status[c];
+        alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
+        this.nBeforeImage = select.value;
+      }, err => {
+        alertify.error('Error Status<br/>[reload]');
+      });
+    } else if (select.value !== '5') this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
+      let c: any = this.nBeforeClass;
+      --this.KeysInfo.status[c];
+      select.className = 'form-control btn-sm white';
+      alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${_id}`);
+    }, err => {
+      alertify.error('Error Status<br/>[reload]');
+    });
+    select.blur();
+  }
+
+  public blurSelect(select, _id, text): void {
+    if (select.value === '5') {
+      this.idKey = _id;
+      this.codeImageModal = text;
+      this.currentHTML = select;
+      this.nImage = Number(this.currentHTML.name) + 1;
+      let before = this.nBeforeImage;
+      this._modal.open(this.imageModal, result => {
+        this.destructImg();
+      }, dismiss => {
+        if (!this.resimageModal) this.currentHTML.value = before;
+        this.destructImg();
+      }, { size: 'lg', backdrop: 'static' });
+    }
   }
 
   public onScrollKey(): void {
@@ -358,6 +347,21 @@ export class HomeComponent implements OnInit {
     else if (this.KeyRegex === '') this.getKeyLineSelected(this.LineSelected);
     else this.getKeyRegex(this.KeyRegex);
   }
+
+  public clickLine(line): void {
+    this.actualKeyPage = 1;
+    this.Keys = [];
+    this.getKeyLineSelected(line)
+  }
+
+  public onScrollLine(e): void {
+    this.actualLinePage = +this.actualLinePage + 1;
+    !this.LineRegex ? this.getLines() : this.getLinesRegex(e.value);
+  }
+
+  /*------------------------------------------------------------------*/
+  // init Functions
+  /*------------------------------------------------------------------*/
 
   public allowed(): Boolean {
     return this.User.role === 'admin';
@@ -399,6 +403,20 @@ export class HomeComponent implements OnInit {
     this.resimageModal = false;
   }
 
+  public setPercentage(set: Boolean): void {
+    let aux = Math.round(this.KeysInfo.percentage * this.KeysInfo.totalDocs / 100);
+    this.KeysInfo.percentage = (set ? ++aux : --aux) * 100 / this.KeysInfo.totalDocs;
+  }
+
+  public lowPercentage(one, two, three): void {
+    let aux = Math.round(this.KeysInfo.percentage * this.KeysInfo.totalDocs / 100);
+    if (one == '5') --aux;
+    else if (two == '5') --aux;
+    else if (three == '5') --aux;
+    this.KeysInfo.percentage = aux * 100 / --this.KeysInfo.totalDocs;
+
+  }
+
   public onSubmitImage(file, warning, danger, success, submit): void {
     const idN = Number(this.currentHTML.name);
     if (!file) warning.classList.remove('d-none');
@@ -409,6 +427,7 @@ export class HomeComponent implements OnInit {
       submit.disabled = true;
       this._shippings.updateImage(this.idKey, fd).subscribe(async res => {
         await success.classList.remove('d-none');
+        this.setPercentage(true);
         warning.classList.add('d-none');
         danger.classList.add('d-none');
         this.currentHTML.disabled = true;
@@ -468,8 +487,9 @@ export class HomeComponent implements OnInit {
       if (cont.length <= 1) {
         await this.confirmModalService.close();
         await this.currentModal.close();
+        this.setPercentage(false);
       } else await this.confirmModalService.close();
-      let select = this._f.findChidlren(this.trElement, 'id', _id).querySelector(`select[name='${idN}']`);
+      let select = this._f.findChidlren(this.tr.toArray(), 'id', _id).querySelector(`select[name='${idN}']`);
       select.className = 'form-control btn-sm white';
       select.value = '';
       select.disabled = false;
@@ -485,7 +505,14 @@ export class HomeComponent implements OnInit {
 
   public confirmDeleteKey(): void {
     this._exchanges.deleteKey(this.idKey).subscribe(async res => {
-      await this._f.findChidlren(this.trElement, 'id', this.idKey).remove();
+      let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
+      await select.remove();
+      console.log()
+      this.lowPercentage(
+        select.querySelector('select[name="0"]').value,
+        select.querySelector('select[name="1"]').value,
+        select.querySelector('select[name="2"]').value
+      );
       alertify.success(`${res.data.line + res.data.code}<br/>[Removido con éxito]`);
       this.currentModal.close();
     }, err => {

@@ -18,6 +18,35 @@ cloudinary.config({
     api_secret: process.env.C_SECRET
 });
 
+function infoStatus(query) {
+    const status = { white: 0, gray: 0, brown: 0, blue: 0, purple: 0, green: 0 };
+    var percentage = 0;
+    return new Promise(resolve => {
+        Key.find(query).exec((err, key) => {
+            key.forEach(d => {
+                let image = d.image;
+                image.forEach(i => {
+                    switch (i.status) {
+                        case 0: ++status.white; break;
+                        case 1: ++status.gray; break;
+                        case 2: ++status.brown; break;
+                        case 3: ++status.blue; break;
+                        case 4: ++status.purple; break;
+                        case 5: ++status.green; break;
+                    }
+                });
+                for (let i = 0; i < image.length; i++) {
+                    if (image[i].status === 5) {
+                        ++percentage;
+                        break;
+                    }
+                }
+            });
+            resolve([status, percentage * 100 / key.length]);
+        });
+    });
+}
+
 const keyController = {
     saveKey(req, res) {
         if (!req.body) return res.status(400).send({ error: 'Bad Request' });
@@ -43,9 +72,14 @@ const keyController = {
     listKeyPage(req, res) {
         if (!req.params.page) return res.status(400).send({ error: 'Bad Request' });
         const pag = Number(req.params.page);
-        Key.paginate({}, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, (err, key) => {
+        const query = {};
+        Key.paginate(query, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, async (err, key) => {
+            console.log("listKeyPage -> err", err)
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!key) return res.status(404).send({ error: 'Key Not Found' });
+            const [status, percentage] = await infoStatus(query);
+            key.status = status;
+            key.percentage = percentage;
             return res.status(200).send({ data: key });
         });
     },
@@ -65,12 +99,15 @@ const keyController = {
         if (!req.params.id && !req.params.page) return res.status(400).send({ error: 'Bad Request' });
         const id = req.params.id;
         const pag = Number(req.params.page);
-        let findKey = id.length < 7
+        let query = id.length < 7
             ? { 'line': { $regex: id, $options: 'i' } }
             : { 'line': id.slice(0, 6), 'code': { $regex: id.slice(6), $options: 'i' } };
-        Key.paginate(findKey, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, (err, key) => {
+        Key.paginate(query, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, async (err, key) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!key) return res.status(404).send({ error: 'Key Not Found' });
+            const [status, percentage] = await infoStatus(query);
+            key.status = status;
+            key.percentage = percentage;
             return res.status(200).send({ data: key });
         });
     },
@@ -85,9 +122,13 @@ const keyController = {
     listKeyLinePage(req, res) {
         if (!req.params.line && !req.params.page) return res.status(400).send({ error: 'Bad Request' });
         const pag = Number(req.params.page);
-        Key.paginate({ 'line': req.params.line }, { page: pag, limit: perPage, sort: 'code' }, (err, key) => {
+        const query = { 'line': req.params.line };
+        Key.paginate(query, { page: pag, limit: perPage, sort: 'code' }, async (err, key) => {
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!key) return res.status(404).send({ error: 'Key Not Found' });
+            const [status, percentage] = await infoStatus(query);
+            key.status = status;
+            key.percentage = percentage;
             return res.status(200).send({ data: key });
         });
     },

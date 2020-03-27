@@ -176,7 +176,7 @@
     <span class="container">Total: {{LinesInfo.totalDocs}}</span>
     <ul class="search-results">
         <li #every>Todas</li>
-        <li #lines *ngFor="let line of Lines" [id]="line._id">
+        <li *ngFor="let line of Lines" (click)="clickLine(line._id)">
             {{line._id}}
             <span>{{line.name}}</span>
         </li>
@@ -190,13 +190,14 @@
     <table class="table table-fit">
         <thead>
             <tr>
-                <th class="block">
+                <th width="240">
                     <span #icon class="icon"><i class="fa fa-search"></i></span>
                     <input #search type="search" id="search" oninput="this.value = this.value.toUpperCase()"
                         placeholder="Search..." />
                 </th>
-                <th class="block">Total: {{KeysInfo.totalDocs}}</th>
-                <th class="block">
+                <th width="200">Total: {{KeysInfo.totalDocs | number}}</th>
+                <th width="150">[{{KeysInfo.percentage.toFixed(2)}}%] Done</th>
+                <th class="infoStatus">
                     <span><i class="fas fa-exclamation-triangle"></i> [{{KeysInfo.status.white}}]</span>&nbsp;
                     <span style="color: gray;"><i class="fas fa-list-alt"></i> [{{KeysInfo.status.gray}}]</span>&nbsp;
                     <span style="color: brown;">
@@ -209,24 +210,27 @@
                 </th>
             </tr>
         </thead>
-        <tbody #tbody infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollKey()" [scrollWindow]="false">
+        <tbody infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollKey()" [scrollWindow]="false">
             <tr #tr *ngFor="let key of Keys" [id]="key._id">
                 <td width="34" class="buttons">
-                    <button *ngIf="allowed()" type="button" id="config" class="btn btn-primary btn-sm">
+                    <button *ngIf="allowed()" type="button" class="btn btn-primary btn-sm"
+                        (click)="clickConfig(key._id, LineCode.textContent)">
                         <i class="fas fa-cogs"></i>
                     </button>
                     <button *ngIf="!allowed()" type="button" class="btn btn-primary btn-sm">
                         <i class="fas fa-sticky-note"></i>
                     </button>
                 </td>
-                <td width="130">{{key.line}}{{key.code}}</td>
+                <td #LineCode width="130">{{key.line}}{{key.code}}</td>
                 <td width="250">
                     <div class="input-group">
-                        <span title="Ver imagen" name="images">
+                        <span title="Ver imagen" name="images" (click)="clickSpan(key._id)">
                             <div class="case">[<i class="fas fa-circle"></i>]</div>
                         </span>
-                        <select class="form-control btn-sm {{statusClass(statusImage(key.image, 0))}}" name="0"
-                            [value]="statusImage(key.image, 0)" [disabled]="disabledImage(statusImage(key.image, 0))">
+                        <select #select0 class="form-control btn-sm {{statusClass(statusImage(key.image, 0))}}" name="0"
+                            [value]="statusImage(key.image, 0)" [disabled]="disabledImage(statusImage(key.image, 0))"
+                            (focus)="focusSelect(select0)" (change)="changeSelect(select0, key._id)"
+                            (blur)="blurSelect(select0, key._id, LineCode.textContent)">
                             <option value="" class="white"></option>
                             <option value="0" class="white">0</option>
                             <option value="1" class="gray">1</option>
@@ -235,8 +239,10 @@
                             <option value="4" class="purple">4</option>
                             <option value="5" class="green">5</option>
                         </select>
-                        <select class="form-control btn-sm {{statusClass(statusImage(key.image, 1))}}" name="1"
-                            [value]="statusImage(key.image, 1)" [disabled]="disabledImage(statusImage(key.image, 1))">
+                        <select #select1 class="form-control btn-sm {{statusClass(statusImage(key.image, 1))}}" name="1"
+                            [value]="statusImage(key.image, 1)" [disabled]="disabledImage(statusImage(key.image, 1))"
+                            (focus)="focusSelect(select1)" (change)="changeSelect(select1, key._id)"
+                            (blur)="blurSelect(select1, key._id, LineCode.textContent)">
                             <option value="" class="white"></option>
                             <option value="0" class="white">0</option>
                             <option value="1" class="gray">1</option>
@@ -245,8 +251,10 @@
                             <option value="4" class="purple">4</option>
                             <option value="5" class="green">5</option>
                         </select>
-                        <select class="form-control btn-sm {{statusClass(statusImage(key.image, 2))}}" name="2"
-                            [value]="statusImage(key.image, 2)" [disabled]="disabledImage(statusImage(key.image, 2))">
+                        <select #select2 class="form-control btn-sm {{statusClass(statusImage(key.image, 2))}}" name="2"
+                            [value]="statusImage(key.image, 2)" [disabled]="disabledImage(statusImage(key.image, 2))"
+                            (focus)="focusSelect(select2)" (change)="changeSelect(select2, key._id)"
+                            (blur)="blurSelect(select2, key._id, LineCode.textContent)">
                             <option value="" class="white"></option>
                             <option value="0" class="white">0</option>
                             <option value="1" class="gray">1</option>
@@ -257,7 +265,7 @@
                         </select>
                     </div>
                 </td>
-                <td class="block">{{key.desc}}</td>
+                <td>{{key.desc}}</td>
             </tr>
             <tr #waitKey class="d-none" style="cursor: wait;">
                 <td class="text-center">

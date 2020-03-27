@@ -322,6 +322,7 @@ main {
     display: table;
     width: 100%;
     table-layout: fixed;
+    overflow: hidden;
 
     th {
       #search {
@@ -346,7 +347,15 @@ main {
       }
     }
 
+    .infoStatus {
+      white-space: nowrap;
+      width: 100%;
+      min-width: 330px;
+      max-width: 400px;
+    }
+
     td {
+      white-space: nowrap;
       span {
         background: rgb(122, 122, 122);
         padding: 2.5px 5px;

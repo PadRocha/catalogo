@@ -5,6 +5,9 @@
 /*------------------------------------------------------------------*/
 
 const mongoose = require('mongoose'); //* Calls mongoose
+const mongoosePaginate = require('mongoose-paginate-v2'); //* Calls mongoose-paginate-v2
+
+mongoose.plugin(mongoosePaginate);
 
 const URI = process.env.MONGO_URI ? process.env.MONGO_URI : 'mongodb://localhost/database';
 
