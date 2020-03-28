@@ -165,13 +165,13 @@ export class AddKeyComponent implements OnInit {
       this.Key.map(e => (delete e.config, e)).forEach((k: Key) => {
         document.body.classList.add('waiting');
         this.currentModal.close();
-        // this._shipping.saveKey(k).subscribe(async res => {
-        //   let ke: Key = res.data;
-        //   await document.body.classList.remove('waiting');
-        //   await this.Keys.push(ke);
-        // }, err => {
-        //   this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error}`);
-        // });
+        this._shipping.sendKey(k).subscribe(async res => {
+          let ke: Key = res.data;
+          await document.body.classList.remove('waiting');
+          await this.Keys.push(ke);
+        }, err => {
+          this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error}`);
+        });
       });
     }
   }
