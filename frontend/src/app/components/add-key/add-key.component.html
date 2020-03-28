@@ -118,17 +118,17 @@
                     <div class="card-body keys">
                         <ul *ngFor="let k of Keys" class="list-group list-group-flush">
                             <li class="list-group-item">
-                                {{k.line}}{{k.code}}
+                                {{k.line + k.code}}
                                 {{k.desc}}
                             </li>
                         </ul>
                     </div>
                     <div class="card-footer text-muted">
-                        2 days ago
+                        Total de {{Keys.length}} claves creadas
                     </div>
                 </div>
             </div>
-            <div *ngIf="Keys.length == 0" class="container alert alert-dark" role="alert">
+            <div *ngIf="Keys.length === 0" class="container alert alert-dark" role="alert">
                 Ninguna clave ha sido creada por el momento
             </div>
         </div>

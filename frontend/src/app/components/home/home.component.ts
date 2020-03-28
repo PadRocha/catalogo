@@ -10,6 +10,7 @@ import { User } from 'src/app/models/user';
 import { Image } from 'src/app/models/image';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FunctionsService } from 'src/app/services/functions.service';
+import { Key } from 'src/app/models/key';
 
 declare const alertify: any;
 
@@ -20,7 +21,7 @@ declare const alertify: any;
 })
 export class HomeComponent implements OnInit {
   private User: User;
-  public Keys = [];
+  public Keys: Array<Key>;
   private actualKeyPage: Number;
   private KeyRegex: String = '';
   private LineSelected: String = '';
@@ -88,6 +89,7 @@ export class HomeComponent implements OnInit {
     private _f: FunctionsService,
     private _modal: ModalService
   ) {
+    this.Keys = new Array();
     this.Image = new Image(undefined, undefined, undefined, undefined);
     this.actualLinePage = 1;
     this.actualKeyPage = 1;
@@ -98,7 +100,6 @@ export class HomeComponent implements OnInit {
     this._route.paramMap.subscribe(params => {
       const line = params.get('line');
       if (line) {
-        console.log("HomeComponent -> ngOnInit -> line", line)
         this.getKeyLineSelected(line);
       } else this.getKeys();
     })
@@ -177,24 +178,6 @@ export class HomeComponent implements OnInit {
       }
     }
   });
-
-  private totalStatus(docs: []): Object {
-    let info = { white: 0, gray: 0, brown: 0, blue: 0, purple: 0, green: 0 };
-    docs.forEach((d: any) => d.image.forEach(i => {
-      switch (i.status) {
-        case 0: ++info.white; break;
-        case 1: ++info.gray; break;
-        case 2: ++info.brown; break;
-        case 3: ++info.blue; break;
-        case 4: ++info.purple; break;
-        case 5: ++info.green; break;
-        default:
-          alertify.error(`Status extra ${d.line + d.code}<br/>[${i.id} No debe existi]`);
-          break;
-      }
-    }));
-    return info;
-  }
 
   private getKeys(): void {
     this.waitKey.nativeElement.classList.remove('d-none');
@@ -507,7 +490,6 @@ export class HomeComponent implements OnInit {
     this._exchanges.deleteKey(this.idKey).subscribe(async res => {
       let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
       await select.remove();
-      console.log()
       this.lowPercentage(
         select.querySelector('select[name="0"]').value,
         select.querySelector('select[name="1"]').value,

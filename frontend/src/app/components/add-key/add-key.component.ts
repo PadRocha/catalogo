@@ -39,27 +39,20 @@ export class AddKeyComponent implements OnInit {
     private _modal: ModalService
   ) {
     _type.showHint = true;
-  }
-
-  public ngOnInit(): void {
-    this.getLines();
     this.LineArray = new Array();
     this.Key = new Array();
     this.Errors = new Array();
     this.Keys = new Array();
   }
 
+  public ngOnInit(): void {
+    this.getLines();
+  }
+
   public ngAfterViewInit(): void {
     this._f.onlyAlphanumeric(this.line);
-    this._f.event(this.code, 'keypress', e => {
-      const theEvent = e || window.event;
-      const key = String.fromCharCode(theEvent.keyCode || theEvent.which);
-      const regex = /^[A-Za-z0-9\s]+$/;
-      if (!regex.test(key)) {
-        theEvent.returnValue = false;
-        if (theEvent.preventDefault) theEvent.preventDefault();
-        if (key === ',') e.target.value += ', ';
-      }
+    this._f.onlyAlphanumeric(this.code, (e, k) => {
+      if (k === ',') e.target.value += ', ';
     });
   }
 

@@ -74,7 +74,6 @@ const keyController = {
         const pag = Number(req.params.page);
         const query = {};
         Key.paginate(query, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, async (err, key) => {
-            console.log("listKeyPage -> err", err)
             if (err) return res.status(500).send({ error: 'Internal Server Error' });
             if (!key) return res.status(404).send({ error: 'Key Not Found' });
             const [status, percentage] = await infoStatus(query);
@@ -181,7 +180,6 @@ const keyController = {
                 else {
                     Key.findOneAndUpdate({ '_id': req.params.id, 'image.idN': { $ne: id } },
                         { $push: { 'image': { 'idN': id, 'status': req.body.status } } }, (err, statusStored) => {
-                            console.log("updateStatus -> err", err)
                             if (err) return res.status(500).send({ error: 'Internal Server Error' });
                             if (!statusStored) return res.status(404).send({ error: 'Key Not Found' });
                             return res.status(200).send({ data: statusStored });
@@ -227,14 +225,12 @@ const keyController = {
         Key.findOneAndUpdate({ '_id': req.params.id, 'image.idN': idN },
             { $set: { 'image.$.status': 5, 'image.$.img': result.url, 'image.$.publicId': result.public_id } }, { new: true },
             async (err, imageStored) => {
-                console.log("saveImage -> id", idN)
                 if (err || !imageStored) {
                     await cloudinary.v2.uploader.destroy(result.public_id);
                     await fs.unlink(req.file.path)
                 }
                 if (err) return res.status(500).send({ error: 'Internal Server Error' });
                 if (!imageStored) return res.status(404).send({ error: 'Key Not Found' });
-                console.log("saveImage -> imageStored", imageStored)
                 await fs.unlink(req.file.path);
                 return res.status(200).send({ data: imageStored });
             });
