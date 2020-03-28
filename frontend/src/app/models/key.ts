@@ -10,6 +10,7 @@ export class Key {
         public code: String,
         public line: String,
         public desc: String,
-        public image: Array<Object>
+        public image: Array<Object>,
+        public config: Boolean
     ) { }
 };
