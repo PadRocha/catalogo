@@ -24,27 +24,20 @@ function infoStatus(query) {
     return new Promise(resolve => {
         Key.find(query).exec((err, key) => {
             key.forEach(d => {
-                let image = d.image;
-                image.forEach(i => {
+                let image = d.image; image.forEach(i => {
                     switch (i.status) {
                         case 0: ++status.white; break;
                         case 1: ++status.gray; break;
                         case 2: ++status.brown; break;
                         case 3: ++status.blue; break;
                         case 4: ++status.purple; break;
-                        case 5: ++status.green; break;
+                        case 5: ++status.green
                     }
                 });
-                for (let i = 0; i < image.length; i++) {
-                    if (image[i].status === 5) {
-                        ++percentage;
-                        break;
-                    }
-                }
-            });
-            resolve([status, percentage * 100 / key.length]);
-        });
-    });
+                for (let i of image) if (5 === i.status) { ++percentage; break }
+            }), resolve([status, 100 * percentage / key.length])
+        })
+    })
 }
 
 const keyController = {
