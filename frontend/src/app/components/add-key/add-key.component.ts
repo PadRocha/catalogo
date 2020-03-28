@@ -50,7 +50,7 @@ export class AddKeyComponent implements OnInit {
   }
 
   public ngAfterViewInit(): void {
-    // this._f.denyAlphanumeric(this.line);
+    this._f.onlyAlphanumeric(this.line);
     this._f.event(this.code, 'keypress', e => {
       const theEvent = e || window.event;
       const key = String.fromCharCode(theEvent.keyCode || theEvent.which);
@@ -63,12 +63,6 @@ export class AddKeyComponent implements OnInit {
     });
   }
 
-  public search = (text$: Observable<string>) => text$.pipe(
-    debounceTime(200),
-    distinctUntilChanged(),
-    map(term => term.length < 1 ? [] : this.LineArray.filter(v => v.toLowerCase().startsWith(term.toLocaleLowerCase())).splice(0, 10))
-  );
-
   private getLines = () => this._arrivals.getLines().subscribe(res => {
     if (res.data) {
       let cont = new Array();
@@ -76,6 +70,12 @@ export class AddKeyComponent implements OnInit {
       this.LineArray = cont;
     }
   }, err => console.log(<any>err));
+
+  public search = (text$: Observable<string>) => text$.pipe(
+    debounceTime(200),
+    distinctUntilChanged(),
+    map(term => term.length < 1 ? [] : this.LineArray.filter(v => v.toLowerCase().startsWith(term.toLocaleLowerCase())).splice(0, 10))
+  );
 
   public closeAlert(alert): void {
     alert.classList.add('d-none');

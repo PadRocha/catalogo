@@ -122,7 +122,7 @@ export class HomeComponent implements OnInit {
       }
     });
     let typingTimer;
-    // this._f.denyAlphanumeric(this.search, e => clearTimeout(typingTimer));
+    // this._f.onlyAlphanumeric(this.search, e => clearTimeout(typingTimer));
     this._f.event(this.search, 'keyup', e => {
       clearTimeout(typingTimer);
       typingTimer = setTimeout(() => {
@@ -141,7 +141,7 @@ export class HomeComponent implements OnInit {
         }
       }, 500);
     });
-    // this._f.denyAlphanumeric(this.searchLine, e => clearTimeout(typingTimer));
+    // this._f.onlyAlphanumeric(this.searchLine, e => clearTimeout(typingTimer));
     this._f.event(this.searchLine, 'keyup', e => {
       clearTimeout(typingTimer);
       typingTimer = setTimeout(() => {

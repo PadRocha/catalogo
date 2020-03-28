@@ -110,7 +110,6 @@
             </form>
         </div>
         <div class="col-md-6">
-
             <div *ngIf="Keys.length > 0" class="container">
                 <div class="card text-center">
                     <div class="card-header">
@@ -129,7 +128,7 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="Keys.length < 0" class="container alert alert-dark" role="alert">
+            <div *ngIf="Keys.length == 0" class="container alert alert-dark" role="alert">
                 Ninguna clave ha sido creada por el momento
             </div>
         </div>

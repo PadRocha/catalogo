@@ -46,20 +46,19 @@ export class FunctionsService {
     });
   }
 
-  public denyAlphanumeric(element: any, keypress: Function = () => { }): void {
-    const event = 'keypress';
-    const callbackEvent = e => {
-      const theEvent = e || window.event;
-      const key = String.fromCharCode(theEvent.keyCode || theEvent.which);
-      const regex = /^[A-Za-z0-9\s]+$/;
-      if (!regex.test(key)) {
-        theEvent.returnValue = false;
-        if (theEvent.preventDefault) theEvent.preventDefault();
+  private keypress(event: any, regex: RegExp, keypress: Function = () => Boolean): void {
+    const theEvent = event || window.event;
+    const key = String.fromCharCode(theEvent.keyCode || theEvent.which);
+    if (!regex.test(key)) {
+      theEvent.returnValue = false;
+      if (theEvent.preventDefault) {
+        theEvent.preventDefault();
+        keypress(theEvent, key, theEvent.target.value);
       }
-      keypress(e, theEvent, key);
     }
-    element.nativeElement.attachEvent
-      ? element.nativeElement.attachEvent('on' + event, callbackEvent)
-      : element.nativeElement.addEventListener(event, callbackEvent, !!0);
+  }
+
+  public onlyAlphanumeric(element: any, keypress: Function = () => Boolean): void {
+    this.event(element, 'keypress', e => this.keypress(e, /^[A-Za-z0-9\s]+$/, keypress));
   }
 }
