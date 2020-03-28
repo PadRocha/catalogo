@@ -48,42 +48,24 @@
                     <input #code type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
                         placeholder="Código..." />
                 </div>
-                <div class="form-group">
-                    <div class="pretty p-default p-thick p-pulse">
-                        <input #checkbox type="checkbox" (click)="clickCheckbox(lote)" />
-                        <div class="state p-warning-o">
-                            <label>Por lotes</label>
-                        </div>
+                <div class="form-group input-group col-lg-3">
+                    <div class="col-auto my-1">
+                        <label class="mr-sm-2" for="inlineFormCustomSelect">Inicializar Status</label>
+                        <select #select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                            <option value="" selected>Vacio</option>
+                            <option value="1">Encontrada</option>
+                            <option value="2">Fotografiada</option>
+                            <option value="3">Preditada</option>
+                            <option value="4">Editada</option>
+                            <option value="5">Guardada</option>
+                        </select>
                     </div>
-                </div>
-                <div #lote class="d-none">
-                    <div class="form-group input-group">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Desde</div>
-                        </div>
-                        <input #n1 type="number" class="form-control" (input)="inputNumber()">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">Hasta</div>
-                        </div>
-                        <input #n2 type="number" class="form-control" (input)="inputNumber()">
-                        <div #invalid1 class="invalid-feedback order-last d-none">
-                            Primer campo está vacío
-                        </div>
-                        <div #invalid2 class="invalid-feedback order-last d-none">
-                            El segundo campo debe ser mayor que el primero
-                        </div>
-                    </div>
-                    <div class="form-group col-lg-3">
-                        <div class="col-auto my-1">
-                            <label class="mr-sm-2" for="inlineFormCustomSelect">Inicializar Status</label>
-                            <select #select class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                                <option value="" selected>Vacio</option>
-                                <option value="1">Encontrada</option>
-                                <option value="2">Fotografiada</option>
-                                <option value="3">Preditada</option>
-                                <option value="4">Editada</option>
-                                <option value="5">Guardada</option>
-                            </select>
+                    <div class="form-control">
+                        <div class="pretty p-default p-thick p-pulse">
+                            <input #checkbox type="checkbox" (click)="clickCheckbox(lote)" />
+                            <div class="state p-warning-o">
+                                <label>Por lotes</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -91,6 +73,22 @@
                     <img #wait src="../../../assets/image/wait9.gif" class="d-none" height="37.83" title="Cargando..."
                         alt="Cargando..." style="padding-right: 15px;">
                     <button #submit type="submit" class="btn-info btn">Crear</button>
+                </div>
+                <div #lote class="form-group input-group d-none">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Desde</div>
+                    </div>
+                    <input #n1 type="number" class="form-control" (input)="inputNumber()">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Hasta</div>
+                    </div>
+                    <input #n2 type="number" class="form-control" (input)="inputNumber()">
+                    <div #invalid1 class="invalid-feedback order-last d-none">
+                        Primer campo está vacío
+                    </div>
+                    <div #invalid2 class="invalid-feedback order-last d-none">
+                        El segundo campo debe ser mayor que el primero
+                    </div>
                 </div>
                 <div *ngIf="Errors.length !== 0" class="container err">
                     <div class="card text-center">
@@ -113,7 +111,7 @@
             <div *ngIf="Keys.length > 0" class="container">
                 <div class="card text-center">
                     <div class="card-header">
-                        Featured
+                        Claves creadas
                     </div>
                     <div class="card-body keys">
                         <ul *ngFor="let k of Keys" class="list-group list-group-flush">

@@ -51,14 +51,17 @@ export class FunctionsService {
     const key = String.fromCharCode(theEvent.keyCode || theEvent.which);
     if (!regex.test(key)) {
       theEvent.returnValue = false;
-      if (theEvent.preventDefault) {
+      if (theEvent.preventDefault)
         theEvent.preventDefault();
-        keypress(theEvent, key, theEvent.target.value);
-      }
+      keypress(theEvent, key, theEvent.target.value);
     }
   }
 
   public onlyAlphanumeric(element: any, keypress: Function = () => Boolean): void {
     this.event(element, 'keypress', e => this.keypress(e, /^[A-Za-z0-9\s]+$/, keypress));
+  }
+
+  public onlyNumeric(element: any, keypress: Function = () => Boolean): void {
+    this.event(element, 'keypress', e => this.keypress(e, /^[0-9]+$/, keypress));
   }
 }

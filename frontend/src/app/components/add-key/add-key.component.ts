@@ -54,14 +54,19 @@ export class AddKeyComponent implements OnInit {
     this._f.onlyAlphanumeric(this.code, (e, k) => {
       if (k === ',') e.target.value += ', ';
     });
+    this._f.event(this.line, 'input', e => {
+      const val = e.target.value;
+      if (val.length > 5 && !this.LineArray.includes(val)) this.line.nativeElement.classList.add('is-invalid');
+      else this.line.nativeElement.classList.remove('is-invalid');
+    });
+    this._f.onlyNumeric(this.n1);
+    this._f.event(this.n1, 'keypress', e => e.target.value.length > 3 && e.preventDefault());
+    this._f.onlyNumeric(this.n2);
+    this._f.event(this.n2, 'keypress', e => e.target.value.length > 3 && e.preventDefault());
   }
 
   private getLines = () => this._arrivals.getLines().subscribe(res => {
-    if (res.data) {
-      let cont = new Array();
-      res.data.forEach(e => cont.push(e._id));
-      this.LineArray = cont;
-    }
+    if (res.data) res.data.forEach(e => this.LineArray.push(e._id));
   }, err => console.log(<any>err));
 
   public search = (text$: Observable<string>) => text$.pipe(
@@ -129,25 +134,23 @@ export class AddKeyComponent implements OnInit {
 
   public onSubmitKey(form, wait, submit): void {
     /* , backdrop: 'static', keyboard: false */
-    this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), dismiss => this.resetLineCode(), { size: 'lg' });
-    // let line = this.line.nativeElement.value;
-    // if (this.LineArray.includes(line)) {
-    //   if (!this.checkbox.nativeElement.checked) {
-    //     console.log("AddKeyComponent -> onSubmitKey -> this.Key", this.Key)
-    //     this.line.nativeElement.disabled = true;
-    //     this.code.nativeElement.disabled = true;
-    //     [...new Set(
-    //       this.code.nativeElement.value.split(",").map(l => l.trim()).filter(e => e.length < 5 && "" !== e).map(l => {
-    //         for (let i = (4 - l.length); i > 0; i--) l = '0' + l;
-    //         return l;
-    //       })
-    //     )].forEach((e: String) => this.Key.push(new Key(void 0, e, line, void 0, !!0)));
-    //     if (this.Key.length > 0)
-    //       this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), dismiss => this.resetLineCode(), { size: 'lg' });
-    //   } else {
+    let line = this.line.nativeElement.value;
+    if (this.LineArray.includes(line)) {
+      if (!this.checkbox.nativeElement.checked) {
+        this.line.nativeElement.disabled = true;
+        this.code.nativeElement.disabled = true;
+        [...new Set(
+          this.code.nativeElement.value.split(",").map(l => l.trim()).filter(e => e.length < 5 && "" !== e).map(l => {
+            for (let i = (4 - l.length); i > 0; i--) l = '0' + l;
+            return l;
+          })
+        )].forEach((e: String) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !!0)));
+        if (this.Key.length > 0)
+          this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
+      } else {
 
-    //   }
-    // }
+      }
+    }
   }
 
   public onSubmitDesc(): void {
@@ -163,9 +166,16 @@ export class AddKeyComponent implements OnInit {
           await document.body.classList.remove('waiting');
           await this.Keys.push(ke);
         }, err => {
-          this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error}`);
+          this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error.error}`);
         });
       });
+      this.resetLineCode();
+      this.line.nativeElement.value = '';
+      this.code.nativeElement.value = '';
+      this.checkbox.nativeElement.checked = false;
+      this.n1.nativeElement.value = '';
+      this.n2.nativeElement.value = '';
+      this.select.nativeElement.value = '';
     }
   }
 
