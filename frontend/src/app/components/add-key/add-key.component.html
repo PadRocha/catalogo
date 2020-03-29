@@ -35,7 +35,8 @@
 <main class="container-fluid">
     <div class="row">
         <div class="col-md-6">
-            <form (ngSubmit)="onSubmitKey(keyForm, wait, submit)" #keyForm="ngForm" class="container" novalidate>
+            <form (ngSubmit)="onSubmitKey(keyForm, warning, danger, wait, submit)" #keyForm="ngForm" class="container"
+                novalidate>
                 <h1 class="title">Creación de nuevas claves</h1>
                 <hr>
                 <div class="form-group input-group">
@@ -47,6 +48,18 @@
                         placeholder="Línea..." />
                     <input #code type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
                         placeholder="Código..." />
+                </div>
+                <div #warning class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+                    <button type="button" class="close" aria-label="Close" (click)="closeAlert(warning)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>¡Ten cuidado!</strong> La línea no puede ir en blanco.
+                </div>
+                <div #danger class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+                    <button type="button" class="close" aria-label="Close" (click)="closeAlert(warning)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>¡Oh rayos!</strong> La línea que introdujiste es invalida.
                 </div>
                 <div class="form-group input-group col-lg-3">
                     <div class="col-auto my-1">

@@ -132,25 +132,26 @@ export class AddKeyComponent implements OnInit {
     this.Key = [];
   }
 
-  public onSubmitKey(form, wait, submit): void {
+  public onSubmitKey(form, warning, danger, wait, submit): void {
     /* , backdrop: 'static', keyboard: false */
     let line = this.line.nativeElement.value;
-    if (this.LineArray.includes(line)) {
-      if (!this.checkbox.nativeElement.checked) {
-        this.line.nativeElement.disabled = true;
-        this.code.nativeElement.disabled = true;
-        [...new Set(
-          this.code.nativeElement.value.split(",").map(l => l.trim()).filter(e => e.length < 5 && "" !== e).map(l => {
-            for (let i = (4 - l.length); i > 0; i--) l = '0' + l;
-            return l;
-          })
-        )].forEach((e: String) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !!0)));
-        if (this.Key.length > 0)
-          this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
-      } else {
-
+    if (line) {
+      warning.classList.add('d-none')
+      if (this.LineArray.includes(line)) {
+        if (!this.checkbox.nativeElement.checked) {
+          this.line.nativeElement.disabled = true;
+          this.code.nativeElement.disabled = true;
+          [...new Set(
+            this.code.nativeElement.value.split(",").map(l => l.trim()).filter(e => e.length < 5 && "" !== e).map(l => {
+              for (let i = (4 - l.length); i > 0; i--) l = '0' + l;
+              return l;
+            })
+          )].forEach((e: String) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !!0)));
+          if (this.Key.length > 0)
+            this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
+        } else danger.classList.remove('d-none');
       }
-    }
+    } else warning.classList.remove('d-none');
   }
 
   public onSubmitDesc(): void {
@@ -166,7 +167,7 @@ export class AddKeyComponent implements OnInit {
           await document.body.classList.remove('waiting');
           await this.Keys.push(ke);
         }, err => {
-          this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error.error}`);
+          this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error.message}`);
         });
       });
       this.resetLineCode();

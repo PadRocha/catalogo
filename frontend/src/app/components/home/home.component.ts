@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   private User: User;
   public Keys: Array<Key>;
   private actualKeyPage: Number;
-  private KeyRegex: String = '';
+  private KeyRegex: String;
   private LineSelected: String = '';
   public KeysInfo: any;
   public Lines = [];
@@ -89,8 +89,9 @@ export class HomeComponent implements OnInit {
     private _f: FunctionsService,
     private _modal: ModalService
   ) {
-    this.Keys = new Array();
     this.Image = new Image(undefined, undefined, undefined, undefined);
+    this.Keys = new Array();
+    this.KeyRegex = '';
     this.actualLinePage = 1;
     this.actualKeyPage = 1;
   }
