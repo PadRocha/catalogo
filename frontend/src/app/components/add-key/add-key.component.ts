@@ -23,11 +23,13 @@ export class AddKeyComponent implements OnInit {
   @ViewChild('line') line !: ElementRef;
   @ViewChild('code') code !: ElementRef;
   @ViewChild('checkbox') checkbox: ElementRef;
+  @ViewChild('lote') lote: ElementRef;
   @ViewChild('n1') n1: ElementRef;
   @ViewChild('n2') n2: ElementRef;
   @ViewChild('invalid1') invalid1: ElementRef;
   @ViewChild('invalid2') invalid2: ElementRef;
   @ViewChild('select') select: ElementRef;
+  @ViewChild('wait') wait: ElementRef;
   @ViewChild('descModal') descModal: ElementRef;
 
 
@@ -129,15 +131,29 @@ export class AddKeyComponent implements OnInit {
   public resetLineCode(): void {
     this.line.nativeElement.disabled = false;
     this.code.nativeElement.disabled = false;
-    this.Key = [];
+    this.Key = new Array();
+    this.wait.nativeElement.classList.add('d-none');
   }
 
-  public onSubmitKey(form, warning, danger, wait, submit): void {
+  public resetForm(): void {
+    this.resetLineCode();
+    this.line.nativeElement.value = '';
+    this.code.nativeElement.value = '';
+    this.checkbox.nativeElement.checked = false;
+    this.n1.nativeElement.value = '';
+    this.n2.nativeElement.value = '';
+    this.select.nativeElement.value = '';
+    this.lote.nativeElement.classList.add('d-none');
+  }
+
+  public onSubmitKey(form, warning, warning2, danger, submit): void {
     /* , backdrop: 'static', keyboard: false */
+    this.wait.nativeElement.classList.remove('d-none');
     let line = this.line.nativeElement.value;
     if (line) {
       warning.classList.add('d-none')
       if (this.LineArray.includes(line)) {
+        danger.classList.add('d-none');
         if (!this.checkbox.nativeElement.checked) {
           this.line.nativeElement.disabled = true;
           this.code.nativeElement.disabled = true;
@@ -149,8 +165,21 @@ export class AddKeyComponent implements OnInit {
           )].forEach((e: String) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !!0)));
           if (this.Key.length > 0)
             this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
-        } else danger.classList.remove('d-none');
-      }
+        } else {
+          let n1 = Number(this.n1.nativeElement.value);
+          let n2 = Number(this.n2.nativeElement.value);
+          if (n1 > 0 && n2 > 0 && n1 < n2 && n2 < 9999) {
+
+            for (let i: any = n1; i <= n2; i++) {
+              i = i.toString();
+              for (let j = (4 - i.length); j > 0; j--) i = '0' + i;
+              this.Key.push(new Key(void 0, i, line, void 0, void 0, !!0));
+            }
+            if (this.Key.length > 0)
+              this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
+          } else warning2.classList.remove('d-none');
+        }
+      } else danger.classList.remove('d-none');
     } else warning.classList.remove('d-none');
   }
 
@@ -159,24 +188,24 @@ export class AddKeyComponent implements OnInit {
     this.Key = this.Key.filter(e => !1 === e.config);
     this.Key.forEach(e => e.desc || (valid = !1));
     if (valid) {
-      this.Key.map(e => (delete e.config, e)).forEach((k: Key) => {
+      this.Key.map(e => (delete e.config, e)).forEach((k: Key, index, array) => {
         document.body.classList.add('waiting');
         this.currentModal.close();
         this._shipping.sendKey(k).subscribe(async res => {
           let ke: Key = res.data;
           await document.body.classList.remove('waiting');
           await this.Keys.push(ke);
-        }, err => {
+          if (index === await array.length - 1) {
+            await this.resetForm();
+          }
+        }, async err => {
+          if (index === await array.length - 1) {
+            await this.resetForm();
+          }
           this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error.message}`);
         });
       });
-      this.resetLineCode();
-      this.line.nativeElement.value = '';
-      this.code.nativeElement.value = '';
-      this.checkbox.nativeElement.checked = false;
-      this.n1.nativeElement.value = '';
-      this.n2.nativeElement.value = '';
-      this.select.nativeElement.value = '';
+
     }
   }
 

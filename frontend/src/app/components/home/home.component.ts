@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit {
     private _f: FunctionsService,
     private _modal: ModalService
   ) {
-    this.Image = new Image(undefined, undefined, undefined, undefined);
+    this.Image = new Image(void 0, void 0, void 0, void 0);
     this.Keys = new Array();
     this.KeyRegex = '';
     this.LineSelected = '';

@@ -3,6 +3,23 @@ main {
 }
 
 .keys {
-  height: 80vh;
+  height: 75vh;
   overflow: auto;
+}
+
+.err {
+  color: #fff;
+  .card-header {
+    background-color: rgb(165, 0, 0);
+  }
+
+  .card-body {
+    background-color: #000;
+    height: 38vh;
+    overflow: auto;
+
+    ul li {
+      background-color: inherit;
+    }
+  }
 }

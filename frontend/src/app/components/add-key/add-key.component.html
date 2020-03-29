@@ -35,8 +35,8 @@
 <main class="container-fluid">
     <div class="row">
         <div class="col-md-6">
-            <form (ngSubmit)="onSubmitKey(keyForm, warning, danger, wait, submit)" #keyForm="ngForm" class="container"
-                novalidate>
+            <form (ngSubmit)="onSubmitKey(keyForm, warning, warning2, danger, submit)" #keyForm="ngForm"
+                class="container" novalidate>
                 <h1 class="title">Creación de nuevas claves</h1>
                 <hr>
                 <div class="form-group input-group">
@@ -103,6 +103,12 @@
                         El segundo campo debe ser mayor que el primero
                     </div>
                 </div>
+                <div #warning2 class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+                    <button type="button" class="close" aria-label="Close" (click)="closeAlert(warning)">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>¡Ten cuidado!</strong> Uno de los dos campos anteriores está vacío.
+                </div>
                 <div *ngIf="Errors.length !== 0" class="container err">
                     <div class="card text-center">
                         <div class="card-header">
@@ -114,7 +120,7 @@
                             </ul>
                         </div>
                         <div class="card-footer text-muted">
-                            2 days ago
+                            Total de {{Errors.length}} errores originados
                         </div>
                     </div>
                 </div>
@@ -129,8 +135,8 @@
                     <div class="card-body keys">
                         <ul *ngFor="let k of Keys" class="list-group list-group-flush">
                             <li class="list-group-item">
-                                {{k.line + k.code}}
-                                {{k.desc}}
+                                <span style="color: purple;">Clave:</span> {{k.line + k.code}}
+                                <span style="color:red;">Descripción:</span> {{k.desc}}
                             </li>
                         </ul>
                     </div>
