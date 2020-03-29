@@ -279,7 +279,6 @@ main {
     .show {
       display: block;
       background-color: rgb(255, 0, 0);
-      cursor: no-drop;
 
       &:hover {
         background-color: rgb(145, 0, 0);
@@ -426,7 +425,6 @@ main {
     background-color: rgb(138, 0, 0);
     border-radius: 0px 0px 15px 15px;
     text-align: center;
-    cursor: no-drop;
 
     td {
       font-size: 23px;

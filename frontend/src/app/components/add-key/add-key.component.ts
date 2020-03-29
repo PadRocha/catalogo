@@ -29,7 +29,6 @@ export class AddKeyComponent implements OnInit {
   @ViewChild('invalid1') invalid1: ElementRef;
   @ViewChild('invalid2') invalid2: ElementRef;
   @ViewChild('select') select: ElementRef;
-  @ViewChild('wait') wait: ElementRef;
   @ViewChild('descModal') descModal: ElementRef;
 
 
@@ -132,11 +131,11 @@ export class AddKeyComponent implements OnInit {
     this.line.nativeElement.disabled = false;
     this.code.nativeElement.disabled = false;
     this.Key = new Array();
-    this.wait.nativeElement.classList.add('d-none');
   }
 
   public resetForm(): void {
     this.resetLineCode();
+    this.currentModal.close();
     this.line.nativeElement.value = '';
     this.code.nativeElement.value = '';
     this.checkbox.nativeElement.checked = false;
@@ -148,9 +147,8 @@ export class AddKeyComponent implements OnInit {
 
   public onSubmitKey(form, warning, warning2, danger, submit): void {
     /* , backdrop: 'static', keyboard: false */
-    this.wait.nativeElement.classList.remove('d-none');
     let line = this.line.nativeElement.value;
-    if (line) {
+    if (line !== '') {
       warning.classList.add('d-none')
       if (this.LineArray.includes(line)) {
         danger.classList.add('d-none');
@@ -169,7 +167,6 @@ export class AddKeyComponent implements OnInit {
           let n1 = Number(this.n1.nativeElement.value);
           let n2 = Number(this.n2.nativeElement.value);
           if (n1 > 0 && n2 > 0 && n1 < n2 && n2 < 9999) {
-
             for (let i: any = n1; i <= n2; i++) {
               i = i.toString();
               for (let j = (4 - i.length); j > 0; j--) i = '0' + i;
@@ -184,22 +181,22 @@ export class AddKeyComponent implements OnInit {
   }
 
   public onSubmitDesc(): void {
+    document.body.classList.add('wait');
     let valid: Boolean = true;
     this.Key = this.Key.filter(e => !1 === e.config);
     this.Key.forEach(e => e.desc || (valid = !1));
     if (valid) {
       this.Key.map(e => (delete e.config, e)).forEach((k: Key, index, array) => {
-        document.body.classList.add('waiting');
-        this.currentModal.close();
         this._shipping.sendKey(k).subscribe(async res => {
           let ke: Key = res.data;
-          await document.body.classList.remove('waiting');
           await this.Keys.push(ke);
           if (index === await array.length - 1) {
             await this.resetForm();
+            await document.body.classList.remove('wait');
           }
         }, async err => {
           if (index === await array.length - 1) {
+            await document.body.classList.remove('wait');
             await this.resetForm();
           }
           this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error.message}`);

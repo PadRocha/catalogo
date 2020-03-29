@@ -187,9 +187,11 @@ export class HomeComponent implements OnInit {
   });
 
   private getKeys(): void {
+    document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysPage(this.actualKeyPage).subscribe(async res => {
       await this.waitKey.nativeElement.classList.add('d-none');
+      await document.body.classList.remove('wait');
       if (res.data) this.Keys = this.Keys.concat(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
@@ -208,9 +210,11 @@ export class HomeComponent implements OnInit {
   }, err => console.log(<any>err));
 
   private getKeyLineSelected(_id: String): void {
+    document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysLinePage(_id, this.actualKeyPage).subscribe(async res => {
       await this.waitKey.nativeElement.classList.add('d-none');
+      await document.body.classList.remove('wait');
       if (res.data.docs) this.Keys = this.Keys.concat(res.data.docs);
       this.LineSelected = _id;
       this.search.nativeElement.value = _id;
@@ -220,9 +224,10 @@ export class HomeComponent implements OnInit {
   }
 
   private getKeyRegex(regex: String): void {
+    document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysRegexPage(regex, this.actualKeyPage).subscribe(async res => {
-      // console.log("HomeComponent -> getKeyRegex -> res", res)
+      await document.body.classList.remove('wait');
       await this.waitKey.nativeElement.classList.add('d-none');
       if (res.data) {
         this.Keys = this.Keys.concat(res.data.docs);
@@ -236,9 +241,11 @@ export class HomeComponent implements OnInit {
   }
 
   private getLines(): void {
+    document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
     this._arrivals.getLinesPage(this.actualLinePage).subscribe(async res => {
       await this.waitLine.nativeElement.classList.add('d-none');
+      await document.body.classList.remove('wait');
       if (res.data) this.Lines = this.Lines.concat(res.data.docs);
       delete res.data.docs;
       this.LinesInfo = res.data;
@@ -246,8 +253,10 @@ export class HomeComponent implements OnInit {
   }
 
   private getLinesRegex(regex: String): void {
+    document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
     this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(async res => {
+      await document.body.classList.remove('wait');
       await this.waitLine.nativeElement.classList.add('d-none');
       if (res.data) this.Lines = this.Lines.concat(res.data.docs);
       if (res.data.docs.length === 0) this.ifExistLine.nativeElement.className = 'show';
@@ -290,9 +299,11 @@ export class HomeComponent implements OnInit {
 
   public changeSelect(select, _id): void {
     if ((this.nBeforeImage === '' || select.value !== '') && select.value !== '5') {
+      document.body.classList.add('wait');
       this.Image.idN = Number(select.name);
       this.Image.status = Number(select.value);
-      this._exchanges.updateStatus(_id, this.Image).subscribe(res => {
+      this._exchanges.updateStatus(_id, this.Image).subscribe(async res => {
+        await document.body.classList.remove('wait');
         if (select.value === '5') select.disabled = true;
         const color = select.options[select.selectedIndex].className;
         select.className = 'form-control btn-sm ' + color;
@@ -302,16 +313,22 @@ export class HomeComponent implements OnInit {
         alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
         this.nBeforeImage = select.value;
       }, err => {
+        document.body.classList.remove('wait');
         alertify.error('Error Status<br/>[reload]');
       });
-    } else if (select.value !== '5') this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(res => {
-      let c: any = this.nBeforeClass;
-      --this.KeysInfo.status[c];
-      select.className = 'form-control btn-sm white';
-      alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${_id}`);
-    }, err => {
-      alertify.error('Error Status<br/>[reload]');
-    });
+    } else if (select.value !== '5') {
+      document.body.classList.add('wait');
+      this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(async res => {
+        await document.body.classList.remove('wait');
+        let c: any = this.nBeforeClass;
+        --this.KeysInfo.status[c];
+        select.className = 'form-control btn-sm white';
+        alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${_id}`);
+      }, err => {
+        document.body.classList.remove('wait');
+        alertify.error('Error Status<br/>[reload]');
+      });
+    }
     select.blur();
   }
 
@@ -411,11 +428,13 @@ export class HomeComponent implements OnInit {
     const idN = Number(this.currentHTML.name);
     if (!file) warning.classList.remove('d-none');
     else {
+      document.body.classList.add('wait');
       let fd: any = new FormData();
       fd.append('idN', idN);
       fd.append('image', file, file.name);
       submit.disabled = true;
       this._shippings.updateImage(this.idKey, fd).subscribe(async res => {
+        await document.body.classList.remove('wait');
         await success.classList.remove('d-none');
         this.setPercentage(true);
         warning.classList.add('d-none');
@@ -427,6 +446,7 @@ export class HomeComponent implements OnInit {
         this.currentHTML.className = 'form-control btn-sm green';
         ++this.KeysInfo.status.green;
       }, err => {
+        document.body.classList.remove('wait');
         submit.disabled = false;
         danger.classList.remove('d-none');
       });
@@ -470,7 +490,9 @@ export class HomeComponent implements OnInit {
     let _id = this.idKey;
     let idN = this.imageId;
     let code = this.codeImageModal;
+    document.body.classList.add('wait');
     this._exchanges.deleteImage(_id, idN).subscribe(async res => {
+      await document.body.classList.remove('wait');
       let cont = new Array();
       await res.data['image'].forEach(e => {
         if (e.status == 5) cont.push(e);
@@ -487,6 +509,7 @@ export class HomeComponent implements OnInit {
       select.disabled = false;
       alertify.success(`${code} [id: ${idN}]<br/>[Eliminada con éxito]`);
     }, err => {
+      document.body.classList.remove('wait');
       alertify.error(`${code} [id: ${idN}]<br/>[Error]`);
     });
   }
@@ -496,7 +519,9 @@ export class HomeComponent implements OnInit {
   }
 
   public confirmDeleteKey(): void {
+    document.body.classList.add('wait');
     this._exchanges.deleteKey(this.idKey).subscribe(async res => {
+      await document.body.classList.remove('wait');
       let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
       await select.remove();
       this.lowPercentage(
@@ -507,6 +532,7 @@ export class HomeComponent implements OnInit {
       alertify.success(`${res.data.line + res.data.code}<br/>[Removido con éxito]`);
       this.currentModal.close();
     }, err => {
+      document.body.classList.remove('wait');
       alertify.error(`${this.idKey}<br/> [Error]`);
     });
   }
