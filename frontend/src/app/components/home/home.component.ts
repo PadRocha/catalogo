@@ -11,6 +11,7 @@ import { Image } from 'src/app/models/image';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FunctionsService } from 'src/app/services/functions.service';
 import { Key } from 'src/app/models/key';
+import { Line } from 'src/app/models/line';
 
 declare const alertify: any;
 
@@ -24,11 +25,11 @@ export class HomeComponent implements OnInit {
   public Keys: Array<Key>;
   private actualKeyPage: Number;
   private KeyRegex: String;
-  private LineSelected: String = '';
+  private LineSelected: String;
   public KeysInfo: any;
-  public Lines = [];
+  public Lines: Array<Line>;
   private actualLinePage: Number;
-  private LineRegex: Boolean = false;
+  private LineRegex: Boolean;
   public LinesInfo: any;
   public imagePath: any;
   public imageSrc: String | ArrayBuffer;
@@ -41,10 +42,10 @@ export class HomeComponent implements OnInit {
   public codeImageModal: String;
   public showImage: Array<Image>;
   private currentHTML: any;
-  public resimageModal: Boolean = false;
+  public resimageModal: Boolean;
   public imageId: Number;
   private currentModal: any;
-  private showSearched: Boolean = false;
+  private showSearched: Boolean;
   private confirmModalService: any;
   @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
@@ -92,8 +93,13 @@ export class HomeComponent implements OnInit {
     this.Image = new Image(undefined, undefined, undefined, undefined);
     this.Keys = new Array();
     this.KeyRegex = '';
+    this.LineSelected = '';
     this.actualLinePage = 1;
+    this.Lines = new Array();
     this.actualKeyPage = 1;
+    this.LineRegex = false;
+    this.resimageModal = false;
+    this.showSearched = false;
   }
 
   public ngOnInit(): void {
@@ -110,7 +116,7 @@ export class HomeComponent implements OnInit {
   public ngAfterViewInit(): void {
     this._f.event(this.every, 'click', e => {
       this.actualKeyPage = 1;
-      this.Keys = [];
+      this.Keys = new Array();
       this.LineSelected = '';
       this.search.nativeElement.value = '';
       this.getKeys();
@@ -131,13 +137,13 @@ export class HomeComponent implements OnInit {
         const regex = e.target.value;
         if (regex !== '') {
           this.actualKeyPage = 1;
-          this.Keys = [];
+          this.Keys = new Array();
           this.KeyRegex = '';
           this.getKeyRegex(regex);
         } else {
           this.ifExistKey.nativeElement.className = 'd-none';
           this.actualKeyPage = 1;
-          this.Keys = [];
+          this.Keys = new Array();
           this.KeyRegex = '';
           this.getKeys();
         }
@@ -150,13 +156,13 @@ export class HomeComponent implements OnInit {
         const regex = e.target.value;
         if (regex !== '') {
           this.actualLinePage = 1;
-          this.Lines = [];
+          this.Lines = new Array();
           this.LineRegex = true;
           this.getLinesRegex(regex);
         } else {
           this.ifExistLine.nativeElement.className = 'd-none';
           this.actualLinePage = 1;
-          this.Lines = [];
+          this.Lines = new Array();
           this.LineRegex = false;
           this.getLines();
         }
@@ -334,7 +340,7 @@ export class HomeComponent implements OnInit {
 
   public clickLine(line): void {
     this.actualKeyPage = 1;
-    this.Keys = [];
+    this.Keys = new Array();
     this.getKeyLineSelected(line)
   }
 
@@ -416,6 +422,8 @@ export class HomeComponent implements OnInit {
         danger.classList.add('d-none');
         this.currentHTML.disabled = true;
         this.resimageModal = true;
+        let c: any = this.nBeforeClass;
+        --this.KeysInfo.status[c];
         this.currentHTML.className = 'form-control btn-sm green';
         ++this.KeysInfo.status.green;
       }, err => {
