@@ -15,6 +15,7 @@ const userController = {
         newUser.save((err, userStored) => {
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!userStored) return res.status(204).send({ message: 'User No Content' });
+            delete userStored.password;
             return res.status(200).send({ token: jwt.createToken(userStored) });
         });
     },
@@ -25,15 +26,16 @@ const userController = {
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!user) return res.status(404).send({ message: 'User Not Found' });
             if (!user.comparePassword(userData.password)) return res.status(401).send({ message: 'Unauthorized' });
-            else return res.status(200).send({ token: jwt.createToken(user) });
+            else {
+                delete user.password;
+                return res.status(200).send({ token: jwt.createToken(user) });
+            }
         });
     },
     returnUser(req, res) {
         if (!req.headers.authorization) return res.status(403).send({ message: 'Forbidden' });
         const token = req.headers.authorization.replace(/['"]+/g, '').split(' ')[1];
-
         if (token === 'null') return res.status(403).send({ message: 'Forbidden' });
-
         try {
             var payload = jsonwebtoken.verify(token, process.env.SECRET_KEY);
             delete payload.iat;

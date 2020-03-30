@@ -17,6 +17,6 @@ mongoose.connect(URI, {
     useFindAndModify: false,
     useUnifiedTopology: true
 }, err => {
-    if (err) console.log('Error > ', err);
-    else console.log('DB Connected');
+    if (err) console.error('Error > ', err);
+    else console.info('DB Connected');
 }, { config: { autoIndex: false } });

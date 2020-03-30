@@ -195,7 +195,7 @@ export class HomeComponent implements OnInit {
       if (res.data) this.Keys = this.Keys.concat(res.data.docs);
       delete res.data.docs;
       this.KeysInfo = res.data;
-    }, err => console.log(<any>err));
+    }, err => console.error(<any>err));
   }
 
   private getKeyCode = (id: String) => this._arrivals.getKey(id).subscribe(async res => {
@@ -207,7 +207,7 @@ export class HomeComponent implements OnInit {
       });
       this.showImage = await cont.filter(() => { return true });
     }
-  }, err => console.log(<any>err));
+  }, err => console.error(<any>err));
 
   private getKeyLineSelected(_id: String): void {
     document.body.classList.add('wait');
@@ -220,7 +220,7 @@ export class HomeComponent implements OnInit {
       this.search.nativeElement.value = _id;
       delete res.data.docs;
       this.KeysInfo = res.data;
-    }, err => console.log(<any>err));
+    }, err => console.error(<any>err));
   }
 
   private getKeyRegex(regex: String): void {
@@ -237,7 +237,7 @@ export class HomeComponent implements OnInit {
       }
       delete res.data.docs;
       this.KeysInfo = res.data;
-    }, err => console.log(<any>err));
+    }, err => console.error(<any>err));
   }
 
   private getLines(): void {
@@ -249,7 +249,7 @@ export class HomeComponent implements OnInit {
       if (res.data) this.Lines = this.Lines.concat(res.data.docs);
       delete res.data.docs;
       this.LinesInfo = res.data;
-    }, err => console.log(<any>err));
+    }, err => console.error(<any>err));
   }
 
   private getLinesRegex(regex: String): void {
@@ -263,7 +263,7 @@ export class HomeComponent implements OnInit {
       else this.ifExistLine.nativeElement.className = 'd-none';
       delete res.data.docs;
       this.LinesInfo = res.data;
-    }, err => console.log(<any>err));
+    }, err => console.error(<any>err));
   }
 
   /*------------------------------------------------------------------*/

@@ -68,7 +68,6 @@ const lineController = {
         if (!req.params.page) return res.status(400).send({ message: 'Bad Request' });
         const pag = Number(req.params.page);
         Line.paginate({}, { page: pag, limit: perPage, sort: '_id' }, async (err, line) => {
-            console.log("listLineTotalKeyPage -> err", err)
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!line) return res.status(404).send({ message: 'Line Not Found' });
             const data = line;

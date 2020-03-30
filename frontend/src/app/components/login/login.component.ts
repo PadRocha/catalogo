@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
       },
       err => {
         this.status = false;
-        // console.log(<any>err);
+        // console.error(<any>err);
       }
     );
   }
