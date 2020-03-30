@@ -145,7 +145,7 @@ export class AddKeyComponent implements OnInit {
     this.lote.nativeElement.classList.add('d-none');
   }
 
-  public onSubmitKey(form, warning, warning2, danger, submit): void {
+  public onSubmitKey(warning, warning2, danger): void {
     /* , backdrop: 'static', keyboard: false */
     let line = this.line.nativeElement.value;
     if (line !== '') {

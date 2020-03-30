@@ -49,6 +49,18 @@ router.route('/line/regex/:id')
 router.route('/line/regex/:id/page/:page')
     .get(lineController.listLineRegexPage);
 
+router.route('/line/total/key')
+    .get(lineController.listLineTotalKey);
+
+router.route('/line/total/key/page/:page')
+    .get(lineController.listLineTotalKeyPage);
+
+router.route('/line/total/key/regex/:id')
+    .get(lineController.listLineTotalKeyRegex);
+
+router.route('/line/total/key/regex/:id/page/:page')
+    .get(lineController.listLineTotalKeyRegexPage);
+
 /*------------------------------------------------------------------*/
 // Key routes
 /*------------------------------------------------------------------*/

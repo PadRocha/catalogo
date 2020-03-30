@@ -17,13 +17,24 @@ cloudinary.config({
     api_secret: process.env.C_SECRET
 });
 
+function totalKey(line) {
+    return new Promise(resolve => {
+        Key.countDocuments({ 'line': line._id }, async (err, countKeys) => {
+            resolve({
+                _id: line._id,
+                name: line.name,
+                started: line.started,
+                countKeys
+            });
+        })
+    });
+}
 
 const lineController = {
     saveLine(req, res) {
         if (!req.body) return res.status(400).send({ message: 'Bad Request' });
         const newLine = new Line(req.body);
         newLine.save((err, lineStored) => {
-            console.log("saveLine -> err", err)
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!lineStored) return res.status(204).send({ message: 'Line No Content' });
             return res.status(200).send({ data: lineStored });
@@ -36,6 +47,14 @@ const lineController = {
             return res.status(200).send({ data: line });
         });
     },
+    listLineTotalKey(req, res) {
+        Line.find({}).sort('_id').exec(async (err, line) => {
+            if (err) return res.status(500).send({ message: 'Internal Server message' });
+            if (!line) return res.status(404).send({ message: 'Line Not Found' });
+            const data = await Promise.all(line.map(l => totalKey(l)))
+            return res.status(200).send({ data });
+        });
+    },
     listLinePage(req, res) {
         if (!req.params.page) return res.status(400).send({ message: 'Bad Request' });
         const pag = Number(req.params.page);
@@ -45,22 +64,55 @@ const lineController = {
             return res.status(200).send({ data: line });
         });
     },
+    listLineTotalKeyPage(req, res) {
+        if (!req.params.page) return res.status(400).send({ message: 'Bad Request' });
+        const pag = Number(req.params.page);
+        Line.paginate({}, { page: pag, limit: perPage, sort: '_id' }, async (err, line) => {
+            console.log("listLineTotalKeyPage -> err", err)
+            if (err) return res.status(500).send({ message: 'Internal Server message' });
+            if (!line) return res.status(404).send({ message: 'Line Not Found' });
+            const data = line;
+            data.docs = await Promise.all(line.docs.map(l => totalKey(l)))
+            return res.status(200).send({ data });
+        });
+    },
     listLineRegex(req, res) {
         if (!req.params.id) return res.status(400).send({ message: 'Bad Request' });
-        Line.find({ '_id': { $regex: req.params.id, $options: 'i' } }).sort('_id').exec((err, line) => {
+        Line.find({ '_id': { $regex: '^' + req.params.id, $options: 'i' } }).sort('_id').exec((err, line) => {
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!line) return res.status(404).send({ message: 'Line Not Found' });
             return res.status(200).send({ data: line });
         });
     },
+    listLineTotalKeyRegex(req, res) {
+        if (!req.params.id) return res.status(400).send({ message: 'Bad Request' });
+        Line.find({ '_id': { $regex: '^' + req.params.id, $options: 'i' } }).sort('_id').exec(async (err, line) => {
+            if (err) return res.status(500).send({ message: 'Internal Server message' });
+            if (!line) return res.status(404).send({ message: 'Line Not Found' });
+            const data = await Promise.all(line.map(l => totalKey(l)))
+            return res.status(200).send({ data });
+        });
+    },
     listLineRegexPage(req, res) {
         if (!req.params.id && !req.params.page) return res.status(400).send({ message: 'Bad Request' });
         const pag = Number(req.params.page);
-        Line.paginate({ '_id': { $regex: req.params.id, $options: 'i' } }, { page: pag, limit: perPage, sort: '_id' },
+        Line.paginate({ '_id': { $regex: '^' + req.params.id, $options: 'i' } }, { page: pag, limit: perPage, sort: '_id' },
             (err, line) => {
                 if (err) return res.status(500).send({ message: 'Internal Server message' });
                 if (!line) return res.status(404).send({ message: 'Line Not Found' });
                 return res.status(200).send({ data: line });
+            });
+    },
+    listLineTotalKeyRegexPage(req, res) {
+        if (!req.params.id && !req.params.page) return res.status(400).send({ message: 'Bad Request' });
+        const pag = Number(req.params.page);
+        Line.paginate({ '_id': { $regex: '^' + req.params.id, $options: 'i' } }, { page: pag, limit: perPage, sort: '_id' },
+            async (err, line) => {
+                if (err) return res.status(500).send({ message: 'Internal Server message' });
+                if (!line) return res.status(404).send({ message: 'Line Not Found' });
+                const data = line;
+                data.docs = await Promise.all(line.docs.map(l => totalKey(l)))
+                return res.status(200).send({ data });
             });
     },
     getLine(req, res) {
@@ -105,7 +157,7 @@ const lineController = {
         Line.findByIdAndDelete(req.params.id, (err, lineDeleted) => {
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!lineDeleted) return res.status(404).send({ message: 'Line Not Found' });
-            let keyImage = [];
+            let keyImage = new Array();
             Key.find({ 'line': lineDeleted._id }).select('image -_id').exec((err, lineDeleted) => {
                 if (err) return res.status(500).send({ message: 'Key Internal Server message' });
                 if (lineDeleted) keyImage = lineDeleted;

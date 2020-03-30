@@ -171,8 +171,8 @@
 </nav>
 <nav class="menu-right" infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollLine(searchLine)"
     [scrollWindow]="false">
-    <input #searchLine type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
-        placeholder="Linea...">
+    <input #searchLine type="search" class="form-control" oninput="this.value = this.value.toUpperCase()"
+        autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Linea...">
     <span class="container">Total: {{LinesInfo.totalDocs}}</span>
     <ul class="search-results">
         <li #every>Todas</li>
@@ -193,7 +193,7 @@
                 <th width="240">
                     <span #icon class="icon"><i class="fa fa-search"></i></span>
                     <input #search type="search" id="search" oninput="this.value = this.value.toUpperCase()"
-                        placeholder="Search..." />
+                        autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Search..." />
                 </th>
                 <th width="150">Σ [{{KeysInfo.totalDocs | number}}]</th>
                 <th width="120"><i class="fas fa-file-image"></i> [{{KeysInfo.percentage.toFixed(2)}}%]</th>

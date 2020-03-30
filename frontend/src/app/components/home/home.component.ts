@@ -306,10 +306,10 @@ export class HomeComponent implements OnInit {
         await document.body.classList.remove('wait');
         if (select.value === '5') select.disabled = true;
         const color = select.options[select.selectedIndex].className;
-        select.className = 'form-control btn-sm ' + color;
-        ++this.KeysInfo.status[color];
         let c: any = this.nBeforeClass;
         if (this.nBeforeImage !== '') --this.KeysInfo.status[c];
+        select.className = 'form-control btn-sm ' + color;
+        ++this.KeysInfo.status[color];
         alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${_id}`);
         this.nBeforeImage = select.value;
       }, err => {

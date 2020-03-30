@@ -35,9 +35,10 @@ function infoStatus(query) {
                     }
                 });
                 for (let i of image) if (5 === i.status) { ++percentage; break }
-            }), resolve([status, 100 * percentage / key.length])
-        })
-    })
+            });
+            resolve([status, 100 * percentage / key.length])
+        });
+    });
 }
 
 const keyController = {
@@ -79,8 +80,8 @@ const keyController = {
         if (!req.params.id) return res.status(400).send({ message: 'Bad Request' });
         const id = req.params.id;
         let findKey = id.length < 7
-            ? Key.find({ 'line': { $regex: id, $options: 'i' } })
-            : Key.find({ 'line': id.slice(0, 6), 'code': { $regex: id.slice(6), $options: 'i' } });
+            ? Key.find({ 'line': { $regex: '^' + id, $options: 'i' } })
+            : Key.find({ 'line': id.slice(0, 6), 'code': { $regex: '^' + id.slice(6), $options: 'i' } });
         findKey.sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!key) return res.status(404).send({ message: 'Key Not Found' });
@@ -92,8 +93,8 @@ const keyController = {
         const id = req.params.id;
         const pag = Number(req.params.page);
         let query = id.length < 7
-            ? { 'line': { $regex: id, $options: 'i' } }
-            : { 'line': id.slice(0, 6), 'code': { $regex: id.slice(6), $options: 'i' } };
+            ? { 'line': { $regex: '^' + id, $options: 'i' } }
+            : { 'line': id.slice(0, 6), 'code': { $regex: '^' + id.slice(6), $options: 'i' } };
         Key.paginate(query, { page: pag, limit: perPage, sort: { 'line': 1, 'code': 1 } }, async (err, key) => {
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!key) return res.status(404).send({ message: 'Key Not Found' });

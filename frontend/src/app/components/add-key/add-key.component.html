@@ -10,7 +10,8 @@
                         {{k.line + k.code}}
                     </div>
                 </div>
-                <input type="text" class="form-control" name="desc" #desc="ngModel" [(ngModel)]="k.desc" required />
+                <input type="text" class="form-control" name="desc" #desc="ngModel" [(ngModel)]="k.desc"
+                    autocomplete="off" spellcheck="false" autocorrect="off" required />
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <div class="pretty p-icon p-toggle">
@@ -35,19 +36,18 @@
 <main class="container-fluid">
     <div class="row">
         <div class="col-md-6">
-            <form (ngSubmit)="onSubmitKey(keyForm, warning, warning2, danger, submit)" #keyForm="ngForm"
-                class="container" novalidate>
+            <form (ngSubmit)="onSubmitKey(warning, warning2, danger)" #keyForm="ngForm" class="container" novalidate>
                 <h1 class="title">Creación de nuevas claves</h1>
                 <hr>
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <div class="input-group-text">Clave</div>
                     </div>
-                    <input #line type="text" class="form-control col-3" maxlength="6"
-                        oninput="this.value = this.value.toUpperCase()" [ngbTypeahead]="search"
-                        placeholder="Línea..." />
+                    <input #line type="text" class="form-control col-3" maxlength="6" autocomplete="off"
+                        spellcheck="false" autocorrect="off" oninput="this.value = this.value.toUpperCase()"
+                        [ngbTypeahead]="search" placeholder="Línea..." />
                     <input #code type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
-                        placeholder="Código..." />
+                        autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Código..." />
                 </div>
                 <div #warning class="alert alert-warning alert-dismissible fade show d-none" role="alert">
                     <button type="button" class="close" aria-label="Close" (click)="closeAlert(warning)">
@@ -83,7 +83,7 @@
                     </div>
                 </div>
                 <div class="form-group text-right">
-                    <button #submit type="submit" class="btn-info btn">Crear</button>
+                    <button type="submit" class="btn-info btn">Crear</button>
                 </div>
                 <div #lote class="form-group input-group d-none">
                     <div class="input-group-prepend">
