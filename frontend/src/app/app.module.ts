@@ -19,6 +19,9 @@ import { HomeComponent } from './components/home/home.component';
 import { EditImageComponent } from './components/edit-image/edit-image.component';
 import { ChatComponent } from './components/chat/chat.component';
 import { AddKeyComponent } from './components/add-key/add-key.component';
+import { AddLineComponent } from './components/add-line/add-line.component';
+import { EditKeyComponent } from './components/edit-key/edit-key.component';
+import { EditLineComponent } from './components/edit-line/edit-line.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   observer: true,
@@ -37,7 +40,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     HomeComponent,
     EditImageComponent,
     ChatComponent,
-    AddKeyComponent
+    AddKeyComponent,
+    AddLineComponent,
+    EditKeyComponent,
+    EditLineComponent
   ],
   imports: [
     BrowserModule,

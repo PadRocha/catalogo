@@ -21,6 +21,9 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { AddKeyComponent } from './components/add-key/add-key.component';
 import { EditImageComponent } from './components/edit-image/edit-image.component';
+import { AddLineComponent } from './components/add-line/add-line.component';
+import { EditKeyComponent } from './components/edit-key/edit-key.component';
+import { EditLineComponent } from './components/edit-line/edit-line.component';
 
 /*------------------------------------------------------------------*/
 // Array de Rutas
@@ -32,7 +35,14 @@ const app: Routes = [
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'home/:line', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'key', component: AddKeyComponent, canActivate: [AuthGuard] },
-    { path: 'edit', component: EditImageComponent, canActivate: [AuthGuard] },
+    { path: 'line', component: AddLineComponent, canActivate: [AuthGuard] },
+    {
+        path: 'edit', children: [
+            { path: 'key', component: EditKeyComponent, canActivate: [AuthGuard] },
+            { path: 'line', component: EditLineComponent, canActivate: [AuthGuard] },
+            { path: 'image', component: EditImageComponent, canActivate: [AuthGuard] }
+        ]
+    },
     { path: '**', component: ErrorComponent }
 ];
 
