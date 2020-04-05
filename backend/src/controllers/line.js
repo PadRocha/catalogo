@@ -17,18 +17,12 @@ cloudinary.config({
     api_secret: process.env.C_SECRET
 });
 
-function totalKey(line) {
-    return new Promise(resolve => {
-        Key.countDocuments({ 'line': line._id }, async (err, countKeys) => {
-            resolve({
-                _id: line._id,
-                name: line.name,
-                started: line.started,
-                countKeys
-            });
-        })
-    });
-}
+const totalKey = (line) => new Promise(resolve => Key.countDocuments({ 'line': line._id }, async (err, countKeys) => resolve({
+    _id: line._id,
+    name: line.name,
+    started: line.started,
+    countKeys
+})));
 
 const lineController = {
     saveLine(req, res) {

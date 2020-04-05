@@ -38,9 +38,9 @@ const app: Routes = [
     { path: 'line', component: AddLineComponent, canActivate: [AuthGuard] },
     {
         path: 'edit', children: [
-            { path: 'key', component: EditKeyComponent, canActivate: [AuthGuard] },
-            { path: 'line', component: EditLineComponent, canActivate: [AuthGuard] },
-            { path: 'image', component: EditImageComponent, canActivate: [AuthGuard] }
+            { path: 'key/:key', component: EditKeyComponent, canActivate: [AuthGuard] },
+            { path: 'line/:line', component: EditLineComponent, canActivate: [AuthGuard] },
+            { path: 'image/image', component: EditImageComponent, canActivate: [AuthGuard] }
         ]
     },
     { path: '**', component: ErrorComponent }

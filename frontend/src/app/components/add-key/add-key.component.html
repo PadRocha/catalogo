@@ -7,7 +7,7 @@
             <div *ngFor="let k of Key" class="form-group input-group">
                 <div class="input-group-append">
                     <div class="input-group-text">
-                        {{k.line + k.code}}
+                        {{k.line}}{{k.code}}
                     </div>
                 </div>
                 <input type="text" class="form-control" name="desc" #desc="ngModel" [(ngModel)]="k.desc"
@@ -133,7 +133,7 @@
                     <div class="card-body keys">
                         <ul *ngFor="let k of Keys" class="list-group list-group-flush">
                             <li class="list-group-item">
-                                <span style="color: purple;">Clave:</span> {{k.line + k.code}}
+                                <span style="color: purple;">Clave:</span> {{k.line}}{{k.code}}
                                 <span style="color:red;">Descripción:</span> {{k.desc}}
                             </li>
                         </ul>
