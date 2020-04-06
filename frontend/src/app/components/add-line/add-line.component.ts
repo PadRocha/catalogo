@@ -12,4 +12,7 @@ export class AddLineComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  public hideMenu(menu): void {
+    !menu.classList.contains('hide_menu') ? menu.classList.add('hide_menu') : menu.classList.remove('hide_menu');
+  }
 }
