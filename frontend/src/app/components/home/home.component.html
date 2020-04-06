@@ -157,13 +157,12 @@
         <button type="button" class="btn btn-secondary" (click)="resimageModal ? modal.close() : false">Cerrar</button>
     </div>
 </ng-template>
-<nav #menu class="menu" infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollLine(searchLine)"
-    [scrollWindow]="false">
+<nav #menu class="menu">
     <div class="smartphone-menu-trigger" (click)="hideMenu(menu)"></div>
     <input #searchLine type="search" class="form-control" oninput="this.value = this.value.toUpperCase()"
         autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Linea...">
     <span class="container">Total: {{LinesInfo.totalDocs}}</span>
-    <ul class="search-results">
+    <ul infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollLine(searchLine)" [scrollWindow]="false">
         <li #every>Todas</li>
         <li *ngFor="let line of Lines" (click)="clickLine(line._id)">
             {{line._id}}
