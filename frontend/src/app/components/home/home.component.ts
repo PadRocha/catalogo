@@ -270,6 +270,10 @@ export class HomeComponent implements OnInit {
   // Event Functions
   /*------------------------------------------------------------------*/
 
+  public hideMenu(menu): void {
+    !menu.classList.contains('hide_menu') ? menu.classList.add('hide_menu') : menu.classList.remove('hide_menu');
+  }
+
   public clickConfig(_id, text): void {
     this.idKey = _id;
     this.codeImageModal = text
