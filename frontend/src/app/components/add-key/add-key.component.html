@@ -73,7 +73,9 @@
                             <option value="5">Guardada</option>
                         </select>
                     </div>
-                    <div class="form-control">
+                </div>
+                <div class="form-group input-group col-lg-3">
+                    <div class="col-auto my-1">
                         <div class="pretty p-default p-thick p-pulse">
                             <input #checkbox type="checkbox" (click)="clickCheckbox(lote)" />
                             <div class="state p-warning-o">
@@ -113,8 +115,8 @@
                             Featured
                         </div>
                         <div class="card-body errors">
-                            <ul *ngFor="let err of Errors" class="list-group list-group-flush">
-                                <li class="list-group-item">{{err}}</li>
+                            <ul class="list-group list-group-flush">
+                                <li *ngFor="let err of Errors" class="list-group-item">{{err}}</li>
                             </ul>
                         </div>
                         <div class="card-footer text-muted">
@@ -131,8 +133,8 @@
                         Claves creadas
                     </div>
                     <div class="card-body keys">
-                        <ul *ngFor="let k of Keys" class="list-group list-group-flush">
-                            <li class="list-group-item">
+                        <ul class="list-group list-group-flush">
+                            <li *ngFor="let k of Keys" class="list-group-item">
                                 <span style="color: purple;">Clave:</span> {{k.line}}{{k.code}}
                                 <span style="color:red;">Descripción:</span> {{k.desc}}
                             </li>

@@ -31,7 +31,6 @@ export class AddKeyComponent implements OnInit {
   @ViewChild('select') select: ElementRef;
   @ViewChild('descModal') descModal: ElementRef;
 
-
   constructor(
     private _type: NgbTypeaheadConfig,
     private _arrivals: ArrivalsService,
@@ -66,6 +65,10 @@ export class AddKeyComponent implements OnInit {
     this._f.event(this.n2, 'keypress', e => e.target.value.length > 3 && e.preventDefault());
   }
 
+  /*------------------------------------------------------------------*/
+  // Query Functions
+  /*------------------------------------------------------------------*/
+
   private getLines = () => this._arrivals.getLines().subscribe(res => {
     if (res.data) res.data.forEach(e => this.LineArray.push(e._id));
   }, err => console.error(<any>err));
@@ -75,6 +78,10 @@ export class AddKeyComponent implements OnInit {
     distinctUntilChanged(),
     map(term => term.length < 1 ? [] : this.LineArray.filter(v => v.toLowerCase().startsWith(term.toLocaleLowerCase())).splice(0, 10))
   );
+
+  /*------------------------------------------------------------------*/
+  // Event Functions
+  /*------------------------------------------------------------------*/
 
   public closeAlert(alert): void {
     alert.classList.add('d-none');
@@ -185,25 +192,35 @@ export class AddKeyComponent implements OnInit {
     let valid: Boolean = true;
     this.Key = this.Key.filter(e => !1 === e.config);
     this.Key.forEach(e => e.desc || (valid = !1));
-    if (valid) {
-      this.Key.map(e => (delete e.config, e)).forEach((k: Key, index, array) => {
-        this._shipping.sendKey(k).subscribe(async res => {
-          let ke: Key = res.data;
-          await this.Keys.push(ke);
-          if (index === await array.length - 1) {
-            await this.resetForm();
-            await document.body.classList.remove('wait');
-          }
-        }, async err => {
-          if (index === await array.length - 1) {
-            await document.body.classList.remove('wait');
-            await this.resetForm();
-          }
-          this.Errors.push(`Error saving ${k.line}${k.code} because: ${err.error.message}`);
-        });
-      });
-
-    }
+    if (valid) this.Key.map(e => (delete e.config, e)).forEach((k: Key, index, array) => this.select.nativeElement.value == ''
+      ? this._shipping.sendKey(k).subscribe(async res => {
+        let ke: Key = res.data;
+        await this.Keys.unshift(ke);
+        if (index === await array.length - 1) {
+          await this.resetForm();
+          await document.body.classList.remove('wait');
+        }
+      }, async err => {
+        if (index === await array.length - 1) {
+          await document.body.classList.remove('wait');
+          await this.resetForm();
+        }
+        this.Errors.unshift(`Error saving ${k.line}${k.code} because: ${err.error.message}`);
+      })
+      : this._shipping.sendKeyStatus(k, Number(this.select.nativeElement.value)).subscribe(async res => {
+        let ke: Key = res.data;
+        await this.Keys.unshift(ke);
+        if (index === await array.length - 1) {
+          await this.resetForm();
+          await document.body.classList.remove('wait');
+        }
+      }, async err => {
+        if (index === await array.length - 1) {
+          await document.body.classList.remove('wait');
+          await this.resetForm();
+        }
+        this.Errors.unshift(`Error saving ${k.line}${k.code} because: ${err.error.message}`);
+      }));
   }
 
 }

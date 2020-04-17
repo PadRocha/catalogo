@@ -34,13 +34,11 @@ const keySchema = new Schema({
             },
             publicId: {
                 type: String,
-                default: null,
-                required: true
+                default: null
             },
             img: {
                 type: String,
-                default: null,
-                required: true
+                default: null
             },
             status: {
                 type: Number,

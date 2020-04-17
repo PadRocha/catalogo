@@ -24,6 +24,7 @@ import { EditImageComponent } from './components/edit-image/edit-image.component
 import { AddLineComponent } from './components/add-line/add-line.component';
 import { EditKeyComponent } from './components/edit-key/edit-key.component';
 import { EditLineComponent } from './components/edit-line/edit-line.component';
+import { CreatePDFComponent } from './components/create-pdf/create-pdf.component';
 
 /*------------------------------------------------------------------*/
 // Array de Rutas
@@ -43,6 +44,7 @@ const app: Routes = [
             { path: 'image/image', component: EditImageComponent, canActivate: [AuthGuard] }
         ]
     },
+    { path: 'pdf', component: CreatePDFComponent, canActivate: [AuthGuard] },
     { path: '**', component: ErrorComponent }
 ];
 

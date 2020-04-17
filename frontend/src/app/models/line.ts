@@ -7,6 +7,7 @@
 export class Line {
     constructor(
         public _id: String,
-        public name: String
+        public name: String,
+        public countKeys: Number
     ) { }
 };

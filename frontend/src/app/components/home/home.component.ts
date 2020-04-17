@@ -96,10 +96,16 @@ export class HomeComponent implements OnInit {
     this.LineSelected = '';
     this.actualLinePage = 1;
     this.Lines = new Array();
+    this.LinesInfo = '';
     this.actualKeyPage = 1;
     this.LineRegex = false;
+    this.KeysInfo = {
+      percentage: 0,
+      status: 0
+    };
     this.resimageModal = false;
     this.showSearched = false;
+    this.showImage = new Array();
   }
 
   public ngOnInit(): void {
@@ -130,7 +136,7 @@ export class HomeComponent implements OnInit {
       }
     });
     let typingTimer;
-    // this._f.onlyAlphanumeric(this.search, e => clearTimeout(typingTimer));
+    this._f.onlyAlphanumeric(this.search, e => clearTimeout(typingTimer));
     this._f.event(this.search, 'keyup', e => {
       clearTimeout(typingTimer);
       typingTimer = setTimeout(() => {
@@ -149,7 +155,7 @@ export class HomeComponent implements OnInit {
         }
       }, 500);
     });
-    // this._f.onlyAlphanumeric(this.searchLine, e => clearTimeout(typingTimer));
+    this._f.onlyAlphanumeric(this.searchLine, e => clearTimeout(typingTimer));
     this._f.event(this.searchLine, 'keyup', e => {
       clearTimeout(typingTimer);
       typingTimer = setTimeout(() => {
@@ -229,6 +235,7 @@ export class HomeComponent implements OnInit {
     this._arrivals.getKeysRegexPage(regex, this.actualKeyPage).subscribe(async res => {
       await document.body.classList.remove('wait');
       await this.waitKey.nativeElement.classList.add('d-none');
+      await this.search.nativeElement.blur();
       if (res.data) {
         this.Keys = this.Keys.concat(res.data.docs);
         this.KeyRegex = regex;
@@ -258,6 +265,7 @@ export class HomeComponent implements OnInit {
     this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(async res => {
       await document.body.classList.remove('wait');
       await this.waitLine.nativeElement.classList.add('d-none');
+      await this.searchLine.nativeElement.blur();
       if (res.data) this.Lines = this.Lines.concat(res.data.docs);
       if (res.data.docs.length === 0) this.ifExistLine.nativeElement.className = 'show';
       else this.ifExistLine.nativeElement.className = 'd-none';
@@ -277,7 +285,7 @@ export class HomeComponent implements OnInit {
   public clickConfig(_id, text): void {
     this.idKey = _id;
     this.codeImageModal = text
-    this.currentModal = this._modal.open(this.deleteModal, null, null, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
+    this.currentModal = this._modal.open(this.deleteModal, () => { }, () => { }, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
   }
 
   public clickSpan(_id): void {
@@ -409,7 +417,7 @@ export class HomeComponent implements OnInit {
     this.idKey = undefined;
     this.nImage = undefined;
     this.codeImageModal = undefined;
-    this.showImage = undefined;
+    this.showImage = new Array();
     this.currentHTML = undefined;
     this.resimageModal = false;
   }
@@ -474,7 +482,7 @@ export class HomeComponent implements OnInit {
 
   public configImg(idN): void {
     this.imageId = idN;
-    this.confirmModalService = this._modal.open(this.confirmModal, null, null, { size: 'sm' })
+    this.confirmModalService = this._modal.open(this.confirmModal, () => { }, () => { }, { size: 'sm' })
   }
 
   public editImg(): void {

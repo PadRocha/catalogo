@@ -2,8 +2,12 @@ main {
   top: 80px;
 }
 
-.keys {
-  height: 75vh;
+.card-body {
+  height: auto;
+}
+
+.keys .card-body {
+  max-height: 75vh;
   overflow: auto;
 }
 
@@ -15,11 +19,16 @@ main {
 
   .card-body {
     background-color: #000;
-    height: 38vh;
+    max-height: 38vh;
     overflow: auto;
 
     ul li {
       background-color: inherit;
+      border-bottom: solid thin #fff;
+
+      &:last-child {
+        border-bottom: none;
+      }
     }
   }
 }

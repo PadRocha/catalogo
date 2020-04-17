@@ -1,13 +1,68 @@
-<nav #menu class="menu" tabindex="0">
-    <div class="smartphone-menu-trigger" (click)="hideMenu(menu)"></div>
+<ng-template #deleteModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Config {{actualLine}}</h4>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <button class="form-control btn btn-outline-secondary" (click)="editLine()">Editar</button>
+        </div>
+        <div class="form-group">
+            <button class="form-control btn btn-outline-info" (click)="viewLine()">Ver línea</button>
+        </div>
+        <div class="form-group">
+            <button class="form-control btn btn-outline-danger" (click)="confirmDisplay(confirm)">Eliminar</button>
+        </div>
+        <div #confirm class="d-none">
+            <div class="row">
+                <div class="col-6">
+                    <div class="pretty p-icon p-toggle p-plain">
+                        <input #k1 type="checkbox" (click)="clench(k1, k2, lock)" />
+                        <div class="state p-on">
+                            <i class="fas fa-lock-open"></i>
+                            <label>Unlocked</label>
+                        </div>
+                        <div class="state p-off">
+                            <i class="fas fa-lock"></i>
+                            <label>Locked</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="pretty p-icon p-toggle p-plain">
+                        <input #k2 type="checkbox" (click)="clench(k1, k2, lock)" />
+                        <div class="state p-on">
+                            <i class="fas fa-lock-open"></i>
+                            <label>Unlocked</label>
+                        </div>
+                        <div class="state p-off">
+                            <i class="fas fa-lock"></i>
+                            <label>Locked</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button #lock class="form-control btn btn-danger" (click)="confirmDeleteLine()" disabled>
+                    Confirmar eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class=" modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cancelar</button>
+    </div>
+</ng-template>
+<nav #menu_search class="menu">
+    <div class="smartphone-menu-trigger" (click)="hideMenu(menu_search)"></div>
     <input #searchLine type="search" class="form-control" oninput="this.value = this.value.toUpperCase()"
         autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Linea...">
-    <span class="container">Total: </span>
-    <ul class="search-results">
-        <li #every>Todas</li>
-        <li (click)="false">
-            Linea
-            <span>Detalle</span>
+    <span class="container">Total: {{LinesInfo.totalDocs}}</span>
+    <ul #lineList infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollLine(searchLine)"
+        [scrollWindow]="false">
+        <li *ngFor="let line of Lines" (click)="clickConfig(line)">
+            {{line._id}}
+            <div class="badge badge-light">{{line.countKeys}}</div>
+            <span>{{line.name}}</span>
         </li>
         <li #waitLine class="text-center">
             <img src="../../../assets/image/wait5.gif" alt="Wait Line" height="100">
@@ -15,3 +70,47 @@
         <li #ifExistLine class="d-none">No existe línea</li>
     </ul>
 </nav>
+<main class="container">
+    <form (ngSubmit)="onSubmitLine(lineForm)" #lineForm="ngForm">
+        <h1 class="title">Creación de nuevas líneas</h1>
+        <hr>
+        <div class="form-group input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">Clave de la línea</div>
+            </div>
+            <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" #id="ngModel"
+                [(ngModel)]="Line._id" name="id" autocomplete="off" spellcheck="false" autocorrect="off" maxlength="6"
+                placeholder="Clave..." />
+        </div>
+        <div class="form-group input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">Nombre de la línea</div>
+            </div>
+            <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" #name="ngModel"
+                [(ngModel)]="Line.name" name="name" autocomplete="off" spellcheck="false" autocorrect="off"
+                placeholder="Nombre..." />
+        </div>
+        <div class="form-group text-right">
+            <button type="submit" class="btn-info btn">Crear</button>
+        </div>
+    </form>
+    <div *ngIf="newLines.length > 0" class="container">
+        <div class="card text-center">
+            <div class="card-header">
+                Líneas creadas
+            </div>
+            <div class="card-body keys">
+                <ul class="list-group list-group-flush">
+                    <li *ngFor="let k of newLines" class="list-group-item">
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer text-muted">
+                Total de {{newLines.length}} claves creadas
+            </div>
+        </div>
+    </div>
+    <div *ngIf="newLines.length === 0" class="container alert alert-dark" role="alert">
+        Ninguna línea ha sido creada por el momento
+    </div>
+</main>

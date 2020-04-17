@@ -21,33 +21,57 @@ cloudinary.config({
 function infoStatus(query) {
     const status = { white: 0, gray: 0, brown: 0, blue: 0, purple: 0, green: 0 };
     var percentage = 0;
-    return new Promise(resolve => {
-        Key.find(query).exec((err, key) => {
-            key.forEach(d => {
-                let image = d.image; image.forEach(i => {
-                    switch (i.status) {
-                        case 0: ++status.white; break;
-                        case 1: ++status.gray; break;
-                        case 2: ++status.brown; break;
-                        case 3: ++status.blue; break;
-                        case 4: ++status.purple; break;
-                        case 5: ++status.green
-                    }
-                });
-                for (let i of image) if (5 === i.status) { ++percentage; break }
+    return new Promise(resolve => Key.find(query).exec((err, key) => {
+        key.forEach(d => {
+            let image = d.image; image.forEach(i => {
+                switch (i.status) {
+                    case 0: ++status.white; break;
+                    case 1: ++status.gray; break;
+                    case 2: ++status.brown; break;
+                    case 3: ++status.blue; break;
+                    case 4: ++status.purple; break;
+                    case 5: ++status.green
+                }
             });
-            resolve([status, 100 * percentage / key.length])
+            for (let i of image) if (5 === i.status) { ++percentage; break }
         });
-    });
+        resolve([status, 100 * percentage / key.length])
+    }));
 }
 
 const keyController = {
     saveKey(req, res) {
         if (!req.body) return res.status(400).send({ message: 'Bad Request' });
-        const newKey = new Key(req.body);
+        const newKey = new Key({
+            code: req.body.code,
+            line: req.body.line,
+            desc: req.body.desc
+        });
         const Line = require('../models/line'); //* Calls line.js model
         Line.findOne({ '_id': newKey.line }).select('_id').exec((err, line) => {
-            if (err) return res.status(500).send({ message: 'Internal Server message' });
+            if (err) return res.status(500).send({ message: 'Line Internal Server message' });
+            if (!line) return res.status(404).send({ message: 'Line Not Found' });
+            newKey.save((err, keyStored) => {
+                if (err) return res.status(500).send({ message: 'Internal Server message' });
+                if (!keyStored) return res.status(204).send({ message: 'Key No Content' });
+                return res.status(200).send({ data: keyStored });
+            });
+        });
+    },
+    saveKeyStatus(req, res) {
+        if (!req.body && !req.body.status) return res.status(400).send({ message: 'Bad Request' });
+        const newKey = new Key({
+            code: req.body.code,
+            line: req.body.line,
+            desc: req.body.desc
+        });
+        for (let idN = 0; idN < 3; idN++) newKey.image.push({
+            idN,
+            status: req.body.status
+        });
+        const Line = require('../models/line'); //* Calls line.js model
+        Line.findOne({ '_id': newKey.line }).select('_id').exec((err, line) => {
+            if (err) return res.status(500).send({ message: 'Line Internal Server message' });
             if (!line) return res.status(404).send({ message: 'Line Not Found' });
             newKey.save((err, keyStored) => {
                 if (err) return res.status(500).send({ message: 'Internal Server message' });
@@ -258,7 +282,7 @@ const keyController = {
                 await cloudinary.v2.uploader.destroy(imageDeleted.image.find(x => x.idN === id).publicId);
                 return res.status(200).send({ data: imageDeleted });
             });
-    },
+    }//,
 };
 
 /*------------------------------------------------------------------*/

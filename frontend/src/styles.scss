@@ -70,15 +70,6 @@ main {
 }
 
 @media screen and (max-width: 1580px) {
-  body {
-    padding-left: 0;
-  }
-
-  .container {
-    width: 100% !important;
-    overflow: auto;
-  }
-
   .menu {
     width: 230px;
     box-shadow: 0 0 0 100em rgba(0, 0, 0, 0);

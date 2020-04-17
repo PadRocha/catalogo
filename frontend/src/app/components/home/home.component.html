@@ -157,8 +157,8 @@
         <button type="button" class="btn btn-secondary" (click)="resimageModal ? modal.close() : false">Cerrar</button>
     </div>
 </ng-template>
-<nav #menu class="menu">
-    <div class="smartphone-menu-trigger" (click)="hideMenu(menu)"></div>
+<nav #menu_search class="menu">
+    <div class="smartphone-menu-trigger" (click)="hideMenu(menu_search)"></div>
     <input #searchLine type="search" class="form-control" oninput="this.value = this.value.toUpperCase()"
         autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Linea...">
     <span class="container">Total: {{LinesInfo.totalDocs}}</span>
@@ -168,7 +168,7 @@
             {{line._id}}
             <span>{{line.name}}</span>
         </li>
-        <li #waitLine class="text-center" style="cursor: wait;">
+        <li #waitLine class="text-center">
             <img src="../../../assets/image/wait5.gif" alt="Wait Line" height="100">
         </li>
         <li #ifExistLine class="d-none">No existe línea</li>
@@ -184,7 +184,7 @@
                         autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Search..." />
                 </th>
                 <th width="150">Σ [{{KeysInfo.totalDocs | number}}]</th>
-                <th width="120"><i class="fas fa-file-image"></i> [{{KeysInfo.percentage.toFixed(2)}}%]</th>
+                <th width="120"><i class="fas fa-file-image"></i> [{{KeysInfo.percentage | number : '1.2-2'}}%]</th>
                 <th class="infoStatus">
                     <span><i class="fas fa-exclamation-triangle"></i> [{{KeysInfo.status.white}}]</span>&nbsp;
                     <span style="color: gray;"><i class="fas fa-list-alt"></i> [{{KeysInfo.status.gray}}]</span>&nbsp;
@@ -255,7 +255,7 @@
                 </td>
                 <td>{{key.desc}}</td>
             </tr>
-            <tr #waitKey class="d-none" style="cursor: wait;">
+            <tr #waitKey class="d-none">
                 <td class="text-center">
                     <img src="../../../assets/image/wait2.gif" alt="Wait Key" height="100">
                 </td>

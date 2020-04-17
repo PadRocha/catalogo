@@ -9,6 +9,7 @@ const router = require('express').Router(); //* Calls the Router of express
 const userController = require('../controllers/user'); //* Calls the module controllers/user.js
 const lineController = require('../controllers/line'); //* Calls the module controllers/line.js
 const keyController = require('../controllers/key'); //* Calls the module controllers/key.js
+const pdfController = require('../controllers/pdf'); //* Calls the module controllers/pdf.js
 
 const mdAuth = require('../middlewares/auth'); //* Calls Security
 
@@ -89,6 +90,9 @@ router.route('/key/line/:line')
 router.route('/key/line/:line/page/:page')
     .get(keyController.listKeyLinePage);
 
+router.route('/Key/status')
+    .post(keyController.saveKeyStatus);
+
 router.route('/key/status/:id')
     .post(keyController.saveStatus)
     .put(keyController.updateStatus);
@@ -103,6 +107,13 @@ router.route('/key/image/:id')
 
 router.route('/key/image/:_id/delete/:idN')
     .delete(keyController.deleteImage);
+
+/*------------------------------------------------------------------*/
+// PDF
+/*------------------------------------------------------------------*/
+
+router.route('/pdf')
+    .get(pdfController.createPdf);
 
 /*------------------------------------------------------------------*/
 

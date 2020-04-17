@@ -10,7 +10,7 @@ export class ModalService {
     private _modalService: NgbModal
   ) { }
 
-  public open(target, callbackResult, callbackDismiss, config): any {
+  public open(target, callbackResult: Function = () => Boolean, callbackDismiss: Function = () => Boolean, config): any {
     const modal = this._modalService.open(target, config);
     modal.result.then(result => callbackResult(result), reason => callbackDismiss(reason));
     return modal;

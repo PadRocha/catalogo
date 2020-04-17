@@ -47,15 +47,35 @@ export class ArrivalsService {
     return this._http.get(this.url + 'line');
   }
 
+  getLinesTotalKey(): Observable<any> {
+    return this._http.get(this.url + 'line/total/key');
+  }
+
   getLinesPage(page: Number): Observable<any> {
     return this._http.get(this.url + 'line/page/' + page);
+  }
+
+  getLinesTotalKeyPage(page: Number): Observable<any> {
+    return this._http.get(this.url + 'line/total/key/page/' + page);
   }
 
   getLinesRegex(id: String): Observable<any> {
     return this._http.get(this.url + 'line/regex/' + id);
   }
 
+  getLinesTotalKeyRegex(id: String): Observable<any> {
+    return this._http.get(this.url + 'line/total/key/regex/' + id);
+  }
+
   getLinesRegexPage(id: String, page: Number): Observable<any> {
     return this._http.get(this.url + 'line/regex/' + id + '/page/' + page);
+  }
+
+  getLinesTotalKeyRegexPage(id: String, page: Number): Observable<any> {
+    return this._http.get(this.url + 'line/total/key/regex/' + id + '/page/' + page);
+  }
+
+  createPDF(): Observable<any> {
+    return this._http.get(this.url + 'pdf', { responseType: 'blob' });
   }
 }

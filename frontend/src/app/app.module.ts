@@ -7,6 +7,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SwiperModule, SwiperConfigInterface, SWIPER_CONFIG } from 'ngx-swiper-wrapper';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { AppComponent } from './app.component';
@@ -22,6 +23,7 @@ import { AddKeyComponent } from './components/add-key/add-key.component';
 import { AddLineComponent } from './components/add-line/add-line.component';
 import { EditKeyComponent } from './components/edit-key/edit-key.component';
 import { EditLineComponent } from './components/edit-line/edit-line.component';
+import { CreatePDFComponent } from './components/create-pdf/create-pdf.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   observer: true,
@@ -43,7 +45,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     AddKeyComponent,
     AddLineComponent,
     EditKeyComponent,
-    EditLineComponent
+    EditLineComponent,
+    CreatePDFComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +55,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     NgbModule,
     routing,
     SwiperModule,
-    InfiniteScrollModule
+    InfiniteScrollModule,
+    NgxExtendedPdfViewerModule
   ],
   providers: [
     {

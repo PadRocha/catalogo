@@ -27,7 +27,10 @@ const totalKey = (line) => new Promise(resolve => Key.countDocuments({ 'line': l
 const lineController = {
     saveLine(req, res) {
         if (!req.body) return res.status(400).send({ message: 'Bad Request' });
-        const newLine = new Line(req.body);
+        const newLine = new Line({
+            _id: req.body._id,
+            name: req.body.name
+        });
         newLine.save((err, lineStored) => {
             if (err) return res.status(500).send({ message: 'Internal Server message' });
             if (!lineStored) return res.status(204).send({ message: 'Line No Content' });
@@ -159,13 +162,13 @@ const lineController = {
                 if (err) return res.status(500).send({ message: 'Key delete Internal Server message' });
                 keyImage.forEach(e => {
                     e.image.forEach(async f => {
-                        await cloudinary.v2.uploader.destroy(f.public);
+                        if (f.public) await cloudinary.v2.uploader.destroy(f.public);
                     });
                 });
             });
             return res.status(200).send({ data: lineDeleted });
         });
-    },
+    }//,
 };
 
 /*------------------------------------------------------------------*/

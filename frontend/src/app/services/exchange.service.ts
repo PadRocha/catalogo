@@ -33,4 +33,8 @@ export class ExchangeService {
   deleteKey(_id: String): Observable<any> {
     return this._http.delete(this.url + 'key/' + _id);
   }
+
+  deleteLine(_id: String): Observable<any> {
+    return this._http.delete(this.url + 'line/' + _id)
+  }
 }
