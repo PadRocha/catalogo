@@ -19,15 +19,20 @@ export class CreatePDFComponent implements OnInit {
     this.createPDF();
   }
 
-  public blobToFile = (theBlob: Blob, fileName: string): File => {
-    var b: any = theBlob;
-    b.lastModifiedDate = new Date();
-    b.name = fileName;
-    return <File>theBlob;
-  }
+  // ngOnDestroy(): void {
+  //   console.clear();
+  // }
+
+  // public blobToFile = (theBlob: Blob, fileName: string): File => {
+  //   var b: any = theBlob;
+  //   b.lastModifiedDate = new Date();
+  //   b.name = fileName;
+  //   return <File>theBlob;
+  // }
+
   public createPDF(): void {
     this._arrival.createPDF().subscribe(res => {
-      let file: File = this.blobToFile(res, 'catalogo.pdf');
+      let file: File = <File>res;
       this.content = URL.createObjectURL(file);
     }, err => console.error(<any>err));
   }
