@@ -112,7 +112,8 @@ router.route('/key/image/:_id/delete/:idN')
 /*------------------------------------------------------------------*/
 
 router.route('/pdf')
-    .get(pdfController.createPdf);
+    .get(pdfController.createPdf)
+    .post(pdfController.personalizePdf);
 
 /*------------------------------------------------------------------*/
 

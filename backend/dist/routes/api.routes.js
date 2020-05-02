@@ -71,5 +71,6 @@ router.route('/key/image/:id')
 router.route('/key/image/:_id/delete/:idN')
     .delete(keyController.deleteImage);
 router.route('/pdf')
-    .get(pdfController.createPdf);
+    .get(pdfController.createPdf)
+    .post(pdfController.personalizePdf);
 exports.default = router;

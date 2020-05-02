@@ -5,12 +5,10 @@
 import { Request, Response } from 'express';
 import path from 'path';
 import pdfkit from 'pdfkit';
-import request from 'request-promise';
+import fetch from 'node-fetch'
 
 import Line from '../models/line';
 import Key, { IKey } from '../models/key';
-
-request.defaults({ encoding: null });
 
 export async function createPdf(req: Request, res: Response) {
     const doc = new pdfkit();
@@ -19,7 +17,7 @@ export async function createPdf(req: Request, res: Response) {
     res.setHeader('Content-type', 'application/pdf');
     doc.fontSize(8);
     // doc.image(path.join(__dirname, '../assets/pdf-header.png'), 24, 24, { width: 564 });
-    let img: any, header = path.join(__dirname, '../assets/pdf-header.png'), imgDefault = path.join(__dirname, '../assets/pdf-default.jpg'),
+    let img: Buffer | string, header = path.join(__dirname, '../assets/pdf-header.png'), imgDefault = path.join(__dirname, '../assets/pdf-default.jpg'),
         spaceX = (doc.page.width - 48) / 5, spaceY = 130.3, xl = 24, yl = 84, pagination: any = 0;
     const lines = await Line.find({}).sort('_id');
     await Promise.all(lines.map(async line => {
@@ -28,12 +26,7 @@ export async function createPdf(req: Request, res: Response) {
             const index = key.image.findIndex(k => k.img != null);
             try {
                 if (index != -1) {
-                    img = await request.get({
-                        uri: <string>key.image[index].img,
-                        encoding: null
-                    }).then(res => {
-                        return Buffer.from(res, 'utf8');
-                    });
+                    img = await fetch(<string>key.image[index].img, { method: 'GET' }).then(res => res.buffer());
                 } else throw new Error('No image Found');
             } catch (error) {
                 img = imgDefault;
@@ -75,12 +68,12 @@ export async function createPdf(req: Request, res: Response) {
                     .text(pagination, 24, doc.page.height - 31, { width: doc.widthOfString(pagination) });
             });
             doc.addPage();
-            line.keys.forEach((key: any) => {
+            line.keys.forEach((key: IKey) => {
                 if (yi == 5) {
                     yi = 0;
                     doc.addPage();
                 }
-                doc.image(<any>key.img, xl + (spaceX * xi), yl + (spaceY * yi), { fit: [112.8, 79.66] })
+                doc.image(key.img, xl + (spaceX * xi), yl + (spaceY * yi), { fit: [112.8, 79.66] })
                     .rect(xl + (spaceX * xi), yl + (spaceY * yi), 112.8, 79.66)
                     .stroke();
                 doc.text(key.line + key.code, xl + (spaceX * xi), yl + (spaceY * yi) + 83.66, { width: 112.8, height: 12.66, align: 'center' })
@@ -99,4 +92,8 @@ export async function createPdf(req: Request, res: Response) {
     // console.log(doc.page.height);
     doc.end();
     doc.pipe(<any>res);
+}
+
+export async function personalizePdf(req: Request, res: Response) {
+
 }

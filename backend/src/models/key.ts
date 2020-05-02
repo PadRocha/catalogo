@@ -15,6 +15,7 @@ export interface IKey extends Document {
     image: Array<IImage>;
     config: boolean;
     createdAt: Date;
+    img: Buffer | string
 }
 
 const keySchema = new Schema({

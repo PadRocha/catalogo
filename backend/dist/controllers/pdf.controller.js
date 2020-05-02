@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const pdfkit_1 = __importDefault(require("pdfkit"));
 const request_promise_1 = __importDefault(require("request-promise"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 const line_1 = __importDefault(require("../models/line"));
 const key_1 = __importDefault(require("../models/key"));
 request_promise_1.default.defaults({ encoding: null });
@@ -33,12 +34,7 @@ function createPdf(req, res) {
                 const index = key.image.findIndex(k => k.img != null);
                 try {
                     if (index != -1) {
-                        img = yield request_promise_1.default.get({
-                            uri: key.image[index].img,
-                            encoding: null
-                        }).then(res => {
-                            return Buffer.from(res, 'utf8');
-                        });
+                        img = yield node_fetch_1.default(key.image[index].img, { method: 'GET' }).then(res => res.buffer());
                     }
                     else
                         throw new Error('No image Found');
@@ -110,3 +106,8 @@ function createPdf(req, res) {
     });
 }
 exports.createPdf = createPdf;
+function personalizePdf(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+    });
+}
+exports.personalizePdf = personalizePdf;
