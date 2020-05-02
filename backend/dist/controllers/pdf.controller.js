@@ -14,11 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const pdfkit_1 = __importDefault(require("pdfkit"));
-const request_1 = __importDefault(require("request"));
+const request_promise_1 = __importDefault(require("request-promise"));
 const line_1 = __importDefault(require("../models/line"));
 const key_1 = __importDefault(require("../models/key"));
-request_1.default.defaults({ encoding: null });
-const doRequest = (url) => new Promise((rs, rj) => request_1.default(url, (e, r, b) => !e && r.statusCode == 200 ? rs(b) : rj(e)));
+request_promise_1.default.defaults({ encoding: null });
 function createPdf(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const doc = new pdfkit_1.default();
@@ -33,8 +32,14 @@ function createPdf(req, res) {
             keys = yield Promise.all(keys.map((key) => __awaiter(this, void 0, void 0, function* () {
                 const index = key.image.findIndex(k => k.img != null);
                 try {
-                    if (index != -1)
-                        img = (yield doRequest(key.image[index].img));
+                    if (index != -1) {
+                        img = yield request_promise_1.default.get({
+                            uri: key.image[index].img,
+                            encoding: null
+                        }).then(res => {
+                            return Buffer.from(res, 'utf8');
+                        });
+                    }
                     else
                         throw new Error('No image Found');
                 }
@@ -47,7 +52,7 @@ function createPdf(req, res) {
                         code: key.code,
                         line: key.line,
                         desc: key.desc,
-                        image: img
+                        img
                     };
                 }
             })));
@@ -57,7 +62,7 @@ function createPdf(req, res) {
                 started: line.started,
                 keys
             };
-        }))).then(lines => {
+        }))).then((lines) => __awaiter(this, void 0, void 0, function* () {
             for (const line of lines) {
                 let xi = 0, yi = 0;
                 doc.on('pageAdded', () => {
@@ -84,7 +89,7 @@ function createPdf(req, res) {
                         yi = 0;
                         doc.addPage();
                     }
-                    doc.image(key.image, xl + (spaceX * xi), yl + (spaceY * yi), { fit: [112.8, 79.66] })
+                    doc.image(key.img, xl + (spaceX * xi), yl + (spaceY * yi), { fit: [112.8, 79.66] })
                         .rect(xl + (spaceX * xi), yl + (spaceY * yi), 112.8, 79.66)
                         .stroke();
                     doc.text(key.line + key.code, xl + (spaceX * xi), yl + (spaceY * yi) + 83.66, { width: 112.8, height: 12.66, align: 'center' })
@@ -99,7 +104,7 @@ function createPdf(req, res) {
                     }
                 });
             }
-        });
+        }));
         doc.end();
         doc.pipe(res);
     });

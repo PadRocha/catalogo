@@ -27,6 +27,7 @@
     "multer": "^1.4.2",
     "pdfkit": "^0.11.0",
     "request": "^2.88.2",
+    "request-promise": "^4.2.5",
     "socket.io": "^2.3.0",
     "uuid": "^7.0.3"
   },
@@ -44,7 +45,7 @@
     "@types/morgan": "^1.9.0",
     "@types/multer": "^1.4.3",
     "@types/pdfkit": "^0.10.5",
-    "@types/request": "^2.48.4",
+    "@types/request-promise": "^4.1.46",
     "@types/socket.io": "^2.1.4",
     "@types/uuid": "^7.0.3",
     "tsc-watch": "^4.2.3",
