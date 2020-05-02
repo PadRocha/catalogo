@@ -1,0 +1,89 @@
+/*------------------------------------------------------------------*/
+// Controlador de pdf.js
+/*------------------------------------------------------------------*/
+
+import { Request, Response } from 'express';
+import path from 'path';
+import pdfkit from 'pdfkit';
+import request from 'request';
+
+import Line from '../models/line';
+import Key, { IKey } from '../models/key';
+
+request.defaults({ encoding: null });
+
+const doRequest = (url: string) => new Promise((rs, rj) => request(url, (e, r, b) => !e && r.statusCode == 200 ? rs(b) : rj(e)));
+
+export async function createPdf(req: Request, res: Response) {
+    const doc = new pdfkit();
+    const filename = 'catalogo.pdf';
+    res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
+    res.setHeader('Content-type', 'application/pdf');
+    doc.fontSize(8);
+    // doc.image(path.join(__dirname, '../assets/pdf-header.png'), 24, 24, { width: 564 });
+    let img: Buffer | string, header = path.join(__dirname, '../assets/pdf-header.png'), imgDefault = path.join(__dirname, '../assets/pdf-default.jpg'),
+        spaceX = (doc.page.width - 48) / 5, spaceY = 130.3, xl = 24, yl = 84, pagination: any = 0;
+    // const lines = await Line.find({}).sort('_id');
+    // await Promise.all(lines.map(async line => {
+    //     let keys: any = await Key.find({ 'line': line._id }).sort('code');
+    //     keys = await Promise.all(keys.map(async (key: IKey) => {
+    //         const index = key.image.findIndex(k => k.img != null);
+    //         try {
+    //             if (index != -1) img = <Buffer>await doRequest(<string>key.image[index].img);
+    //             else throw new Error('No image Found');
+    //         } catch (error) {
+    //             img = imgDefault;
+    //         } finally {
+    //             return {
+    //                 _id: key._id,
+    //                 code: key.code,
+    //                 line: key.line,
+    //                 desc: key.desc,
+    //                 image: img
+    //             };
+    //         }
+    //     }));
+    //     return {
+    //         _id: line._id,
+    //         name: line.name,
+    //         started: line.started,
+    //         keys
+    //     };
+    // })).then(lines => {
+    //     for (const line of lines) {
+    //         let xi = 0, yi = 0;
+    //         doc.on('pageAdded', () => {
+    //             ++pagination;
+    //             doc.save();
+    //             line.name = 'Línea: ' + line.name;
+    //             doc.image(header, 24, 24, { width: doc.page.width - 48 });
+    //             doc.fontSize(10);
+    //             doc.rect(doc.page.width - 53 - doc.widthOfString(line.name), 40, doc.widthOfString(line.name) + 10, 20)
+    //                 .fill('#000000')
+    //                 .fillColor('white')
+    //                 .text(line.name, doc.page.width - 48 - doc.widthOfString(line.name), 45, { width: doc.widthOfString(line.name) });
+    //             doc.restore()
+    //                 .fontSize(8);
+    //             doc.moveTo(24, doc.page.height - 24)
+    //                 .lineTo(doc.page.width - 24, doc.page.height - 24)
+    //                 .rect(24, doc.page.height - 33, 10, 9)
+    //                 .stroke()
+    //                 .text(pagination, 24, doc.page.height - 31, { width: doc.widthOfString(pagination) });
+    //         });
+    //         doc.addPage();
+    //         line.keys.forEach((key: IKey) => {
+    //             if (yi == 5) {
+    //                 yi = 0;
+    //                 doc.addPage();
+    //             }
+    //             doc.image(key.image, xl + (spaceX * xi), yl + (spaceY * yi), { fit: [112.8, 79.66] })
+    //                 .rect(xl + (spaceX * xi), yl + (spaceY * yi), 112.8, 79.66)
+    //                 .stroke();
+    //             doc.text(key.line + key.code, xl + (spaceX * xi), yl + (spaceY * yi) + 83.66, { width: 112.8, height: 12.66, align: 'center' })
+    //                 .rect(xl + (spaceX * xi), yl + (spaceY * yi) + 79.66, 112.8, 12.66)
+    //                 .stroke();
+    //             doc.text(key.desc, xl + (spaceX * xi), yl + (spaceY * yi) + 98.32, { width: 112.8, height: 37.98, align: 'center' })
+    //                 .rect(xl + (spaceX * xi), yl + (spaceY * yi) + 92.32, 112.8, 37.98)
+    //                 .stroke();
+    //             if (++xi == 5) {
+   
