@@ -11,6 +11,7 @@ import createToken, { Token } from '../services/jwt';
 
 import config from '../config/config';
 
+
 export function registerUser(req: Request, res: Response) {
     if (!req.body) return res.status(400).send({ message: 'Bad Request' });
     const newUser = new User(req.body);

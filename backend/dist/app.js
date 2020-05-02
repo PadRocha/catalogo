@@ -12,12 +12,16 @@ const multer_1 = __importDefault(require("multer"));
 const uuid_1 = require("uuid");
 const api_routes_1 = __importDefault(require("./routes/api.routes"));
 const app = express_1.default();
+app.set('trust proxy', true);
+app.set('env', process.env.NODE_ENV);
 app.set('port', process.env.PORT || 4000);
 const storage = multer_1.default.diskStorage({
     destination: path_1.default.join(__dirname, 'uploads'),
     filename: (req, file, cb) => cb(null, uuid_1.v4() + path_1.default.extname(file.originalname).toLowerCase())
 });
-app.use(morgan_1.default('dev'));
+if (app.get('env') === 'development') {
+    app.use(morgan_1.default('dev'));
+}
 app.use(cors_1.default());
 app.use(helmet_1.default());
 app.use(express_1.default.urlencoded({ extended: false }));
