@@ -1,5 +1,3 @@
-import { emptyDir } from "fs-extra";
-
 export default {
     KEY: {
         SECRET: process.env.SECRET_KEY || '//password',

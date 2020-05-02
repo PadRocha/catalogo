@@ -5,10 +5,16 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
-    "build": "tsc"
+    "watch:tsc": "tsc-watch --onSuccess \"node dist/index.js\"",
+    "watch:grunt": "grunt watch",
+    "watch:all": "concurrently \"npm run watch:tsc\" \"npm run watch:grunt\"",
+    "build:tsc": "tsc",
+    "build:grunt": "grunt",
+    "build:all": "npm run build:tsc && npm run build:grunt"
   },
-  "keywords": [],
+  "keywords": [
+    "catalogo"
+  ],
   "author": "Cétr!co.Productions",
   "license": "ISC",
   "dependencies": {
@@ -47,6 +53,11 @@
     "@types/pdfkit": "^0.10.5",
     "@types/socket.io": "^2.1.4",
     "@types/uuid": "^7.0.3",
+    "concurrently": "^5.2.0",
+    "grunt": "^1.1.0",
+    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-uglify-es": "^3.3.0",
+    "grunt-contrib-watch": "^1.1.0",
     "tsc-watch": "^4.2.3",
     "typescript": "^3.8.3"
   }

@@ -1,12 +1,15 @@
 import { model, Schema, PaginateModel, Document } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
+import { IKey } from '../models/key';
+
 export interface ILine extends Document {
     _id: string,
     name: string,
     started: Date,
     ended: Date,
-    countKeys: number
+    countKeys: number,
+    keys: Array<IKey>
 }
 
 const lineSchema = new Schema({

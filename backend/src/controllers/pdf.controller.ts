@@ -7,7 +7,7 @@ import path from 'path';
 import pdfkit from 'pdfkit';
 import fetch from 'node-fetch'
 
-import Line from '../models/line';
+import Line, { ILine } from '../models/line';
 import Key, { IKey } from '../models/key';
 
 export async function createPdf(req: Request, res: Response) {
@@ -21,17 +21,16 @@ export async function createPdf(req: Request, res: Response) {
         spaceX = (doc.page.width - 48) / 5, spaceY = 130.3, xl = 24, yl = 84, pagination: any = 0;
     const lines = await Line.find({}).sort('_id');
     await Promise.all(lines.map(async line => {
-        let keys: any = await Key.find({ 'line': line._id }).sort('code');
+        let keys: Array<IKey> = await Key.find({ 'line': line._id }).sort('code');
         keys = await Promise.all(keys.map(async (key: IKey) => {
             const index = key.image.findIndex(k => k.img != null);
             try {
-                if (index != -1) {
-                    img = await fetch(<string>key.image[index].img, { method: 'GET' }).then(res => res.buffer());
-                } else throw new Error('No image Found');
+                if (index != -1) img = await fetch(<string>key.image[index].img, { method: 'GET' }).then(res => res.buffer());
+                else throw new Error('No image Found');
             } catch (error) {
                 img = imgDefault;
             } finally {
-                return {
+                return <IKey>{
                     _id: key._id,
                     code: key.code,
                     line: key.line,
@@ -40,7 +39,7 @@ export async function createPdf(req: Request, res: Response) {
                 };
             }
         }));
-        return {
+        return <ILine>{
             _id: line._id,
             name: line.name,
             started: line.started,
@@ -68,7 +67,7 @@ export async function createPdf(req: Request, res: Response) {
                     .text(pagination, 24, doc.page.height - 31, { width: doc.widthOfString(pagination) });
             });
             doc.addPage();
-            line.keys.forEach((key: IKey) => {
+            line.keys.forEach(key => {
                 if (yi == 5) {
                     yi = 0;
                     doc.addPage();

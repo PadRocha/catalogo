@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -131,16 +122,16 @@ function listKeyPage(req, res) {
         limit: perPage,
         sort: { 'line': 1, 'code': 1 }
     };
-    key_1.default.paginate(query, options, (err, key) => __awaiter(this, void 0, void 0, function* () {
+    key_1.default.paginate(query, options, async (err, key) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
-        const [status, percentage] = yield infoStatus(query);
+        const [status, percentage] = await infoStatus(query);
         key.status = status;
         key.percentage = percentage;
         return res.status(200).send({ data: key });
-    }));
+    });
 }
 exports.listKeyPage = listKeyPage;
 function listKeyRegex(req, res) {
@@ -171,16 +162,16 @@ function listKeyRegexPage(req, res) {
         limit: perPage,
         sort: { 'line': 1, 'code': 1 }
     };
-    key_1.default.paginate(query, options, (err, key) => __awaiter(this, void 0, void 0, function* () {
+    key_1.default.paginate(query, options, async (err, key) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
-        const [status, percentage] = yield infoStatus(query);
+        const [status, percentage] = await infoStatus(query);
         key.status = status;
         key.percentage = percentage;
         return res.status(200).send({ data: key });
-    }));
+    });
 }
 exports.listKeyRegexPage = listKeyRegexPage;
 function listKeyLine(req, res) {
@@ -205,16 +196,16 @@ function listKeyLinePage(req, res) {
         limit: perPage,
         sort: 'code'
     };
-    key_1.default.paginate(query, options, (err, key) => __awaiter(this, void 0, void 0, function* () {
+    key_1.default.paginate(query, options, async (err, key) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
-        const [status, percentage] = yield infoStatus(query);
+        const [status, percentage] = await infoStatus(query);
         key.status = status;
         key.percentage = percentage;
         return res.status(200).send({ data: key });
-    }));
+    });
 }
 exports.listKeyLinePage = listKeyLinePage;
 function getKey(req, res) {
@@ -249,9 +240,9 @@ function deleteKey(req, res) {
             return res.status(500).send({ message: 'Internal Server message' });
         if (!keyDeleted)
             return res.status(404).send({ message: 'Key Not Found' });
-        keyDeleted.image.forEach((e) => __awaiter(this, void 0, void 0, function* () {
-            yield cloudinary_1.v2.uploader.destroy(e.publicId);
-        }));
+        keyDeleted.image.forEach(async (e) => {
+            await cloudinary_1.v2.uploader.destroy(e.publicId);
+        });
         return res.status(200).send({ data: keyDeleted });
     });
 }
@@ -329,68 +320,64 @@ function deleteStatus(req, res) {
     });
 }
 exports.deleteStatus = deleteStatus;
-function saveImage(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file)
-            return res.status(400).send({ message: 'Bad Request' });
-        const result = yield cloudinary_1.v2.uploader.upload(req.file.path);
-        const query = {
-            '_id': req.params.id,
-            'image.idN': req.body.idN
-        };
-        const update = {
-            $set: {
-                'image.$.status': 5,
-                'image.$.img': result.url,
-                'image.$.publicId': result.public_id
-            }
-        };
-        key_1.default.findOneAndUpdate(query, update, { new: true }, (err, imageStored) => __awaiter(this, void 0, void 0, function* () {
-            if (err || !imageStored) {
-                yield cloudinary_1.v2.uploader.destroy(result.public_id);
-                yield fs_extra_1.default.unlink(req.file.path);
-            }
-            if (err)
-                return res.status(500).send({ message: 'Internal Server message' });
-            if (!imageStored)
-                return res.status(404).send({ message: 'Key Not Found' });
-            yield fs_extra_1.default.unlink(req.file.path);
-            return res.status(200).send({ data: imageStored });
-        }));
+async function saveImage(req, res) {
+    if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file)
+        return res.status(400).send({ message: 'Bad Request' });
+    const result = await cloudinary_1.v2.uploader.upload(req.file.path);
+    const query = {
+        '_id': req.params.id,
+        'image.idN': req.body.idN
+    };
+    const update = {
+        $set: {
+            'image.$.status': 5,
+            'image.$.img': result.url,
+            'image.$.publicId': result.public_id
+        }
+    };
+    key_1.default.findOneAndUpdate(query, update, { new: true }, async (err, imageStored) => {
+        if (err || !imageStored) {
+            await cloudinary_1.v2.uploader.destroy(result.public_id);
+            await fs_extra_1.default.unlink(req.file.path);
+        }
+        if (err)
+            return res.status(500).send({ message: 'Internal Server message' });
+        if (!imageStored)
+            return res.status(404).send({ message: 'Key Not Found' });
+        await fs_extra_1.default.unlink(req.file.path);
+        return res.status(200).send({ data: imageStored });
     });
 }
 exports.saveImage = saveImage;
-function updateImage(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file)
-            return res.status(400).send({ message: 'Bad Request' });
-        const result = yield cloudinary_1.v2.uploader.upload(req.file.path);
-        const query = {
-            '_id': req.params.id,
-            'image.idN': req.body.idN,
-            'image.status': 5,
-            'image.img': { $ne: null },
-            'image.publicId': { $ne: null }
-        };
-        const update = {
-            $set: {
-                'image.$.img': result.url,
-                'image.$.publicId': result.public_id
-            }
-        };
-        key_1.default.findOneAndUpdate(query, update, (err, imageUpdated) => __awaiter(this, void 0, void 0, function* () {
-            if (err || !imageUpdated) {
-                yield cloudinary_1.v2.uploader.destroy(result.public_id);
-                yield fs_extra_1.default.unlink(req.file.path);
-            }
-            if (err)
-                return res.status(500).send({ message: 'Internal Server message' });
-            if (!imageUpdated)
-                return res.status(404).send({ message: 'Key Not Found' });
-            yield cloudinary_1.v2.uploader.destroy(imageUpdated.image.find((x) => x.idN === req.body.idN).publicId);
-            yield fs_extra_1.default.unlink(req.file.path);
-            return res.status(200).send({ data: imageUpdated });
-        }));
+async function updateImage(req, res) {
+    if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file)
+        return res.status(400).send({ message: 'Bad Request' });
+    const result = await cloudinary_1.v2.uploader.upload(req.file.path);
+    const query = {
+        '_id': req.params.id,
+        'image.idN': req.body.idN,
+        'image.status': 5,
+        'image.img': { $ne: null },
+        'image.publicId': { $ne: null }
+    };
+    const update = {
+        $set: {
+            'image.$.img': result.url,
+            'image.$.publicId': result.public_id
+        }
+    };
+    key_1.default.findOneAndUpdate(query, update, async (err, imageUpdated) => {
+        if (err || !imageUpdated) {
+            await cloudinary_1.v2.uploader.destroy(result.public_id);
+            await fs_extra_1.default.unlink(req.file.path);
+        }
+        if (err)
+            return res.status(500).send({ message: 'Internal Server message' });
+        if (!imageUpdated)
+            return res.status(404).send({ message: 'Key Not Found' });
+        await cloudinary_1.v2.uploader.destroy(imageUpdated.image.find((x) => x.idN === req.body.idN).publicId);
+        await fs_extra_1.default.unlink(req.file.path);
+        return res.status(200).send({ data: imageUpdated });
     });
 }
 exports.updateImage = updateImage;
@@ -406,13 +393,13 @@ function deleteImage(req, res) {
             }
         }
     };
-    key_1.default.findByIdAndUpdate(req.params._id, update, (err, imageDeleted) => __awaiter(this, void 0, void 0, function* () {
+    key_1.default.findByIdAndUpdate(req.params._id, update, async (err, imageDeleted) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!imageDeleted)
             return res.status(404).send({ message: 'Key Not Found' });
-        yield cloudinary_1.v2.uploader.destroy(imageDeleted.image.find((x) => x.idN === id).publicId);
+        await cloudinary_1.v2.uploader.destroy(imageDeleted.image.find((x) => x.idN === id).publicId);
         return res.status(200).send({ data: imageDeleted });
-    }));
+    });
 }
 exports.deleteImage = deleteImage;

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -22,13 +13,11 @@ cloudinary_1.v2.config({
     api_key: config_1.default.CDB.C_KEY,
     api_secret: config_1.default.CDB.C_SECRET
 });
-const totalKey = (line) => new Promise((resolve) => key_1.default.countDocuments({ 'line': line._id }, (err, countKeys) => __awaiter(void 0, void 0, void 0, function* () {
-    return resolve({
-        _id: line._id,
-        name: line.name,
-        started: line.started,
-        countKeys
-    });
+const totalKey = (line) => new Promise((resolve) => key_1.default.countDocuments({ 'line': line._id }, async (err, countKeys) => resolve({
+    _id: line._id,
+    name: line.name,
+    started: line.started,
+    countKeys
 })));
 function saveLine(req, res) {
     if (!req.body)
@@ -59,14 +48,14 @@ function listLine(req, res) {
 exports.listLine = listLine;
 function listLineTotalKey(req, res) {
     const query = {};
-    line_1.default.find(query).sort('_id').exec((err, line) => __awaiter(this, void 0, void 0, function* () {
+    line_1.default.find(query).sort('_id').exec(async (err, line) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
-        const data = yield Promise.all(line.map(l => totalKey(l)));
+        const data = await Promise.all(line.map(l => totalKey(l)));
         return res.status(200).send({ data });
-    }));
+    });
 }
 exports.listLineTotalKey = listLineTotalKey;
 function listLinePage(req, res) {
@@ -96,15 +85,15 @@ function listLineTotalKeyPage(req, res) {
         limit: perPage,
         sort: '_id'
     };
-    line_1.default.paginate(query, options, (err, line) => __awaiter(this, void 0, void 0, function* () {
+    line_1.default.paginate(query, options, async (err, line) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         const data = line;
-        data.docs = yield Promise.all(line.docs.map(l => totalKey(l)));
+        data.docs = await Promise.all(line.docs.map(l => totalKey(l)));
         return res.status(200).send({ data });
-    }));
+    });
 }
 exports.listLineTotalKeyPage = listLineTotalKeyPage;
 function listLineRegex(req, res) {
@@ -134,14 +123,14 @@ function listLineTotalKeyRegex(req, res) {
             $options: 'i'
         }
     };
-    line_1.default.find(query).sort('_id').exec((err, line) => __awaiter(this, void 0, void 0, function* () {
+    line_1.default.find(query).sort('_id').exec(async (err, line) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
-        const data = yield Promise.all(line.map(l => totalKey(l)));
+        const data = await Promise.all(line.map(l => totalKey(l)));
         return res.status(200).send({ data });
-    }));
+    });
 }
 exports.listLineTotalKeyRegex = listLineTotalKeyRegex;
 function listLineRegexPage(req, res) {
@@ -181,15 +170,15 @@ function listLineTotalKeyRegexPage(req, res) {
         limit: perPage,
         sort: '_id'
     };
-    line_1.default.paginate(query, options, (err, line) => __awaiter(this, void 0, void 0, function* () {
+    line_1.default.paginate(query, options, async (err, line) => {
         if (err)
             return res.status(500).send({ message: 'Internal Server message' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         const data = line;
-        data.docs = yield Promise.all(line.docs.map(l => totalKey(l)));
+        data.docs = await Promise.all(line.docs.map(l => totalKey(l)));
         return res.status(200).send({ data });
-    }));
+    });
 }
 exports.listLineTotalKeyRegexPage = listLineTotalKeyRegexPage;
 function getLine(req, res) {
@@ -264,10 +253,10 @@ function deleteLine(req, res) {
             if (err)
                 return res.status(500).send({ message: 'Key delete Internal Server message' });
             keyImage.forEach(e => {
-                e.image.forEach((f) => __awaiter(this, void 0, void 0, function* () {
+                e.image.forEach(async (f) => {
                     if (f.publicId)
-                        yield cloudinary_1.v2.uploader.destroy(f.publicId);
-                }));
+                        await cloudinary_1.v2.uploader.destroy(f.publicId);
+                });
             });
         });
         return res.status(200).send({ data: lineDeleted });
