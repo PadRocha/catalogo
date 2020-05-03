@@ -11,9 +11,10 @@ const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
 const uuid_1 = require("uuid");
 const api_routes_1 = __importDefault(require("./routes/api.routes"));
+const config_1 = __importDefault(require("./config/config"));
 const app = express_1.default();
 app.set('trust proxy', true);
-app.set('env', process.env.NODE_ENV);
+app.set('env', config_1.default.ENV);
 app.set('port', process.env.PORT || 4000);
 const storage = multer_1.default.diskStorage({
     destination: path_1.default.join(__dirname, 'uploads'),

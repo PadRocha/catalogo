@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 import api from './routes/api.routes';
+import config from './config/config'
 
 const app = express();
 
@@ -16,7 +17,7 @@ const app = express();
 /*------------------------------------------------------------------*/
 
 app.set('trust proxy', true);
-app.set('env', process.env.NODE_ENV) //* Definir el ambiente
+app.set('env', config.ENV); //* Definir el ambiente
 app.set('port', process.env.PORT || 4000); //* Definir el puerto
 const storage = multer.diskStorage({ //* Definir donde se van a guardar las imagenes y se les asigna un nombre al azar
     destination: path.join(__dirname, 'uploads'),

@@ -13,7 +13,7 @@ import config from '../config/config';
 
 
 export function registerUser(req: Request, res: Response) {
-    if (!req.body) return res.status(400).send({ message: 'Bad Request' });
+    if (!req.body) return res.status(400).send({ message: 'Client has not sent params' });
     const newUser = new User(req.body);
     newUser.save((err, userStored: IUser) => {
         if (err) return res.status(500).send({ message: 'Internal Server message' });
@@ -38,7 +38,8 @@ export function loginUser(req: Request, res: Response) {
 }
 
 export function returnUser(req: Request, res: Response) {
-    if (!req.headers.authorization) return res.status(403).send({ message: 'Forbidden' });
+    if (!req.headers.authorization) return res.status(400).send({ message: 'Client has not sent Token' });
+    //TODO: Cambiar 403 por 400 en frontend
     const token = req.headers.authorization.replace(/['"]+/g, '').split(' ')[1];
     if (token === 'null') return res.status(403).send({ message: 'Forbidden' });
     try {

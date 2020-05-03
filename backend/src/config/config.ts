@@ -1,4 +1,5 @@
 export default {
+    ENV: process.env.NODE_ENV || 'development',
     KEY: {
         SECRET: process.env.SECRET_KEY || '//password',
         SALT: Number(process.env.SALT) || 11

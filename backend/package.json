@@ -10,8 +10,8 @@
     "watch:tsc": "tsc-watch --onSuccess \"node dist/index.js\"",
     "watch:grunt": "grunt watch",
     "watch:all": "concurrently \"npm run watch:tsc\" \"npm run watch:grunt\"",
-    "build": "tsc",
-    "docs": "apidoc -i src/ -o docs/"
+    "docs": "apidoc -i src/ -o docs/",
+    "build": "tsc"
   },
   "keywords": [
     "catalogo"

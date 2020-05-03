@@ -9,7 +9,7 @@ const jwt_1 = __importDefault(require("../services/jwt"));
 const config_1 = __importDefault(require("../config/config"));
 function registerUser(req, res) {
     if (!req.body)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const newUser = new user_1.default(req.body);
     newUser.save((err, userStored) => {
         if (err)
@@ -41,7 +41,7 @@ function loginUser(req, res) {
 exports.loginUser = loginUser;
 function returnUser(req, res) {
     if (!req.headers.authorization)
-        return res.status(403).send({ message: 'Forbidden' });
+        return res.status(400).send({ message: 'Client has not sent Token' });
     const token = req.headers.authorization.replace(/['"]+/g, '').split(' ')[1];
     if (token === 'null')
         return res.status(403).send({ message: 'Forbidden' });

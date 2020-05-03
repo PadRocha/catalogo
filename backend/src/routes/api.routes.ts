@@ -15,27 +15,43 @@ const router = Router();
 
 /**
  * 
- * @api {post} / Request user info
+ * @api {get} / Request User Info
  * @apiName ReturnUser
- * @apiGroup Auth
+ * @apiDescription Allow an user to Request his info
+ * @apiGroup User
+ * @apiVersion  0.1.0
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/
  * 
  * 
- * @apiSuccess (200) {string} _id id´s User.
- * @apiSuccess (200) {nickname} nikcname Nickname of the User.
- * @apiSuccess (200) {role} role Role of the User
+ * @apiSuccess {string} _id id´s User.
+ * @apiSuccess {string} nikcname Nickname of the User.
+ * @apiSuccess {string} role Role of the User
  * 
+ * @apiSuccessExample {json} Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *           "_id": "5e6ceef1cf62796de0e1e791", 
+ *           "nickname": "padrocha", 
+ *           "role": "$3a$10$WjLK2U2TqVjG8Y5g4qyUC.xJ5h3x8IDtb3VLzZmkKpMAvbnOsNJ0i"
+ *      }
  * 
- * @apiSuccessExample {type} Success-Response:
- * HTTP/1.1 200 OK
- * {
- *      "_id": "5e6ceef1cf62796de0e1e791", 
- *      "nickname": "padrocha", 
- *      "role": "$3a$10$WjLK2U2TqVjG8Y5g4qyUC.xJ5h3x8IDtb3VLzZmkKpMAvbnOsNJ0i"
- * }
+ * @apiError message Request Header does not contain token
  * 
- * @apiError Request Header does not contain documentation
+ * @apiErrorExample {json} Error-Response:
+ *      HTTP/1.1 400 The server cannot or will not process the request due to an apparent client error.
+ *      {
+ *          "message": "Client has not sent Token"
+ *      }
  * 
- * @apiErrorExample {type} Error-Response:
+ * @apiError message Request Header does not contain token
+ * 
+ * @apiErrorExample {json} Error-Response:
+ *      HTTP/1.1 403 The server cannot or will not process the request due to an apparent client error.
+ *      {
+ *          "message": "Client has not sent Token"
+ *      }
+ * 
  * 
  */
 
@@ -46,8 +62,86 @@ router.route('/')
 // User Routes
 /*------------------------------------------------------------------*/
 
+/**
+ * @apiDefine admin User access only
+ * This optional description belong to to the group admin.
+ */
+
+/**
+ * @apiDefine SuccessToken
+ * @apiSuccess {json} token User Token identificaction
+ * 
+ * @apiSuccessExample  {json} Request-Example:
+ *      HTTP/1.1 200 OK
+ *      {
+ *           token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCI8.eyJzdWIiOiI1ZTZiZWVmMWNmNjI3OTVkZTBlMWU3OTEiLCJuaWNrbmFtZSI6InBhZHJvY2hhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTg4MzkxNTUxLCJleHAiOjE1OTA5ODM1NTF9.kXECNDTfHt6yMdpR__InB6wu0Z8FKs8083mBnyVVaWg"
+ *      }
+ */
+
+/*------------------------------------------------------------------*/
+
+/**
+ * 
+ * @api {post} /register Register User
+ * @apiName RegisterUser
+ * @apiDescription Allows an Admin to register a user
+ * @apiGroup User
+ * @apiVersion  0.1.0
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/register
+ * 
+ * 
+ * @apiParam  (body) {String} nikcname Nickname of the User.
+ * @apiParam  (body) {String} password Password ot the User
+ * @apiParam  (body) {String} role Role of the User
+ * 
+ * @apiParamExample  {json} Request-Example:
+ *      {
+ *          "nickname": "padrocha", 
+ *          "password": "pass",
+ *          "role": "admin"
+ *      }
+ * 
+ * @apiuse SuccessToken
+ * 
+ * @apiError message Request Header does not contain token
+ * 
+ * @apiErrorExample {json} Error-Response:
+ *      HTTP/1.1 400 The server cannot or will not process the request due to an apparent client error.
+ *      {
+ *          "message": "Client has not sent Token"
+ *      }
+ * 
+ * 
+ */
+
 router.route('/register')
     .post(authAdmin, userController.registerUser);
+
+/**
+ * 
+ * @api {post} /login Login User
+ * @apiName LoginUser
+ * @apiDescription Verify if the user exits and have the correct password
+ * @apiGroup User
+ * @apiVersion  0.1.0
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/login
+ * 
+ * 
+ * @apiParam  (body) {String} nikcname Nickname of the User.
+ * @apiParam  (body) {String} password Password ot the User
+ * 
+ * @apiParamExample  {json} Request-Example:
+ *      {
+ *          "nickname": "padrocha", 
+ *          "password": "pass"
+ *      }
+ * 
+ * @apiuse SuccessToken
+ * 
+ * 
+ */
 
 router.route('/login')
     .post(userController.loginUser);
