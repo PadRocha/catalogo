@@ -63,6 +63,7 @@ keySchema.index({ code: 1, line: 1 }, { unique: true });
 keySchema.pre('save', function (next) {
     const key = this;
     const length = key.code.length;
+    let code = '';
     for (let i = 0; i < (4 - length); i++)
         key.code = '0' + key.code;
     return next();

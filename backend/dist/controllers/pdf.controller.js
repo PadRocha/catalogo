@@ -6,12 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const pdfkit_1 = __importDefault(require("pdfkit"));
 const node_fetch_1 = __importDefault(require("node-fetch"));
+const cloudinary_1 = require("cloudinary");
 const line_1 = __importDefault(require("../models/line"));
 const key_1 = __importDefault(require("../models/key"));
 async function createPdf(req, res) {
     const doc = new pdfkit_1.default();
     const filename = 'catalogo.pdf';
-    res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
+    res.setHeader('Content-disposition', `attachment; filename="${filename}"`);
     res.setHeader('Content-type', 'application/pdf');
     doc.fontSize(8);
     let img, header = path_1.default.join(__dirname, '../assets/pdf-header.png'), imgDefault = path_1.default.join(__dirname, '../assets/pdf-default.jpg'), spaceX = (doc.page.width - 48) / 5, spaceY = 130.3, xl = 24, yl = 84, pagination = 0;
@@ -19,10 +20,10 @@ async function createPdf(req, res) {
     await Promise.all(lines.map(async (line) => {
         let keys = await key_1.default.find({ 'line': line._id }).sort('code');
         keys = await Promise.all(keys.map(async (key) => {
-            const index = key.image.findIndex(k => k.img != null);
+            const index = key.image.sort((a, b) => a.idN - b.idN).findIndex(k => k.img != null);
             try {
                 if (index != -1)
-                    img = await node_fetch_1.default(key.image[index].img, { method: 'GET' }).then(res => res.buffer());
+                    img = await node_fetch_1.default(cloudinary_1.v2.url(key.image[index].publicId, { width: 113, crop: "scale" }), { method: 'GET' }).then(res => res.buffer());
                 else
                     throw new Error('No image Found');
             }
@@ -51,13 +52,13 @@ async function createPdf(req, res) {
             doc.on('pageAdded', () => {
                 ++pagination;
                 doc.save();
-                line.name = 'Línea: ' + line.name;
+                let name = 'Línea: ' + line.name;
                 doc.image(header, 24, 24, { width: doc.page.width - 48 });
                 doc.fontSize(10);
-                doc.rect(doc.page.width - 53 - doc.widthOfString(line.name), 40, doc.widthOfString(line.name) + 10, 20)
+                doc.rect(doc.page.width - 53 - doc.widthOfString(name), 40, doc.widthOfString(name) + 10, 20)
                     .fill('#000000')
                     .fillColor('white')
-                    .text(line.name, doc.page.width - 48 - doc.widthOfString(line.name), 45, { width: doc.widthOfString(line.name) });
+                    .text(line.name, doc.page.width - 48 - doc.widthOfString(name), 45, { width: doc.widthOfString(name) });
                 doc.restore()
                     .fontSize(8);
                 doc.moveTo(24, doc.page.height - 24)

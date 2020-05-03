@@ -13,7 +13,31 @@ import { authorized, authAdmin } from '../middlewares/auth'
 
 const router = Router();
 
-/*------------------------------------------------------------------*/
+/**
+ * 
+ * @api {post} / Request user info
+ * @apiName ReturnUser
+ * @apiGroup Auth
+ * 
+ * 
+ * @apiSuccess (200) {string} _id id´s User.
+ * @apiSuccess (200) {nickname} nikcname Nickname of the User.
+ * @apiSuccess (200) {role} role Role of the User
+ * 
+ * 
+ * @apiSuccessExample {type} Success-Response:
+ * HTTP/1.1 200 OK
+ * {
+ *      "_id": "5e6ceef1cf62796de0e1e791", 
+ *      "nickname": "padrocha", 
+ *      "role": "$3a$10$WjLK2U2TqVjG8Y5g4qyUC.xJ5h3x8IDtb3VLzZmkKpMAvbnOsNJ0i"
+ * }
+ * 
+ * @apiError Request Header does not contain documentation
+ * 
+ * @apiErrorExample {type} Error-Response:
+ * 
+ */
 
 router.route('/')
     .get(authorized, userController.returnUser); //* User
