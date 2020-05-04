@@ -22,10 +22,7 @@ const totalKey = (line) => new Promise((resolve) => key_1.default.countDocuments
 function saveLine(req, res) {
     if (!req.body)
         return res.status(400).send({ message: 'Client has not sent params' });
-    const newLine = new line_1.default({
-        _id: req.body._id,
-        name: req.body.name
-    });
+    const newLine = new line_1.default(req.body);
     newLine.save((err, lineStored) => {
         if (err)
             return res.status(406).send({ message: 'Internal error, probably error with params' });

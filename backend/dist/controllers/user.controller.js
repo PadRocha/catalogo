@@ -15,7 +15,7 @@ function registerUser(req, res) {
         if (err)
             return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!userStored)
-            return res.status(204).send({ message: 'User No Content' });
+            return res.status(204).send({ message: 'Saved and is not returning any content' });
         delete userStored.password;
         return res.status(200).send({ token: jwt_1.default(userStored) });
     });
@@ -29,7 +29,7 @@ function loginUser(req, res) {
         if (err)
             return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!user)
-            return res.status(404).send({ message: 'User Not Found' });
+            return res.status(404).send({ message: 'Document not found' });
         if (!user.comparePassword(userData.password))
             return res.status(401).send({ message: 'Unauthorized' });
         else {
@@ -52,7 +52,7 @@ function returnUser(req, res) {
         return res.status(200).send({ _id: payload.sub, nickname: payload.nickname, role: payload.role });
     }
     catch (message) {
-        return res.status(409).send({ message: 'Internal error, probably error with paramsss' });
+        return res.status(409).send({ message: 'Internal error, probably error with params' });
     }
 }
 exports.returnUser = returnUser;

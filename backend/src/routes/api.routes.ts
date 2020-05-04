@@ -23,6 +23,27 @@ const router = Router();
  * This function is restricted for logged in users.
 */
 
+/**
+ * @apiDefine page
+ * @apiParam  (params) {number} page Number of page.
+ */
+
+/**
+ * @apiDefine regex
+ * @apiParam  (params) {string} id Regular expression that matches the start.
+ */
+
+/**
+ * @apiDefine BodyLine
+ * @apiParam (body) {String} _id Line identifier
+ * @apiParam (body) {String} name Line name
+ * 
+ * @apiParamExample  {json} Request-Example:
+ *      {
+ *          "_id": "ACCSEH",
+ *          "name": "Accesorios (SEH)"
+ *      }
+ */
 
 /**
  * @apiDefine SuccessToken
@@ -31,7 +52,150 @@ const router = Router();
  * @apiSuccessExample  {json} Success-Response:
  *      HTTP/1.1 200 OK
  *      {
- *           token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCI8.eyJzdWIiOiI1ZTZiZWVmMWNmNjI3OTVkZTBlMWU3OTEiLCJuaWNrbmFtZSI6InBhZHJvY2hhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTg4MzkxNTUxLCJleHAiOjE1OTA5ODM1NTF9.kXECNDTfHt6yMdpR__InB6wu0Z8FKs8083mBnyVVaWg"
+ *           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCI8.eyJzdWIiOiI1ZTZiZWVmMWNmNjI3OTVkZTBlMWU3OTEiLCJuaWNrbmFtZSI6InBhZHJvY2hhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTg4MzkxNTUxLCJleHAiOjE1OTA5ODM1NTF9.kXECNDTfHt6yMdpR__InB6wu0Z8FKs8083mBnyVVaWg"
+ *      }
+ */
+
+/**
+ * @apiDefine SuccessLines
+ * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} name Line name
+ * @apiParam (Success 200 [Array])  {Date} started Line creation date
+ * 
+ * @apiSuccessExample  {json} Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": [   
+ *              {
+ *                  "_id": "ACCSEH",
+ *                  "name": "Accesorios (SEH)",
+ *                  "started": "2020-04-21T20:25:10.395Z",
+ *                  "__v": 0
+ *              }
+ *          ]
+ *      }
+ */
+
+/**
+ * @apiDefine SuccessLinesPaged
+ * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} name Line name
+ * @apiParam (Success 200 [Array])  {Date} started Line creation date
+ * 
+ * @apiParam (Paged format) {Array} docs Array of Line Documents
+ * @apiParam (Paged format) {Number} totalDocs Total number of documents in collection that match a query
+ * @apiParam (Paged format) {Number} limit Limit that was used
+ * @apiParam (Paged format) {Number} totalPages Total number of pages.
+ * @apiParam (Paged format) {Number} page Current page number
+ * @apiParam (Paged format) {Number} pagingCounter The starting sl. number of first document.
+ * @apiParam (Paged format) {Boolean} hasPrevPage Availability of prev page.
+ * @apiParam (Paged format) {Boolean} hasNextPage Availability of next page.
+ * @apiParam (Paged format) {Number} prevPage Previous page number if available or NULL
+ * @apiParam (Paged format) {Number} nextPage Next page number if available or NULL
+ * 
+ * @apiSuccessExample  {json} Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": {
+ *              "docs": [
+ *                  {
+ *                      "_id": "ACCSEH",
+ *                      "name": "Accesorios (SEH)",
+ *                      "started": "2020-04-21T20:25:10.395Z",
+ *                  }
+ *              ],
+ *              "totalDocs": 1,
+ *              "limit": 20,
+ *              "totalPages": 1,
+ *              "page": 1,
+ *              "pagingCounter": 1,
+ *              "hasPrevPage": false,
+ *              "hasNextPage": false,
+ *              "prevPage": null,
+ *              "nextPage": null
+ *          }
+ *      }
+ */
+
+/**
+ * @apiDefine SuccessLinesTotalKey
+ * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} name Line name
+ * @apiParam (Success 200 [Array])  {Date} started Line creation date
+ * @apiParam (Success 200 [Array])  {Number} countKeys Total Key in Line
+ * 
+ * @apiSuccessExample  {json} Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": [
+ *              {
+ *                  "_id": "ACCSEH",
+ *                  "name": "Accesorios (SEH)",
+ *                  "started": "2020-04-21T20:25:10.395Z",
+ *                  "countKeys": 26
+ *              }
+ *          ]
+ *      }
+ */
+
+/**
+ * @apiDefine SuccessLinesTotalKeyPaged
+ * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} name Line name
+ * @apiParam (Success 200 [Array])  {Date} started Line creation date
+ * @apiParam (Success 200 [Array])  {Number} countKeys Total Key in Line
+ * 
+ * @apiParam (Paged format) {Array} docs Array of Line Documents
+ * @apiParam (Paged format) {Number} totalDocs Total number of documents in collection that match a query
+ * @apiParam (Paged format) {Number} limit Limit that was used
+ * @apiParam (Paged format) {Number} totalPages Total number of pages.
+ * @apiParam (Paged format) {Number} page Current page number
+ * @apiParam (Paged format) {Number} pagingCounter The starting sl. number of first document.
+ * @apiParam (Paged format) {Boolean} hasPrevPage Availability of prev page.
+ * @apiParam (Paged format) {Boolean} hasNextPage Availability of next page.
+ * @apiParam (Paged format) {Number} prevPage Previous page number if available or NULL
+ * @apiParam (Paged format) {Number} nextPage Next page number if available or NULL
+ * 
+ * @apiSuccessExample  {json} Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": {
+ *              "docs": [
+ *                  {
+ *                      "_id": "ACCSEH",
+ *                      "name": "Accesorios (SEH)",
+ *                      "started": "2020-04-21T20:25:10.395Z",
+ *                      "countKeys": 26
+ *                  }
+ *              ],
+ *              "totalDocs": 1,
+ *              "limit": 20,
+ *              "totalPages": 1,
+ *              "page": 1,
+ *              "pagingCounter": 1,
+ *              "hasPrevPage": false,
+ *              "hasNextPage": false,
+ *              "prevPage": null,
+ *              "nextPage": null
+ *          }
+ *      }
+ */
+
+/**
+ * @apiDefine SuccessLine
+ * @apiSuccess {String} _id Line identifier
+ * @apiSuccess {String} name Line name
+ * @apiSuccess {Date} started Line creation date
+ * 
+ * @apiSuccessExample  {json} Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": {
+ *              "_id": "ACCSEH",
+ *              "name": "Accesorios (SEH)",
+ *              "started": "2020-04-21T20:25:10.395Z",
+ *              "__v": 0
+ *          }
  *      }
  */
 
@@ -204,32 +368,294 @@ router.route('/login')
 // Line routes
 /*------------------------------------------------------------------*/
 
+/**
+ * 
+ * @api {get} /line List Line
+ * @apiName ListLine
+ * @apiDescription Show all Line documents
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line
+ * 
+ * 
+ * @apiuse SuccessLines
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
+
+/**
+ * 
+ * @api {post} /line Save Line
+ * @apiName SaveLine
+ * @apiDescription Save Line in the database
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line
+ * 
+ * 
+ * @apiuse BodyLine
+ * 
+ * @apiuse SuccessLine
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NoContent
+ * 
+ */
+
 router.route('/line')
     .get(lineController.listLine)
     .post(lineController.saveLine);
+
+/**
+ * 
+ * @api {get} /line/:id Get Line
+ * @apiName getLine
+ * @apiDescription Return the Line document that matchs with the id
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/ACCSEH
+ * 
+ * 
+ * @apiParam  (params) {string} id Line identifier.
+ * 
+ * @apiuse SuccessLine
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
+
+/**
+ * 
+ * @api {put} /line/:id Update Line
+ * @apiName updateLine
+ * @apiDescription Update the line in id and returns the Line before the update
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/ACCSEH
+ * 
+ * 
+ * @apiParam  (params) {string} id Line identifier.
+ * 
+ * @apiuse BodyLine
+ * 
+ * @apiuse SuccessLine
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ * @apiuse NoContent
+ * 
+ */
 
 router.route('/line/:id')
     .get(lineController.getLine)
     .put(lineController.updateLine)
     .delete(lineController.deleteLine);
 
+/**
+ * 
+ * @api {get} /line/page/:page List Line Page
+ * @apiName listLinePage
+ * @apiDescription Show all Line documents with the paged format
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/page/1
+ * 
+ * 
+ * @apiuse page
+ * 
+ * @apiuse SuccessLinesPaged
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
+
 router.route('/line/page/:page')
     .get(authorized, lineController.listLinePage); //* User
+
+/**
+ * 
+ * @api {get} /line/regex/:id List Line Regex
+ * @apiName listLineRegex
+ * @apiDescription Show all Line documents found with the regex
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/regex/ACC
+ * 
+ * 
+ * @apiuse regex
+ * 
+ * @apiuse SuccessLines
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
 
 router.route('/line/regex/:id')
     .get(lineController.listLineRegex);
 
+/**
+ * 
+ * @api {get} /line/regex/:id/page/:page List Line Regex Page
+ * @apiName listLineRegexPage
+ * @apiDescription Show all Line documents found with the regex with the paged format
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/regex/ACC/page/1
+ * 
+ * 
+ * @apiuse regex
+ * @apiuse page
+ * 
+ * @apiuse SuccessLinesPaged
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
+
 router.route('/line/regex/:id/page/:page')
     .get(lineController.listLineRegexPage);
+
+/**
+ * 
+ * @api {get} /line/total/key List Line Key
+ * @apiName ListLineTotalKey
+ * @apiDescription Show all Line documents adding the total of Keys that belong to the line
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/total/key
+ * 
+ * 
+ * @apiuse SuccessLinesTotalKey
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
 
 router.route('/line/total/key')
     .get(lineController.listLineTotalKey);
 
+/**
+ * 
+ * @api {get} /line/total/key/page/:page List Line Key Page
+ * @apiName ListLineTotalKeyPage
+ * @apiDescription Show all Line documents adding the total of Keys that belong to the line with the paged format
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/total/key/page/1
+ * 
+ * 
+ * @apiuse page
+ * 
+ * @apiuse SuccessLinesTotalKeyPaged
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
+
 router.route('/line/total/key/page/:page')
     .get(lineController.listLineTotalKeyPage);
 
+/**
+ * 
+ * @api {get} /line/total/key/regex/:id List Line Key Regex
+ * @apiName listLineTotalKeyRegex
+ * @apiDescription Show all Line documents found with the regex adding the total of Keys that belong to the line
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/total/key/regex/ACC
+ * 
+ * 
+ * @apiuse regex
+ * 
+ * @apiuse SuccessLinesTotalKey
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
+
 router.route('/line/total/key/regex/:id')
     .get(lineController.listLineTotalKeyRegex);
+
+/**
+ * 
+ * @api {get} /line/total/key/regex/:id/page/:page List Line Key Regex Page
+ * @apiName listLineTotalKeyRegexPage
+ * @apiDescription Show all Line documents found with the regex  adding the total of Keys that belong to the line with the paged format
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission user
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/total/key/regex/ACC/page/1
+ * 
+ * 
+ * @apiuse regex
+ * @apiuse page
+ * 
+ * @apiuse SuccessLinesTotalKeyPaged
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ */
 
 router.route('/line/total/key/regex/:id/page/:page')
     .get(lineController.listLineTotalKeyRegexPage);
