@@ -21,14 +21,14 @@ const totalKey = (line) => new Promise((resolve) => key_1.default.countDocuments
 })));
 function saveLine(req, res) {
     if (!req.body)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const newLine = new line_1.default({
         _id: req.body._id,
         name: req.body.name
     });
     newLine.save((err, lineStored) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!lineStored)
             return res.status(204).send({ message: 'Line No Content' });
         return res.status(200).send({ data: lineStored });
@@ -39,7 +39,7 @@ function listLine(req, res) {
     const query = {};
     line_1.default.find(query).sort('_id').exec((err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         return res.status(200).send({ data: line });
@@ -50,7 +50,7 @@ function listLineTotalKey(req, res) {
     const query = {};
     line_1.default.find(query).sort('_id').exec(async (err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         const data = await Promise.all(line.map(l => totalKey(l)));
@@ -60,7 +60,7 @@ function listLineTotalKey(req, res) {
 exports.listLineTotalKey = listLineTotalKey;
 function listLinePage(req, res) {
     if (!req.params.page)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {};
     const options = {
         page: Number(req.params.page),
@@ -69,7 +69,7 @@ function listLinePage(req, res) {
     };
     line_1.default.paginate(query, options, (err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         return res.status(200).send({ data: line });
@@ -78,7 +78,7 @@ function listLinePage(req, res) {
 exports.listLinePage = listLinePage;
 function listLineTotalKeyPage(req, res) {
     if (!req.params.page)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {};
     const options = {
         page: Number(req.params.page),
@@ -87,7 +87,7 @@ function listLineTotalKeyPage(req, res) {
     };
     line_1.default.paginate(query, options, async (err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         const data = line;
@@ -98,7 +98,7 @@ function listLineTotalKeyPage(req, res) {
 exports.listLineTotalKeyPage = listLineTotalKeyPage;
 function listLineRegex(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {
         '_id': {
             $regex: '^' + req.params.id,
@@ -107,7 +107,7 @@ function listLineRegex(req, res) {
     };
     line_1.default.find(query).sort('_id').exec((err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         return res.status(200).send({ data: line });
@@ -116,7 +116,7 @@ function listLineRegex(req, res) {
 exports.listLineRegex = listLineRegex;
 function listLineTotalKeyRegex(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {
         '_id': {
             $regex: '^' + req.params.id,
@@ -125,7 +125,7 @@ function listLineTotalKeyRegex(req, res) {
     };
     line_1.default.find(query).sort('_id').exec(async (err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         const data = await Promise.all(line.map(l => totalKey(l)));
@@ -135,7 +135,7 @@ function listLineTotalKeyRegex(req, res) {
 exports.listLineTotalKeyRegex = listLineTotalKeyRegex;
 function listLineRegexPage(req, res) {
     if (!req.params.id || !req.params.page)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {
         '_id': {
             $regex: '^' + req.params.id,
@@ -149,7 +149,7 @@ function listLineRegexPage(req, res) {
     };
     line_1.default.paginate(query, options, (err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         return res.status(200).send({ data: line });
@@ -158,7 +158,7 @@ function listLineRegexPage(req, res) {
 exports.listLineRegexPage = listLineRegexPage;
 function listLineTotalKeyRegexPage(req, res) {
     if (!req.params.id || !req.params.page)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {
         '_id': {
             $regex: '^' + req.params.id,
@@ -172,7 +172,7 @@ function listLineTotalKeyRegexPage(req, res) {
     };
     line_1.default.paginate(query, options, async (err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         const data = line;
@@ -183,10 +183,10 @@ function listLineTotalKeyRegexPage(req, res) {
 exports.listLineTotalKeyRegexPage = listLineTotalKeyRegexPage;
 function getLine(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     line_1.default.findById(req.params.id).exec((err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         return res.status(200).send({ data: line });
@@ -195,28 +195,28 @@ function getLine(req, res) {
 exports.getLine = getLine;
 function updateLine(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     if (!req.body)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const id = req.params.id;
     if (req.body._id) {
         if (!req.body.name)
-            return res.status(400).send({ message: 'Bad Request' });
+            return res.status(400).send({ message: 'Client has not sent params' });
         const newLine = new line_1.default(req.body);
         line_1.default.findByIdAndDelete(id, (err, lineDeleted) => {
             if (err)
-                return res.status(500).send({ message: 'Replace 1 Internal Server message' });
+                return res.status(500).send({ message: 'Replace 1 Internal Server Error' });
             if (!lineDeleted)
                 return res.status(404).send({ message: 'Line Not Found' });
             newLine.save((err, lineStored) => {
                 if (err)
-                    return res.status(500).send({ message: 'Replace 2 Internal Server message' });
+                    return res.status(500).send({ message: 'Replace 2 Internal Server Error' });
                 if (!lineStored)
                     return res.status(204).send({ message: 'Line No Content' });
                 if (lineDeleted._id !== lineStored._id) {
                     key_1.default.updateMany({ 'line': lineDeleted._id }, { 'line': lineStored._id }).exec(err => {
                         if (err)
-                            return res.status(500).send({ message: 'Key Internal Server message' });
+                            return res.status(500).send({ message: 'Key Internal Server Error' });
                     });
                 }
                 return res.status(200).send({ data: lineDeleted });
@@ -226,7 +226,7 @@ function updateLine(req, res) {
     else {
         line_1.default.findByIdAndUpdate(id, req.body, (err, lineUpdated) => {
             if (err)
-                return res.status(500).send({ message: 'Internal Server message' });
+                return res.status(406).send({ message: 'Internal error, probably error with params' });
             if (!lineUpdated)
                 return res.status(404).send({ message: 'Line Not Found' });
             return res.status(200).send({ data: lineUpdated });
@@ -236,22 +236,22 @@ function updateLine(req, res) {
 exports.updateLine = updateLine;
 function deleteLine(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     line_1.default.findByIdAndDelete(req.params.id, (err, lineDeleted) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!lineDeleted)
             return res.status(404).send({ message: 'Line Not Found' });
         let keyImage = new Array();
         key_1.default.find({ 'line': lineDeleted._id }).select('image -_id').exec((err, lineDeleted) => {
             if (err)
-                return res.status(500).send({ message: 'Key Internal Server message' });
+                return res.status(500).send({ message: 'Key Internal Server Error' });
             if (lineDeleted)
                 keyImage = lineDeleted;
         });
         key_1.default.deleteMany({ 'line': lineDeleted._id }).exec(err => {
             if (err)
-                return res.status(500).send({ message: 'Key delete Internal Server message' });
+                return res.status(500).send({ message: 'Key delete Internal Server Error' });
             keyImage.forEach(e => {
                 e.image.forEach(async (f) => {
                     if (f.publicId)

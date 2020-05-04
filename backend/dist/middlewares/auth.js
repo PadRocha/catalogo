@@ -22,7 +22,7 @@ async function authorized(req, res, next) {
             return res.status(423).send({ message: 'The resource that is being accessed is locked' });
     }
     catch (message) {
-        return res.status(409).send({ message: 'Indicates that the request could not be processed because of conflict in the current state of the resourcess' });
+        return res.status(409).send({ message: 'Indicates that Internal error, probably error with paramsss' });
     }
     delete payload.iat;
     delete payload.exp;
@@ -46,7 +46,7 @@ async function authAdmin(req, res, next) {
             return res.status(423).send({ message: 'The resource that is being accessed is locked' });
     }
     catch (message) {
-        return res.status(409).send({ message: 'Indicates that the request could not be processed because of conflict in the current state of the resourcess' });
+        return res.status(409).send({ message: 'Indicates that Internal error, probably error with paramsss' });
     }
     delete payload.iat;
     delete payload.exp;

@@ -51,7 +51,7 @@ function infoStatus(query) {
 }
 function saveKey(req, res) {
     if (!req.body)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const newKey = new key_1.default({
         code: req.body.code,
         line: req.body.line,
@@ -60,12 +60,12 @@ function saveKey(req, res) {
     const query = { '_id': newKey.line };
     line_1.default.findOne(query).select('_id').exec((err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Line Internal Server message' });
+            return res.status(500).send({ message: 'Line Internal Server Error' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         newKey.save((err, keyStored) => {
             if (err)
-                return res.status(500).send({ message: 'Internal Server message' });
+                return res.status(406).send({ message: 'Internal error, probably error with params' });
             if (!keyStored)
                 return res.status(204).send({ message: 'Key No Content' });
             return res.status(200).send({ data: keyStored });
@@ -75,7 +75,7 @@ function saveKey(req, res) {
 exports.saveKey = saveKey;
 function saveKeyStatus(req, res) {
     if (!req.body || !req.body.status)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const newKey = new key_1.default({
         code: req.body.code,
         line: req.body.line,
@@ -89,12 +89,12 @@ function saveKeyStatus(req, res) {
     const query = { '_id': newKey.line };
     line_1.default.findOne(query).select('_id').exec((err, line) => {
         if (err)
-            return res.status(500).send({ message: 'Line Internal Server message' });
+            return res.status(500).send({ message: 'Line Internal Server Error' });
         if (!line)
             return res.status(404).send({ message: 'Line Not Found' });
         newKey.save((err, keyStored) => {
             if (err)
-                return res.status(500).send({ message: 'Internal Server message' });
+                return res.status(406).send({ message: 'Internal error, probably error with params' });
             if (!keyStored)
                 return res.status(204).send({ message: 'Key No Content' });
             return res.status(200).send({ data: keyStored });
@@ -106,7 +106,7 @@ function listKey(req, res) {
     const query = {};
     key_1.default.find(query).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
         return res.status(200).send({ data: key });
@@ -115,7 +115,7 @@ function listKey(req, res) {
 exports.listKey = listKey;
 function listKeyPage(req, res) {
     if (!req.params.page)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {};
     const options = {
         page: Number(req.params.page),
@@ -124,7 +124,7 @@ function listKeyPage(req, res) {
     };
     key_1.default.paginate(query, options, async (err, key) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
         const [status, percentage] = await infoStatus(query);
@@ -136,14 +136,14 @@ function listKeyPage(req, res) {
 exports.listKeyPage = listKeyPage;
 function listKeyRegex(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const id = req.params.id;
     let query = id.length < 7
         ? { 'line': { $regex: '^' + id, $options: 'i' } }
         : { 'line': id.slice(0, 6), 'code': { $regex: '^' + id.slice(6), $options: 'i' } };
     key_1.default.find(query).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
         return res.status(200).send({ data: key });
@@ -152,7 +152,7 @@ function listKeyRegex(req, res) {
 exports.listKeyRegex = listKeyRegex;
 function listKeyRegexPage(req, res) {
     if (!req.params.id || !req.params.page)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const id = req.params.id;
     const query = id.length < 7
         ? { 'line': { $regex: '^' + id, $options: 'i' } }
@@ -164,7 +164,7 @@ function listKeyRegexPage(req, res) {
     };
     key_1.default.paginate(query, options, async (err, key) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
         const [status, percentage] = await infoStatus(query);
@@ -176,11 +176,11 @@ function listKeyRegexPage(req, res) {
 exports.listKeyRegexPage = listKeyRegexPage;
 function listKeyLine(req, res) {
     if (!req.params.line)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = { 'line': req.params.line };
     key_1.default.find(query).sort('code').exec((err, key) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
         return res.status(200).send({ data: key });
@@ -189,7 +189,7 @@ function listKeyLine(req, res) {
 exports.listKeyLine = listKeyLine;
 function listKeyLinePage(req, res) {
     if (!req.params.line || !req.params.page)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = { 'line': req.params.line };
     const options = {
         page: Number(req.params.page),
@@ -198,7 +198,7 @@ function listKeyLinePage(req, res) {
     };
     key_1.default.paginate(query, options, async (err, key) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
         const [status, percentage] = await infoStatus(query);
@@ -210,10 +210,10 @@ function listKeyLinePage(req, res) {
 exports.listKeyLinePage = listKeyLinePage;
 function getKey(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     key_1.default.findById(req.params.id).populate('line').exec((err, key) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!key)
             return res.status(404).send({ message: 'Key Not Found' });
         return res.status(200).send({ data: key });
@@ -222,10 +222,10 @@ function getKey(req, res) {
 exports.getKey = getKey;
 function updateKey(req, res) {
     if (!req.params.id || !req.body)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     key_1.default.findByIdAndUpdate(req.params.id, req.body, (err, keyUpdated) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!keyUpdated)
             return res.status(404).send({ message: 'Key Not Found' });
         return res.status(200).send({ data: keyUpdated });
@@ -234,10 +234,10 @@ function updateKey(req, res) {
 exports.updateKey = updateKey;
 function deleteKey(req, res) {
     if (!req.params.id)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     key_1.default.findByIdAndDelete(req.params.id, (err, keyDeleted) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!keyDeleted)
             return res.status(404).send({ message: 'Key Not Found' });
         keyDeleted.image.forEach(async (e) => {
@@ -249,7 +249,7 @@ function deleteKey(req, res) {
 exports.deleteKey = deleteKey;
 function saveStatus(req, res) {
     if (!req.params.id || !req.body || isNaN(req.body.idN) || isNaN(req.body.status))
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {
         '_id': req.params.id,
         'image.idN': { $ne: req.body.idN }
@@ -266,7 +266,7 @@ function saveStatus(req, res) {
     };
     key_1.default.findOneAndUpdate(query, update, (err, statusStored) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!statusStored)
             return res.status(404).send({ message: 'Key Not Found' });
         return res.status(200).send({ data: statusStored });
@@ -275,7 +275,7 @@ function saveStatus(req, res) {
 exports.saveStatus = saveStatus;
 function updateStatus(req, res) {
     if (!req.params.id || !req.body || isNaN(req.body.idN) || isNaN(req.body.status))
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const query = {
         '_id': req.params.id,
         'image.idN': req.body.idN
@@ -283,7 +283,7 @@ function updateStatus(req, res) {
     const update = { $set: { 'image.$.status': req.body.status } };
     key_1.default.findOneAndUpdate(query, update, (err, statusUpdated) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (statusUpdated)
             return res.status(200).send({ data: statusUpdated });
         else
@@ -293,7 +293,7 @@ function updateStatus(req, res) {
 exports.updateStatus = updateStatus;
 function deleteStatus(req, res) {
     if (!req.params._id || !req.params.idN)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const id = Number(req.params.idN);
     const update = {
         $pull: {
@@ -305,7 +305,7 @@ function deleteStatus(req, res) {
     };
     key_1.default.findByIdAndUpdate(req.params._id, update, (err, statusDeleted) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!statusDeleted)
             return res.status(404).send({ message: 'Key Not Found' });
         try {
@@ -322,7 +322,7 @@ function deleteStatus(req, res) {
 exports.deleteStatus = deleteStatus;
 async function saveImage(req, res) {
     if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const result = await cloudinary_1.v2.uploader.upload(req.file.path);
     const query = {
         '_id': req.params.id,
@@ -341,7 +341,7 @@ async function saveImage(req, res) {
             await fs_extra_1.default.unlink(req.file.path);
         }
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!imageStored)
             return res.status(404).send({ message: 'Key Not Found' });
         await fs_extra_1.default.unlink(req.file.path);
@@ -351,7 +351,7 @@ async function saveImage(req, res) {
 exports.saveImage = saveImage;
 async function updateImage(req, res) {
     if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const result = await cloudinary_1.v2.uploader.upload(req.file.path);
     const query = {
         '_id': req.params.id,
@@ -372,7 +372,7 @@ async function updateImage(req, res) {
             await fs_extra_1.default.unlink(req.file.path);
         }
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!imageUpdated)
             return res.status(404).send({ message: 'Key Not Found' });
         await cloudinary_1.v2.uploader.destroy(imageUpdated.image.find((x) => x.idN === req.body.idN).publicId);
@@ -383,7 +383,7 @@ async function updateImage(req, res) {
 exports.updateImage = updateImage;
 function deleteImage(req, res) {
     if (!req.params._id || !req.params.idN)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const id = Number(req.params.idN);
     const update = {
         $pull: {
@@ -395,7 +395,7 @@ function deleteImage(req, res) {
     };
     key_1.default.findByIdAndUpdate(req.params._id, update, async (err, imageDeleted) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!imageDeleted)
             return res.status(404).send({ message: 'Key Not Found' });
         await cloudinary_1.v2.uploader.destroy(imageDeleted.image.find((x) => x.idN === id).publicId);

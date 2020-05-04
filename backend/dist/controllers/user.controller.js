@@ -13,7 +13,7 @@ function registerUser(req, res) {
     const newUser = new user_1.default(req.body);
     newUser.save((err, userStored) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!userStored)
             return res.status(204).send({ message: 'User No Content' });
         delete userStored.password;
@@ -23,11 +23,11 @@ function registerUser(req, res) {
 exports.registerUser = registerUser;
 function loginUser(req, res) {
     if (!req.body)
-        return res.status(400).send({ message: 'Bad Request' });
+        return res.status(400).send({ message: 'Client has not sent params' });
     const userData = req.body;
     user_1.default.findOne({ nickname: userData.nickname }, (err, user) => {
         if (err)
-            return res.status(500).send({ message: 'Internal Server message' });
+            return res.status(406).send({ message: 'Internal error, probably error with params' });
         if (!user)
             return res.status(404).send({ message: 'User Not Found' });
         if (!user.comparePassword(userData.password))
@@ -52,7 +52,7 @@ function returnUser(req, res) {
         return res.status(200).send({ _id: payload.sub, nickname: payload.nickname, role: payload.role });
     }
     catch (message) {
-        return res.status(409).send({ message: 'The request could not be processed because of conflict in the current state of the resourcess' });
+        return res.status(409).send({ message: 'Internal error, probably error with paramsss' });
     }
 }
 exports.returnUser = returnUser;

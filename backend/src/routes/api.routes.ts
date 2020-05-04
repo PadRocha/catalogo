@@ -14,12 +14,81 @@ import { authorized, authAdmin } from '../middlewares/auth'
 const router = Router();
 
 /**
+ * @apiDefine admin Admin access only
+ * This function is restricted for administrators.
+*/
+
+/**
+ * @apiDefine user User access only
+ * This function is restricted for logged in users.
+*/
+
+
+/**
+ * @apiDefine SuccessToken
+ * @apiSuccess {json} token User Token identificaction
+ * 
+ * @apiSuccessExample  {json} Success-Response:
+ *      HTTP/1.1 200 OK
+ *      {
+ *           token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCI8.eyJzdWIiOiI1ZTZiZWVmMWNmNjI3OTVkZTBlMWU3OTEiLCJuaWNrbmFtZSI6InBhZHJvY2hhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTg4MzkxNTUxLCJleHAiOjE1OTA5ODM1NTF9.kXECNDTfHt6yMdpR__InB6wu0Z8FKs8083mBnyVVaWg"
+ *      }
+ */
+
+/**
+ * @apiDefine BadRequest
+ * @apiError Bad_Request Request not contains data
+ * 
+ * @apiErrorExample {json} Bad_Request-Response:
+ *      HTTP/1.1 400 The server cannot or will not process the request due to an apparent client error.
+ *      {
+ *          "message": "Client has not sent params"
+ *      }
+ */
+
+/**
+ * @apiDefine Conflict
+ * @apiError Concflict An internal error ocurred
+ * 
+ * @apiErrorExample {json} Conflict-Response:
+ *      HTTP/1.1 406 Indicates that the request could not be processed because of conflict in the current state of the resource
+ *      {
+ *          "message": "Internal error, probably error with params"
+ *      }
+ */
+
+/**
+ * @apiDefine NoContent
+ * @apiError No_Content Couldn´t return
+ * 
+ * @apiErrorExample {json} No_Content-Response:
+ *      HTTP/1.1 204 The server successfully processed the request and is not returning any content.
+ *      {
+ *          "message": "Saved and is not returning any content"
+ *      }
+ */
+
+/**
+ * @apiDefine NotFound
+ * @apiError Not_Found Server didn´t find request
+ * 
+ * @apiErrorExample {json} Not_Found-Response:
+ *      HTTP/1.1 404 The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible.
+ *      {
+ *          "message": "Document not found"
+ *      }
+ */
+
+/*------------------------------------------------------------------*/
+
+/**
  * 
  * @api {get} / Request User Info
  * @apiName ReturnUser
  * @apiDescription Allow an user to Request his info
  * @apiGroup User
  * @apiVersion  0.1.0
+ * @apiPermission user
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/
  * 
@@ -63,30 +132,13 @@ router.route('/')
 /*------------------------------------------------------------------*/
 
 /**
- * @apiDefine admin User access only
- * This optional description belong to to the group admin.
- */
-
-/**
- * @apiDefine SuccessToken
- * @apiSuccess {json} token User Token identificaction
- * 
- * @apiSuccessExample  {json} Request-Example:
- *      HTTP/1.1 200 OK
- *      {
- *           token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCI8.eyJzdWIiOiI1ZTZiZWVmMWNmNjI3OTVkZTBlMWU3OTEiLCJuaWNrbmFtZSI6InBhZHJvY2hhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTg4MzkxNTUxLCJleHAiOjE1OTA5ODM1NTF9.kXECNDTfHt6yMdpR__InB6wu0Z8FKs8083mBnyVVaWg"
- *      }
- */
-
-/*------------------------------------------------------------------*/
-
-/**
  * 
  * @api {post} /register Register User
  * @apiName RegisterUser
  * @apiDescription Allows an Admin to register a user
  * @apiGroup User
  * @apiVersion  0.1.0
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/register
  * 
@@ -104,14 +156,11 @@ router.route('/')
  * 
  * @apiuse SuccessToken
  * 
- * @apiError message Request Header does not contain token
+ * @apiuse BadRequest
  * 
- * @apiErrorExample {json} Error-Response:
- *      HTTP/1.1 400 The server cannot or will not process the request due to an apparent client error.
- *      {
- *          "message": "Client has not sent Token"
- *      }
+ * @apiuse Conflict
  * 
+ * @apiuse NoContent
  * 
  */
 
@@ -140,6 +189,11 @@ router.route('/register')
  * 
  * @apiuse SuccessToken
  * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
  * 
  */
 
