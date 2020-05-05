@@ -5,6 +5,20 @@
     "title": "TS API",
     "order": [
         "User",
-        "Line"
+        "Line",
+        "SaveLine",
+        "ListLine",
+        "getLine",
+        "updateLine",
+        "deleteLine",
+        "listLinePage",
+        "listLineRegex",
+        "listLineRegexPage",
+        "ListLineTotalKey",
+        "ListLineTotalKeyPage",
+        "listLineTotalKeyRegex",
+        "listLineTotalKeyRegexPage",
+        "forceUpdateLine",
+        "forceDeleteLine"
     ]
 }

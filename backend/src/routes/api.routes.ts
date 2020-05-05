@@ -24,6 +24,16 @@ const router = Router();
 */
 
 /**
+ * @apiDefine header
+ * @apiHeader {String} headers Users unique access-key.
+ * 
+ * @apiHeaderExample {json} Request-E:
+ *      {
+ *           "Authorization": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCI8.eyJzdWIiOiI1ZTZiZWVmMWNmNjI3OTVkZTBlMWU3OTEiLCJuaWNrbmFtZSI6InBhZHJvY2hhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTg4MzkxNTUxLCJleHAiOjE1OTA5ODM1NTF9.kXECNDTfHt6yMdpR__InB6wu0Z8FKs8083mBnyVVaWg"
+ *      }
+ */
+
+/**
  * @apiDefine page
  * @apiParam  (params) {number} page Number of page.
  */
@@ -38,7 +48,7 @@ const router = Router();
  * @apiParam (body) {String} _id Line identifier
  * @apiParam (body) {String} name Line name
  * 
- * @apiParamExample  {json} Request-Example:
+ * @apiParamExample  {json} Request-E:
  *      {
  *          "_id": "ACCSEH",
  *          "name": "Accesorios (SEH)"
@@ -49,7 +59,7 @@ const router = Router();
  * @apiDefine SuccessToken
  * @apiSuccess {json} token User Token identificaction
  * 
- * @apiSuccessExample  {json} Success-Response:
+ * @apiSuccessExample  {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
  *           "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCI8.eyJzdWIiOiI1ZTZiZWVmMWNmNjI3OTVkZTBlMWU3OTEiLCJuaWNrbmFtZSI6InBhZHJvY2hhIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTg4MzkxNTUxLCJleHAiOjE1OTA5ODM1NTF9.kXECNDTfHt6yMdpR__InB6wu0Z8FKs8083mBnyVVaWg"
@@ -62,7 +72,7 @@ const router = Router();
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
  * 
- * @apiSuccessExample  {json} Success-Response:
+ * @apiSuccessExample  {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
  *          "data": [   
@@ -93,7 +103,7 @@ const router = Router();
  * @apiParam (Paged format) {Number} prevPage Previous page number if available or NULL
  * @apiParam (Paged format) {Number} nextPage Next page number if available or NULL
  * 
- * @apiSuccessExample  {json} Success-Response:
+ * @apiSuccessExample  {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
  *          "data": {
@@ -124,7 +134,7 @@ const router = Router();
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
  * @apiParam (Success 200 [Array])  {Number} countKeys Total Key in Line
  * 
- * @apiSuccessExample  {json} Success-Response:
+ * @apiSuccessExample  {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
  *          "data": [
@@ -156,7 +166,7 @@ const router = Router();
  * @apiParam (Paged format) {Number} prevPage Previous page number if available or NULL
  * @apiParam (Paged format) {Number} nextPage Next page number if available or NULL
  * 
- * @apiSuccessExample  {json} Success-Response:
+ * @apiSuccessExample  {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
  *          "data": {
@@ -187,7 +197,7 @@ const router = Router();
  * @apiSuccess {String} name Line name
  * @apiSuccess {Date} started Line creation date
  * 
- * @apiSuccessExample  {json} Success-Response:
+ * @apiSuccessExample  {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
  *          "data": {
@@ -200,10 +210,45 @@ const router = Router();
  */
 
 /**
- * @apiDefine BadRequest
- * @apiError Bad_Request Request not contains data
+ * @apiDefine HeaderErrors
+ * @apiError Passport[P] Request Header does not contain token
  * 
- * @apiErrorExample {json} Bad_Request-Response:
+ * @apiErrorExample {json} P-R:
+ *      HTTP/1.1 400 The server cannot or will not process the request due to an apparent client error.
+ *      {
+ *          "message": "Client has not sent Token"
+ *      }
+ * 
+ * @apiError Credencials[CR] Passport does not contain credentials
+ * 
+ * @apiErrorExample {json} CR-R:
+ *      HTTP/1.1 403 The request contained valid data and was understood by the server, but the server is refusing action.
+ *      {
+ *          "message": "The user does not have the necessary credentials for this operation"
+ *      }
+ * 
+ * @apiError Access[A] Passport of user is invalid
+ * 
+ * @apiErrorExample {json} A-R:
+ *      HTTP/1.1 423 The resource that is being accessed is locked.
+ *      {
+ *          "message": "Access denied"
+ *      }
+ * 
+ * @apiError Decryp[D] Decrypting Failed
+ * 
+ * @apiErrorExample {json} D-R:
+ *      HTTP/1.1 409 The decryption process was unable to process the token.
+ *      {
+ *          "message": "Error decrypting token"
+ *      } 
+ */
+
+/**
+ * @apiDefine BadRequest
+ * @apiError BadRequest[BR] Request not contains data
+ * 
+ * @apiErrorExample {json} BR-R:
  *      HTTP/1.1 400 The server cannot or will not process the request due to an apparent client error.
  *      {
  *          "message": "Client has not sent params"
@@ -212,10 +257,10 @@ const router = Router();
 
 /**
  * @apiDefine Conflict
- * @apiError Concflict An internal error ocurred
+ * @apiError Concflict[C] An internal error ocurred
  * 
- * @apiErrorExample {json} Conflict-Response:
- *      HTTP/1.1 406 Indicates that the request could not be processed because of conflict in the current state of the resource
+ * @apiErrorExample {json} C-R:
+ *      HTTP/1.1 409 Indicates that the request could not be processed because of conflict in the current state of the resource
  *      {
  *          "message": "Internal error, probably error with params"
  *      }
@@ -223,9 +268,9 @@ const router = Router();
 
 /**
  * @apiDefine NoContent
- * @apiError No_Content Couldn´t return
+ * @apiError NoContent[NC] Couldn´t return
  * 
- * @apiErrorExample {json} No_Content-Response:
+ * @apiErrorExample {json} NC-R:
  *      HTTP/1.1 204 The server successfully processed the request and is not returning any content.
  *      {
  *          "message": "Saved and is not returning any content"
@@ -234,9 +279,9 @@ const router = Router();
 
 /**
  * @apiDefine NotFound
- * @apiError Not_Found Server didn´t find request
+ * @apiError NotFound[NF] Server didn´t find request
  * 
- * @apiErrorExample {json} Not_Found-Response:
+ * @apiErrorExample {json} NF-R:
  *      HTTP/1.1 404 The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible.
  *      {
  *          "message": "Document not found"
@@ -257,11 +302,13 @@ const router = Router();
  *     http://localhost:4000/api/
  * 
  * 
+ * @apiuse header
+ * 
  * @apiSuccess {string} _id id´s User.
  * @apiSuccess {string} nikcname Nickname of the User.
  * @apiSuccess {string} role Role of the User
  * 
- * @apiSuccessExample {json} Success-Response:
+ * @apiSuccessExample {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
  *           "_id": "5e6ceef1cf62796de0e1e791", 
@@ -269,22 +316,15 @@ const router = Router();
  *           "role": "$3a$10$WjLK2U2TqVjG8Y5g4qyUC.xJ5h3x8IDtb3VLzZmkKpMAvbnOsNJ0i"
  *      }
  * 
- * @apiError message Request Header does not contain token
+ * @apiError Auth[AU] Auth failed
  * 
- * @apiErrorExample {json} Error-Response:
+ * @apiErrorExample {json} AU-R:
  *      HTTP/1.1 400 The server cannot or will not process the request due to an apparent client error.
  *      {
- *          "message": "Client has not sent Token"
+ *          "message": "Client has not sent params"
  *      }
  * 
- * @apiError message Request Header does not contain token
- * 
- * @apiErrorExample {json} Error-Response:
- *      HTTP/1.1 403 The server cannot or will not process the request due to an apparent client error.
- *      {
- *          "message": "Client has not sent Token"
- *      }
- * 
+ * @apiuse HeaderErrors
  * 
  */
 
@@ -311,7 +351,7 @@ router.route('/')
  * @apiParam  (body) {String} password Password ot the User
  * @apiParam  (body) {String} role Role of the User
  * 
- * @apiParamExample  {json} Request-Example:
+ * @apiParamExample  {json} Request-E:
  *      {
  *          "nickname": "padrocha", 
  *          "password": "pass",
@@ -325,6 +365,8 @@ router.route('/')
  * @apiuse Conflict
  * 
  * @apiuse NoContent
+ * 
+ * @apiuse HeaderErrors
  * 
  */
 
@@ -345,7 +387,7 @@ router.route('/register')
  * @apiParam  (body) {String} nikcname Nickname of the User.
  * @apiParam  (body) {String} password Password ot the User
  * 
- * @apiParamExample  {json} Request-Example:
+ * @apiParamExample  {json} Request-E:
  *      {
  *          "nickname": "padrocha", 
  *          "password": "pass"
@@ -372,13 +414,15 @@ router.route('/login')
  * 
  * @api {get} /line List Line
  * @apiName ListLine
- * @apiDescription Show all Line documents
+ * @apiDescription Show all *Line documents*
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse SuccessLines
  * 
@@ -386,19 +430,23 @@ router.route('/login')
  * 
  * @apiuse NotFound
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 /**
  * 
  * @api {post} /line Save Line
  * @apiName SaveLine
- * @apiDescription Save Line in the database
+ * @apiDescription Save a *Line document* in the database
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse BodyLine
  * 
@@ -410,23 +458,27 @@ router.route('/login')
  * 
  * @apiuse NoContent
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line')
-    .get(lineController.listLine)
-    .post(lineController.saveLine);
+    .get(authAdmin, lineController.listLine)
+    .post(authAdmin, lineController.saveLine);
 
 /**
  * 
  * @api {get} /line/:id Get Line
  * @apiName getLine
- * @apiDescription Return the Line document that matchs with the id
+ * @apiDescription Return the *Line document* that matchs with the id
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/ACCSEH
  * 
+ * 
+ * @apiuse header
  * 
  * @apiParam  (params) {string} id Line identifier.
  * 
@@ -437,6 +489,8 @@ router.route('/line')
  * @apiuse Conflict
  * 
  * @apiuse NotFound
+ * 
+ * @apiuse HeaderErrors
  * 
  */
 
@@ -444,13 +498,15 @@ router.route('/line')
  * 
  * @api {put} /line/:id Update Line
  * @apiName updateLine
- * @apiDescription Update the line in id and returns the Line before the update, also update all the keys that contain Line
+ * @apiDescription Update the line in id and returns the *Line* before the update, also update all the keys that contain Line
  * @apiGroup Line
  * @apiVersion  0.1.0
  * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/ACCSEH
  * 
+ * 
+ * @apiuse header
  * 
  * @apiParam  (params) {string} id Line identifier.
  * 
@@ -466,19 +522,23 @@ router.route('/line')
  * 
  * @apiuse NoContent
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 /**
  * 
  * @api {delete} /line/:id Delete Line
  * @apiName deleteLine
- * @apiDescription Delete the line in id and returns the Line before delete it, also delete all de keys that contain Line
+ * @apiDescription Delete the line in id and returns the *Line* before delete it, also delete all de keys that contain Line
  * @apiGroup Line
  * @apiVersion  0.1.0
  * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/ACCSEH
  * 
+ * 
+ * @apiuse header
  * 
  * @apiParam  (params) {string} id Line identifier.
  * 
@@ -492,24 +552,28 @@ router.route('/line')
  * 
  * @apiuse NoContent
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line/:id')
-    .get(lineController.getLine)
-    .put(lineController.updateLine)
-    .delete(lineController.deleteLine);
+    .get(authAdmin, lineController.getLine)
+    .put(authAdmin, lineController.updateLine)
+    .delete(authAdmin, lineController.deleteLine);
 
 /**
  * 
  * @api {get} /line/page/:page List Line Page
  * @apiName listLinePage
- * @apiDescription Show all Line documents with the paged format
+ * @apiDescription Show all *Line documents* with the paged format
  * @apiGroup Line
  * @apiVersion  0.1.0
  * @apiPermission user
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/page/1
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse page
  * 
@@ -520,6 +584,8 @@ router.route('/line/:id')
  * @apiuse Conflict
  * 
  * @apiuse NotFound
+ * 
+ * @apiuse HeaderErrors
  * 
  */
 
@@ -530,13 +596,15 @@ router.route('/line/page/:page')
  * 
  * @api {get} /line/regex/:id List Line Regex
  * @apiName listLineRegex
- * @apiDescription Show all Line documents found with the regex
+ * @apiDescription Show all *Line documents* found with the regex
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/regex/ACC
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse regex
  * 
@@ -548,22 +616,26 @@ router.route('/line/page/:page')
  * 
  * @apiuse NotFound
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line/regex/:id')
-    .get(lineController.listLineRegex);
+    .get(authAdmin, lineController.listLineRegex);
 
 /**
  * 
  * @api {get} /line/regex/:id/page/:page List Line Regex Page
  * @apiName listLineRegexPage
- * @apiDescription Show all Line documents found with the regex with the paged format
+ * @apiDescription Show all *Line documents* found with the regex with the paged format
  * @apiGroup Line
  * @apiVersion  0.1.0
  * @apiPermission user
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/regex/ACC/page/1
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse regex
  * @apiuse page
@@ -576,22 +648,26 @@ router.route('/line/regex/:id')
  * 
  * @apiuse NotFound
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line/regex/:id/page/:page')
-    .get(lineController.listLineRegexPage);
+    .get(authorized, lineController.listLineRegexPage);
 
 /**
  * 
  * @api {get} /line/total/key List Line Key
  * @apiName ListLineTotalKey
- * @apiDescription Show all Line documents adding the total of Keys that belong to the line
+ * @apiDescription Show all *Line documents* adding the total of Keys that belong to the line
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/total/key
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse SuccessLinesTotalKey
  * 
@@ -599,22 +675,26 @@ router.route('/line/regex/:id/page/:page')
  * 
  * @apiuse NotFound
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line/total/key')
-    .get(lineController.listLineTotalKey);
+    .get(authAdmin, lineController.listLineTotalKey);
 
 /**
  * 
  * @api {get} /line/total/key/page/:page List Line Key Page
  * @apiName ListLineTotalKeyPage
- * @apiDescription Show all Line documents adding the total of Keys that belong to the line with the paged format
+ * @apiDescription Show all *Line documents* adding the total of Keys that belong to the line with the paged format
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/total/key/page/1
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse page
  * 
@@ -626,22 +706,26 @@ router.route('/line/total/key')
  * 
  * @apiuse NotFound
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line/total/key/page/:page')
-    .get(lineController.listLineTotalKeyPage);
+    .get(authAdmin, lineController.listLineTotalKeyPage);
 
 /**
  * 
  * @api {get} /line/total/key/regex/:id List Line Key Regex
  * @apiName listLineTotalKeyRegex
- * @apiDescription Show all Line documents found with the regex adding the total of Keys that belong to the line
+ * @apiDescription Show all *Line documents* found with the regex adding the total of Keys that belong to the line
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/total/key/regex/ACC
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse regex
  * 
@@ -653,22 +737,26 @@ router.route('/line/total/key/page/:page')
  * 
  * @apiuse NotFound
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line/total/key/regex/:id')
-    .get(lineController.listLineTotalKeyRegex);
+    .get(authAdmin, lineController.listLineTotalKeyRegex);
 
 /**
  * 
  * @api {get} /line/total/key/regex/:id/page/:page List Line Key Regex Page
  * @apiName listLineTotalKeyRegexPage
- * @apiDescription Show all Line documents found with the regex  adding the total of Keys that belong to the line with the paged format
+ * @apiDescription Show all *Line documents* found with the regex  adding the total of Keys that belong to the line with the paged format
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/total/key/regex/ACC/page/1
  * 
+ * 
+ * @apiuse header
  * 
  * @apiuse regex
  * @apiuse page
@@ -681,10 +769,72 @@ router.route('/line/total/key/regex/:id')
  * 
  * @apiuse NotFound
  * 
+ * @apiuse HeaderErrors
+ * 
  */
 
 router.route('/line/total/key/regex/:id/page/:page')
-    .get(lineController.listLineTotalKeyRegexPage);
+    .get(authAdmin, lineController.listLineTotalKeyRegexPage);
+
+/**
+ * 
+ * @api {get} /line/force/:id Force Update Line
+ * @apiName forceUpdateLine
+ * @apiDescription Update the *Line document*. **Warning** This funcion only will update the Line but wont update the line param in the Keys
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission admin
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/force/ACCSEH
+ * 
+ * 
+ * @apiuse header
+ * 
+ * @apiuse page
+ * 
+ * @apiuse SuccessLine
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ * @apiuse HeaderErrors
+ * 
+ */
+
+/**
+ * 
+ * @api {delete} /line/force/:id Force Delete Line
+ * @apiName forceDeleteLine
+ * @apiDescription Delete a *Line document*. **Warning** This funcion only will update the Line but wont delete all the Lines with this param in the Keys
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission admin
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/force/ACCSEH
+ * 
+ * 
+ * @apiuse header
+ * 
+ * @apiuse page
+ * 
+ * @apiuse SuccessLine
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ * @apiuse HeaderErrors
+ * 
+ */
+
+router.route('/line/force/:id')
+    .put(authAdmin, lineController.forceUpdateLine)
+    .delete(authAdmin, lineController.forceDeleteLine);
 
 /*------------------------------------------------------------------*/
 // Key routes
