@@ -444,10 +444,10 @@ router.route('/line')
  * 
  * @api {put} /line/:id Update Line
  * @apiName updateLine
- * @apiDescription Update the line in id and returns the Line before the update
+ * @apiDescription Update the line in id and returns the Line before the update, also update all the keys that contain Line
  * @apiGroup Line
  * @apiVersion  0.1.0
- * @apiPermission user
+ * @apiPermission admin
  * @apiExample {url} Example usage:
  *     http://localhost:4000/api/line/ACCSEH
  * 
@@ -455,6 +455,32 @@ router.route('/line')
  * @apiParam  (params) {string} id Line identifier.
  * 
  * @apiuse BodyLine
+ * 
+ * @apiuse SuccessLine
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ * @apiuse NoContent
+ * 
+ */
+
+/**
+ * 
+ * @api {delete} /line/:id Delete Line
+ * @apiName deleteLine
+ * @apiDescription Delete the line in id and returns the Line before delete it, also delete all de keys that contain Line
+ * @apiGroup Line
+ * @apiVersion  0.1.0
+ * @apiPermission admin
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/line/ACCSEH
+ * 
+ * 
+ * @apiParam  (params) {string} id Line identifier.
  * 
  * @apiuse SuccessLine
  * 
