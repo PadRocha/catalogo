@@ -828,6 +828,14 @@ router.route('/line/total/key/regex/:id/page/:page')
  * 
  * @apiuse NotFound
  * 
+ * @apiError Removal[R] Delete multiple documents
+ * 
+ * @apiErrorExample {json} R-R:
+ *      HTTP/1.1 409 Indicates that the request could not be processed because of conflict in the current state of the resource, such as an edit conflict between multiple simultaneous updates.
+ *      {
+ *          "message": "Access denied"
+ *      }
+ * 
  * @apiuse HeaderErrors
  * 
  */

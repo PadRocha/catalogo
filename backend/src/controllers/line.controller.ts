@@ -203,15 +203,19 @@ export function deleteLine(req: Request, res: Response) {
     Line.findByIdAndDelete(req.params.id, async (err, lineDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineDeleted) return res.status(404).send({ message: 'Document not found' });
-        let keyImage = await Key.find({ 'line': lineDeleted._id }).select('image -_id');
-        Key.deleteMany({ 'line': lineDeleted._id }).exec(err => {
-            if (err) return res.status(500).send({ message: 'Key delete Internal Server Error' });
-            keyImage.forEach(e => {
-                e.image.forEach(async f => {
-                    if (f.publicId) await v2.uploader.destroy(f.publicId);
-                });
-            });
-        });
+        const query: MongooseFilterQuery<IKey> = { 'line': lineDeleted._id };
+        const keys = await Key.find(query).select('image -_id');
+        if (keys) await new Promise(resolve => Key.deleteMany(query, async err => {
+            if (err) {
+                //TODO: Provar nueva funcionalidad, si no elimina todos, lo recrea
+                req.body = lineDeleted;
+                await saveLine(req, res);
+                return res.status(409).send({ message: 'Batch removal process has failed' });
+            }
+            await Promise.all(keys.map(async k => await Promise.all(k.image.map(async i => {
+                if (i.publicId) await v2.uploader.destroy(i.publicId)
+            }))));
+        }));
         return res.status(200).send({ data: lineDeleted });
     });
 }
