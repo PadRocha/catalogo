@@ -172,14 +172,11 @@ export function getLine(req: Request, res: Response) {
 export function updateLine(req: Request, res: Response) {
     if (!req.params.id || !req.body) return res.status(400).send({ message: 'Client has not sent params' });
     Line.findOneAndUpdate({ 'identifier': req.params.id }, req.body, { new: true }, async (err, lineUpdated) => {
-        console.log("req.params.id", req.params.id)
-        console.log("req.body", req.body)
-        console.log("lineUpdated", lineUpdated)
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineUpdated) return res.status(404).send({ message: 'Document not found' });
-        // if (req.params.id !== lineUpdated.id) await Key.updateMany({ 'line': req.params.id }, { 'line': lineUpdated.identifier }).exec(err => {
-        //     if (err) return res.status(500).send({ message: 'Key Internal Server Error' });
-        // });
+        if (req.params.id !== lineUpdated.id) await Key.updateMany({ 'line': req.params.id }, { 'line': lineUpdated.identifier }).exec(err => {
+            if (err) return res.status(500).send({ message: 'Key Internal Server Error' });
+        });
         return res.status(200).send({ data: lineUpdated });
     });
 }
