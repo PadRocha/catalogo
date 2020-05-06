@@ -20,9 +20,9 @@ export async function createPdf(req: Request, res: Response) {
     // doc.image(path.join(__dirname, '../assets/pdf-header.png'), 24, 24, { width: 564 });
     let img: Buffer | string, header = path.join(__dirname, '../assets/pdf-header.png'), imgDefault = path.join(__dirname, '../assets/pdf-default.jpg'),
         spaceX = (doc.page.width - 48) / 5, spaceY = 130.3, xl = 24, yl = 84, pagination: any = 0;
-    const lines = await Line.find({}).sort('_id');
+    const lines = await Line.find({}).sort('identifier');
     await Promise.all(lines.map(async line => {
-        let keys: Array<IKey> = await Key.find({ 'line': line._id }).sort('code');
+        let keys: Array<IKey> = await Key.find({ 'line': line.identifier }).sort('code');
         keys = await Promise.all(keys.map(async (key: IKey) => {
             const index = key.image.sort((a, b) => a.idN - b.idN).findIndex(k => k.img != null);
             try {
@@ -32,7 +32,7 @@ export async function createPdf(req: Request, res: Response) {
                 img = imgDefault;
             } finally {
                 return <IKey>{
-                    _id: key._id,
+                    identifier: key.identifier,
                     code: key.code,
                     line: key.line,
                     desc: key.desc,
@@ -41,7 +41,7 @@ export async function createPdf(req: Request, res: Response) {
             }
         }));
         return <ILine>{
-            _id: line._id,
+            identifier: line.identifier,
             name: line.name,
             started: line.started,
             keys

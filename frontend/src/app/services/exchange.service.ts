@@ -22,19 +22,19 @@ export class ExchangeService {
     return this._http.put(this.url + 'key/status/' + id, params, { headers: headers });
   }
 
-  deleteStatus(_id: String, idN: Number): Observable<any> {
-    return this._http.delete(this.url + 'key/status/' + _id + '/delete/' + idN);
+  deleteStatus(identifier: String, idN: Number): Observable<any> {
+    return this._http.delete(this.url + 'key/status/' + identifier + '/delete/' + idN);
   }
 
-  deleteImage(_id: String, idN: Number): Observable<any> {
-    return this._http.delete(this.url + 'key/image/' + _id + '/delete/' + idN);
+  deleteImage(identifier: String, idN: Number): Observable<any> {
+    return this._http.delete(this.url + 'key/image/' + identifier + '/delete/' + idN);
   }
 
-  deleteKey(_id: String): Observable<any> {
-    return this._http.delete(this.url + 'key/' + _id);
+  deleteKey(identifier: String): Observable<any> {
+    return this._http.delete(this.url + 'key/' + identifier);
   }
 
-  deleteLine(_id: String): Observable<any> {
-    return this._http.delete(this.url + 'line/' + _id)
+  deleteLine(identifier: String): Observable<any> {
+    return this._http.delete(this.url + 'line/' + identifier)
   }
 }

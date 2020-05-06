@@ -19,8 +19,8 @@ v2.config({
     api_secret: config.CDB.C_SECRET
 });
 
-const totalKey = (line: ILine) => new Promise<ILine>((resolve) => Key.countDocuments({ 'line': line._id }, async (err, countKeys: number) => resolve(<ILine>{
-    _id: line._id,
+const totalKey = (line: ILine) => new Promise<ILine>((resolve) => Key.countDocuments({ 'line': line.identifier }, async (err, countKeys: number) => resolve(<ILine>{
+    identifier: line.identifier,
     name: line.name,
     started: line.started,
     countKeys
@@ -38,7 +38,7 @@ export async function saveLine(req: Request, res: Response) {
 
 export function listLine(req: Request, res: Response) {
     const query: MongooseFilterQuery<ILine> = {};
-    Line.find(query).sort('_id').exec((err, line) => {
+    Line.find(query).sort('identifier').exec((err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: line });
@@ -47,7 +47,7 @@ export function listLine(req: Request, res: Response) {
 
 export function listLineTotalKey(req: Request, res: Response) {
     const query: MongooseFilterQuery<ILine> = {};
-    Line.find(query).sort('_id').exec(async (err, line) => {
+    Line.find(query).sort('identifier').exec(async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         const data = await Promise.all(line.map(l => totalKey(l)))
@@ -61,7 +61,7 @@ export function listLinePage(req: Request, res: Response) {
     const options: PaginateOptions = {
         page: Number(req.params.page),
         limit: perPage,
-        sort: '_id'
+        sort: 'identifier'
     };
     Line.paginate(query, options, (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
@@ -76,7 +76,7 @@ export function listLineTotalKeyPage(req: Request, res: Response) {
     const options: PaginateOptions = {
         page: Number(req.params.page),
         limit: perPage,
-        sort: '_id'
+        sort: 'identifier'
     };
     Line.paginate(query, options, async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
@@ -90,12 +90,12 @@ export function listLineTotalKeyPage(req: Request, res: Response) {
 export function listLineRegex(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
-        '_id': {
+        'identifier': {
             $regex: '^' + req.params.id,
             $options: 'i'
         }
     };
-    Line.find(query).sort('_id').exec((err, line) => {
+    Line.find(query).sort('identifier').exec((err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: line });
@@ -105,12 +105,12 @@ export function listLineRegex(req: Request, res: Response) {
 export function listLineTotalKeyRegex(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
-        '_id': {
+        'identifier': {
             $regex: '^' + req.params.id,
             $options: 'i'
         }
     };
-    Line.find(query).sort('_id').exec(async (err, line) => {
+    Line.find(query).sort('identifier').exec(async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         const data = await Promise.all(line.map(l => totalKey(l)))
@@ -121,7 +121,7 @@ export function listLineTotalKeyRegex(req: Request, res: Response) {
 export function listLineRegexPage(req: Request, res: Response) {
     if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
-        '_id': {
+        'identifier': {
             $regex: '^' + req.params.id,
             $options: 'i'
         }
@@ -129,7 +129,7 @@ export function listLineRegexPage(req: Request, res: Response) {
     const options: PaginateOptions = {
         page: Number(req.params.page),
         limit: perPage,
-        sort: '_id'
+        sort: 'identifier'
     };
     Line.paginate(query, options, (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
@@ -141,7 +141,7 @@ export function listLineRegexPage(req: Request, res: Response) {
 export function listLineTotalKeyRegexPage(req: Request, res: Response) {
     if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
-        '_id': {
+        'identifier': {
             $regex: '^' + req.params.id,
             $options: 'i'
         }
@@ -149,7 +149,7 @@ export function listLineTotalKeyRegexPage(req: Request, res: Response) {
     const options: PaginateOptions = {
         page: Number(req.params.page),
         limit: perPage,
-        sort: '_id'
+        sort: 'identifier'
     };
     Line.paginate(query, options, async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
@@ -171,31 +171,17 @@ export function getLine(req: Request, res: Response) {
 
 export function updateLine(req: Request, res: Response) {
     if (!req.params.id || !req.body) return res.status(400).send({ message: 'Client has not sent params' });
-    const id = req.params.id
-    if (req.body._id) {
-        if (!req.body.name) return res.status(400).send({ message: 'Client has not sent params' });
-        const newLine = new Line(req.body);
-        Line.findByIdAndDelete(id, (err, lineDeleted) => {
-            if (err) return res.status(500).send({ message: 'Replace 1 Internal Server Error' });
-            if (!lineDeleted) return res.status(404).send({ message: 'Document not found' });
-            newLine.save((err, lineStored) => {
-                if (err) return res.status(500).send({ message: 'Replace 2 Internal Server Error' });
-                if (!lineStored) return res.status(204).send({ message: 'Line No Content' });
-                if (lineDeleted._id !== lineStored._id) {
-                    Key.updateMany({ 'line': lineDeleted._id }, { 'line': lineStored._id }).exec(err => {
-                        if (err) return res.status(500).send({ message: 'Key Internal Server Error' });
-                    });
-                }
-                return res.status(200).send({ data: lineDeleted });
-            });
-        });
-    } else {
-        Line.findByIdAndUpdate(id, req.body, (err, lineUpdated) => {
-            if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-            if (!lineUpdated) return res.status(404).send({ message: 'Document not found' });
-            return res.status(200).send({ data: lineUpdated });
-        });
-    }
+    Line.findOneAndUpdate({ 'identifier': req.params.id }, req.body, { new: true }, async (err, lineUpdated) => {
+        console.log("req.params.id", req.params.id)
+        console.log("req.body", req.body)
+        console.log("lineUpdated", lineUpdated)
+        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
+        if (!lineUpdated) return res.status(404).send({ message: 'Document not found' });
+        // if (req.params.id !== lineUpdated.id) await Key.updateMany({ 'line': req.params.id }, { 'line': lineUpdated.identifier }).exec(err => {
+        //     if (err) return res.status(500).send({ message: 'Key Internal Server Error' });
+        // });
+        return res.status(200).send({ data: lineUpdated });
+    });
 }
 
 export function deleteLine(req: Request, res: Response) {
@@ -203,26 +189,19 @@ export function deleteLine(req: Request, res: Response) {
     Line.findByIdAndDelete(req.params.id, async (err, lineDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineDeleted) return res.status(404).send({ message: 'Document not found' });
-        const query: MongooseFilterQuery<IKey> = { 'line': lineDeleted._id };
-        const keys = await Key.find(query).select('image -_id');
-        if (keys) await new Promise(resolve => Key.deleteMany(query, async err => {
-            if (err) {
-                //TODO: Provar nueva funcionalidad, si no elimina todos, lo recrea
-                req.body = lineDeleted;
-                await saveLine(req, res);
-                return res.status(409).send({ message: 'Batch removal process has failed' });
-            }
-            await Promise.all(keys.map(async k => await Promise.all(k.image.map(async i => {
-                if (i.publicId) await v2.uploader.destroy(i.publicId)
-            }))));
-        }));
+        const query: MongooseFilterQuery<IKey> = { 'line': lineDeleted.identifier };
+        const keys = await Key.find(query).select('image -identifier');
+        if (keys) await Key.deleteMany(query).exec(async err => {
+            if (err) return res.status(409).send({ message: 'Batch removal process has failed' });
+            await Promise.all(keys.map(async k => await Promise.all(k.image.map(async i => i.publicId && await v2.uploader.destroy(i.publicId)))));
+        });
         return res.status(200).send({ data: lineDeleted });
     });
 }
 
 export function forceUpdateLine(req: Request, res: Response) {
     if (!req.params.id || !req.body) return res.status(400).send({ message: 'Client has not sent params' });
-    Line.findByIdAndUpdate(req.params.id, (err: Error, lineUpdated: ILine) => {
+    Line.findByIdAndUpdate(req.params.id, req.body, (err, lineUpdated) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineUpdated) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: lineUpdated });

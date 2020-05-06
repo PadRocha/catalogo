@@ -164,8 +164,8 @@
     <span class="container">Total: {{LinesInfo.totalDocs}}</span>
     <ul infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollLine(searchLine)" [scrollWindow]="false">
         <li #every>Todas</li>
-        <li *ngFor="let line of Lines" (click)="clickLine(line._id)">
-            {{line._id}}
+        <li *ngFor="let line of Lines" (click)="clickLine(line.identifier)">
+            {{line.identifier}}
             <span>{{line.name}}</span>
         </li>
         <li #waitLine class="text-center">
@@ -199,10 +199,10 @@
             </tr>
         </thead>
         <tbody infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollKey()" [scrollWindow]="false">
-            <tr #tr *ngFor="let key of Keys" [id]="key._id">
+            <tr #tr *ngFor="let key of Keys" [id]="key.identifier">
                 <td width="34" class="buttons">
                     <button *ngIf="allowed()" type="button" class="btn btn-primary btn-sm"
-                        (click)="clickConfig(key._id, LineCode.textContent)">
+                        (click)="clickConfig(key.identifier, LineCode.textContent)">
                         <i class="fas fa-cogs"></i>
                     </button>
                     <button *ngIf="!allowed()" type="button" class="btn btn-primary btn-sm">
@@ -212,13 +212,13 @@
                 <td #LineCode width="130">{{key.line}}{{key.code}}</td>
                 <td width="250">
                     <div class="input-group">
-                        <span title="Ver imagen" name="images" (click)="clickSpan(key._id)">
+                        <span title="Ver imagen" name="images" (click)="clickSpan(key.identifier)">
                             <div class="case">[<i class="fas fa-circle"></i>]</div>
                         </span>
                         <select #select0 class="form-control btn-sm {{statusClass(statusImage(key.image, 0))}}" name="0"
                             [value]="statusImage(key.image, 0)" [disabled]="disabledImage(statusImage(key.image, 0))"
-                            (focus)="focusSelect(select0)" (change)="changeSelect(select0, key._id)"
-                            (blur)="blurSelect(select0, key._id, LineCode.textContent)">
+                            (focus)="focusSelect(select0)" (change)="changeSelect(select0, key.identifier)"
+                            (blur)="blurSelect(select0, key.identifier, LineCode.textContent)">
                             <option value="" class="white"></option>
                             <option value="0" class="white">0</option>
                             <option value="1" class="gray">1</option>
@@ -229,8 +229,8 @@
                         </select>
                         <select #select1 class="form-control btn-sm {{statusClass(statusImage(key.image, 1))}}" name="1"
                             [value]="statusImage(key.image, 1)" [disabled]="disabledImage(statusImage(key.image, 1))"
-                            (focus)="focusSelect(select1)" (change)="changeSelect(select1, key._id)"
-                            (blur)="blurSelect(select1, key._id, LineCode.textContent)">
+                            (focus)="focusSelect(select1)" (change)="changeSelect(select1, key.identifier)"
+                            (blur)="blurSelect(select1, key.identifier, LineCode.textContent)">
                             <option value="" class="white"></option>
                             <option value="0" class="white">0</option>
                             <option value="1" class="gray">1</option>
@@ -241,8 +241,8 @@
                         </select>
                         <select #select2 class="form-control btn-sm {{statusClass(statusImage(key.image, 2))}}" name="2"
                             [value]="statusImage(key.image, 2)" [disabled]="disabledImage(statusImage(key.image, 2))"
-                            (focus)="focusSelect(select2)" (change)="changeSelect(select2, key._id)"
-                            (blur)="blurSelect(select2, key._id, LineCode.textContent)">
+                            (focus)="focusSelect(select2)" (change)="changeSelect(select2, key.identifier)"
+                            (blur)="blurSelect(select2, key.identifier, LineCode.textContent)">
                             <option value="" class="white"></option>
                             <option value="0" class="white">0</option>
                             <option value="1" class="gray">1</option>

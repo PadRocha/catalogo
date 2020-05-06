@@ -48,8 +48,8 @@ export function saveKey(req: Request, res: Response) {
         line: req.body.line,
         desc: req.body.desc
     });
-    const query: MongooseFilterQuery<ILine> = { '_id': newKey.line };
-    Line.findOne(query).select('_id').exec((err: Error, line: IKey) => {
+    const query: MongooseFilterQuery<ILine> = { 'identifier': newKey.line };
+    Line.findOne(query).select('identifier').exec((err: Error, line: IKey) => {
         if (err) return res.status(500).send({ message: 'Line Internal Server Error' });
         if (!line) return res.status(404).send({ message: 'Line Not Found' });
         newKey.save((err, keyStored) => {
@@ -71,8 +71,8 @@ export function saveKeyStatus(req: Request, res: Response) {
         idN,
         status: req.body.status
     });
-    const query: MongooseFilterQuery<ILine> = { '_id': newKey.line };
-    Line.findOne(query).select('_id').exec((err: Error, line: IKey) => {
+    const query: MongooseFilterQuery<ILine> = { 'identifier': newKey.line };
+    Line.findOne(query).select('identifier').exec((err: Error, line: IKey) => {
         if (err) return res.status(500).send({ message: 'Line Internal Server Error' });
         if (!line) return res.status(404).send({ message: 'Line Not Found' });
         newKey.save((err, keyStored) => {
@@ -205,7 +205,7 @@ export function deleteKey(req: Request, res: Response) {
 export function saveStatus(req: Request, res: Response) {
     if (!req.params.id || !req.body || isNaN(req.body.idN) || isNaN(req.body.status)) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {
-        '_id': req.params.id,
+        'identifier': req.params.id,
         'image.idN': { $ne: req.body.idN }
     };
     const update: UpdateQuery<IKey> = {
@@ -228,7 +228,7 @@ export function saveStatus(req: Request, res: Response) {
 export function updateStatus(req: Request, res: Response) {
     if (!req.params.id || !req.body || isNaN(req.body.idN) || isNaN(req.body.status)) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {
-        '_id': req.params.id,
+        'identifier': req.params.id,
         'image.idN': req.body.idN
     };
     const update: UpdateQuery<IKey> = { $set: { 'image.$.status': req.body.status } };
@@ -240,7 +240,7 @@ export function updateStatus(req: Request, res: Response) {
 }
 
 export function deleteStatus(req: Request, res: Response) {
-    if (!req.params._id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!req.params.identifier || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
     const id: any = Number(req.params.idN);
     const update: UpdateQuery<IKey> = {
         $pull: {
@@ -250,7 +250,7 @@ export function deleteStatus(req: Request, res: Response) {
             }
         }
     };
-    Key.findByIdAndUpdate(req.params._id, update, (err, statusDeleted: any) => {
+    Key.findByIdAndUpdate(req.params.identifier, update, (err, statusDeleted: any) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!statusDeleted) return res.status(404).send({ message: 'Key Not Found' });
         try {
@@ -268,19 +268,19 @@ export async function saveImage(req: Request, res: Response) {
     const result = await v2.uploader.upload(req.file.path);
     //TODO: Check  'image.status': { $ne: null }, 
     const query: MongooseFilterQuery<IKey> = {
-        '_id': req.params.id,
+        'identifier': req.params.id,
         'image.idN': req.body.idN
     };
     const update: UpdateQuery<IKey> = {
         $set: {
             'image.$.status': 5,
             'image.$.img': result.url,
-            'image.$.publicId': result.public_id
+            'image.$.publicId': result.publicidentifier
         }
     };
     Key.findOneAndUpdate(query, update, { new: true }, async (err, imageStored) => {
         if (err || !imageStored) {
-            await v2.uploader.destroy(result.public_id);
+            await v2.uploader.destroy(result.publicidentifier);
             await fs.unlink(req.file.path)
         }
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
@@ -294,7 +294,7 @@ export async function updateImage(req: Request, res: Response) {
     if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file) return res.status(400).send({ message: 'Client has not sent params' });
     const result = await v2.uploader.upload(req.file.path);
     const query: MongooseFilterQuery<IKey> = {
-        '_id': req.params.id,
+        'identifier': req.params.id,
         'image.idN': req.body.idN,
         'image.status': 5,
         'image.img': { $ne: null },
@@ -303,12 +303,12 @@ export async function updateImage(req: Request, res: Response) {
     const update: UpdateQuery<IKey> = {
         $set: {
             'image.$.img': result.url,
-            'image.$.publicId': result.public_id
+            'image.$.publicId': result.publicidentifier
         }
     };
     Key.findOneAndUpdate(query, update, async (err, imageUpdated: any) => {
         if (err || !imageUpdated) {
-            await v2.uploader.destroy(result.public_id);
+            await v2.uploader.destroy(result.publicidentifier);
             await fs.unlink(req.file.path)
         }
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
@@ -320,7 +320,7 @@ export async function updateImage(req: Request, res: Response) {
 }
 
 export function deleteImage(req: Request, res: Response) {
-    if (!req.params._id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!req.params.identifier || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
     const id: any = Number(req.params.idN);
     const update: UpdateQuery<IKey> = {
         $pull: {
@@ -330,7 +330,7 @@ export function deleteImage(req: Request, res: Response) {
             }
         }
     };
-    Key.findByIdAndUpdate(req.params._id, update, async (err, imageDeleted: any) => {
+    Key.findByIdAndUpdate(req.params.identifier, update, async (err, imageDeleted: any) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!imageDeleted) return res.status(404).send({ message: 'Key Not Found' });
         await v2.uploader.destroy(imageDeleted.image.find((x: IImage) => x.idN === id).publicId);

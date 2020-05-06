@@ -58,7 +58,7 @@ const keySchema = new Schema({
                 required: true
             }
         }],
-        _id: false,
+        identifier: false,
         idN: true
     },
     conf: {

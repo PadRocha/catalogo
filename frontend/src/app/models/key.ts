@@ -8,7 +8,7 @@ import { Image } from './image';
 
 export class Key {
     constructor(
-        public _id: String,
+        public identifier: String,
         public code: String,
         public line: String,
         public desc: String,

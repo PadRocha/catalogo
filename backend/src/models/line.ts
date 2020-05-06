@@ -4,7 +4,7 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 import { IKey } from '../models/key';
 
 export interface ILine extends Document {
-    readonly _id: string,
+    readonly identifier: string,
     readonly name: string,
     readonly started: Date,
     readonly ended: Date,
@@ -13,7 +13,7 @@ export interface ILine extends Document {
 }
 
 const lineSchema = new Schema({
-    _id: {
+    identifier: {
         type: String,
         trim: true,
         minlength: 6,

@@ -114,7 +114,7 @@ export class AddLineComponent implements OnInit {
   }
 
   public clickConfig(line: Line): void {
-    this.actualLine = line._id;
+    this.actualLine = line.identifier;
     this.currentModal = this._modal.open(this.deleteModal, () => { }, () => { }, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
   }
 

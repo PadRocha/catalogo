@@ -6,7 +6,7 @@
 
 export class User {
     constructor(
-        public _id: String,
+        public identifier: String,
         public nickname: String,
         public password: String,
         public role: String

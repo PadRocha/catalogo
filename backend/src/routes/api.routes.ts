@@ -45,12 +45,12 @@ const router = Router();
 
 /**
  * @apiDefine BodyLine
- * @apiParam (body) {String} _id Line identifier
+ * @apiParam (body) {String} identifier Line identifier
  * @apiParam (body) {String} name Line name
  * 
  * @apiParamExample  {json} Request-E:
  *      {
- *          "_id": "ACCSEH",
+ *          "identifier": "ACCSEH",
  *          "name": "Accesorios (SEH)"
  *      }
  */
@@ -68,7 +68,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLines
- * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
  * 
@@ -77,7 +77,7 @@ const router = Router();
  *      {
  *          "data": [   
  *              {
- *                  "_id": "ACCSEH",
+ *                  "identifier": "ACCSEH",
  *                  "name": "Accesorios (SEH)",
  *                  "started": "2020-04-21T20:25:10.395Z",
  *                  "__v": 0
@@ -88,7 +88,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLinesPaged
- * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
  * 
@@ -109,7 +109,7 @@ const router = Router();
  *          "data": {
  *              "docs": [
  *                  {
- *                      "_id": "ACCSEH",
+ *                      "identifier": "ACCSEH",
  *                      "name": "Accesorios (SEH)",
  *                      "started": "2020-04-21T20:25:10.395Z",
  *                  }
@@ -129,7 +129,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLinesTotalKey
- * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
  * @apiParam (Success 200 [Array])  {Number} countKeys Total Key in Line
@@ -139,7 +139,7 @@ const router = Router();
  *      {
  *          "data": [
  *              {
- *                  "_id": "ACCSEH",
+ *                  "identifier": "ACCSEH",
  *                  "name": "Accesorios (SEH)",
  *                  "started": "2020-04-21T20:25:10.395Z",
  *                  "countKeys": 26
@@ -150,7 +150,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLinesTotalKeyPaged
- * @apiParam (Success 200 [Array])  {String} _id Line identifier
+ * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
  * @apiParam (Success 200 [Array])  {Number} countKeys Total Key in Line
@@ -172,7 +172,7 @@ const router = Router();
  *          "data": {
  *              "docs": [
  *                  {
- *                      "_id": "ACCSEH",
+ *                      "identifier": "ACCSEH",
  *                      "name": "Accesorios (SEH)",
  *                      "started": "2020-04-21T20:25:10.395Z",
  *                      "countKeys": 26
@@ -193,7 +193,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLine
- * @apiSuccess {String} _id Line identifier
+ * @apiSuccess {String} identifier Line identifier
  * @apiSuccess {String} name Line name
  * @apiSuccess {Date} started Line creation date
  * 
@@ -201,7 +201,7 @@ const router = Router();
  *      HTTP/1.1 200 OK
  *      {
  *          "data": {
- *              "_id": "ACCSEH",
+ *              "identifier": "ACCSEH",
  *              "name": "Accesorios (SEH)",
  *              "started": "2020-04-21T20:25:10.395Z",
  *              "__v": 0
@@ -288,6 +288,26 @@ const router = Router();
  *      }
  */
 
+/**
+ * @apiDefine SuccessKeys
+ * @apiParam (Success 200 [Array])  {identifier} identifier Line identifier
+ * @apiParam (Success 200 [Array])  {String} name Line name
+ * @apiParam (Success 200 [Array])  {Date} started Line creation date
+ * 
+ * @apiSuccessExample  {json} Success-R:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": [   
+ *              {
+ *                  "identifier": "ACCSEH",
+ *                  "name": "Accesorios (SEH)",
+ *                  "started": "2020-04-21T20:25:10.395Z",
+ *                  "__v": 0
+ *              }
+ *          ]
+ *      }
+ */
+
 /*------------------------------------------------------------------*/
 
 /**
@@ -304,14 +324,14 @@ const router = Router();
  * 
  * @apiuse header
  * 
- * @apiSuccess {string} _id id´s User.
+ * @apiSuccess {string} identifier id´s User.
  * @apiSuccess {string} nikcname Nickname of the User.
  * @apiSuccess {string} role Role of the User
  * 
  * @apiSuccessExample {json} Success-R:
  *      HTTP/1.1 200 OK
  *      {
- *           "_id": "5e6ceef1cf62796de0e1e791", 
+ *           "identifier": "5e6ceef1cf62796de0e1e791", 
  *           "nickname": "padrocha", 
  *           "role": "$3a$10$WjLK2U2TqVjG8Y5g4qyUC.xJ5h3x8IDtb3VLzZmkKpMAvbnOsNJ0i"
  *      }
@@ -551,6 +571,14 @@ router.route('/line')
  * @apiuse NotFound
  * 
  * @apiuse NoContent
+ * 
+ * @apiError Removal[R] Delete multiple documents
+ * 
+ * @apiErrorExample {json} R-R:
+ *      HTTP/1.1 409 Indicates that the request could not be processed because of conflict in the current state of the resource, such as an edit conflict between multiple simultaneous updates.
+ *      {
+ *          "message": "Batch removal process has failed"
+ *      }
  * 
  * @apiuse HeaderErrors
  * 
@@ -828,14 +856,6 @@ router.route('/line/total/key/regex/:id/page/:page')
  * 
  * @apiuse NotFound
  * 
- * @apiError Removal[R] Delete multiple documents
- * 
- * @apiErrorExample {json} R-R:
- *      HTTP/1.1 409 Indicates that the request could not be processed because of conflict in the current state of the resource, such as an edit conflict between multiple simultaneous updates.
- *      {
- *          "message": "Access denied"
- *      }
- * 
  * @apiuse HeaderErrors
  * 
  */
@@ -879,14 +899,14 @@ router.route('/key/status/:id')
     .post(keyController.saveStatus)
     .put(authorized, keyController.updateStatus); //* User
 
-router.route('/key/status/:_id/delete/:idN')
+router.route('/key/status/:identifier/delete/:idN')
     .delete(keyController.deleteStatus);
 
 router.route('/key/image/:id')
     .post(keyController.saveImage)
     .put(keyController.updateImage);
 
-router.route('/key/image/:_id/delete/:idN')
+router.route('/key/image/:identifier/delete/:idN')
     .delete(keyController.deleteImage);
 
 /*------------------------------------------------------------------*/

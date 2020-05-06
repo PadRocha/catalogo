@@ -70,7 +70,7 @@ export class AddKeyComponent implements OnInit {
   /*------------------------------------------------------------------*/
 
   private getLines = () => this._arrivals.getLines().subscribe(res => {
-    if (res.data) res.data.forEach(e => this.LineArray.push(e._id));
+    if (res.data) res.data.forEach(e => this.LineArray.push(e.identifier));
   }, err => console.error(<any>err));
 
   public search = (text$: Observable<string>) => text$.pipe(
