@@ -15,7 +15,7 @@ export interface Token {
 
 export default function createToken(user: IUser) {
     var payload: Token = {
-        sub: user.identifier,
+        sub: user._id,
         nickname: user.nickname,
         role: user.role,
         iat: moment().unix(),

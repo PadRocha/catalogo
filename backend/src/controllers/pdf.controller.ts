@@ -32,7 +32,7 @@ export async function createPdf(req: Request, res: Response) {
                 img = imgDefault;
             } finally {
                 return <IKey>{
-                    identifier: key.identifier,
+                    _id: key._id,
                     code: key.code,
                     line: key.line,
                     desc: key.desc,

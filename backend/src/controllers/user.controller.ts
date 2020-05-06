@@ -7,10 +7,7 @@ import { Secret, verify } from 'jsonwebtoken';
 
 import User, { IUser } from '../models/user';
 
-import createToken, { Token } from '../services/jwt';
-
-import config from '../config/config';
-
+import createToken from '../services/jwt';
 
 export function registerUser(req: Request, res: Response) {
     if (!req.body) return res.status(400).send({ message: 'Client has not sent params' });

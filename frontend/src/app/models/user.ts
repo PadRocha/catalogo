@@ -6,9 +6,9 @@
 
 export class User {
     constructor(
-        public identifier: String,
-        public nickname: String,
-        public password: String,
-        public role: String
+        public _id: string,
+        public nickname: string,
+        public password: string,
+        public role: string
     ) { }
 };

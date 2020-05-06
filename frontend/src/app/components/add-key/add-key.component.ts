@@ -167,7 +167,7 @@ export class AddKeyComponent implements OnInit {
               for (let i = (4 - l.length); i > 0; i--) l = '0' + l;
               return l;
             })
-          )].forEach((e: String) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !!0)));
+          )].forEach((e: string) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !!0)));
           if (this.Key.length > 0)
             this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
         } else {

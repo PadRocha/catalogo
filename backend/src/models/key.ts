@@ -28,7 +28,6 @@ const keySchema = new Schema({
     },
     line: {
         type: String,
-        ref: 'Line',
         required: true
     },
     desc: {
@@ -61,11 +60,6 @@ const keySchema = new Schema({
         identifier: false,
         idN: true
     },
-    conf: {
-        type: Boolean,
-        default: false,
-        required: true
-    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -73,7 +67,14 @@ const keySchema = new Schema({
     }
 });
 
+keySchema.virtual('identifier', {
+    ref: 'Lines',
+    localField: 'line',
+    foreignField: 'identifier'
+})
+
 keySchema.index({ code: 1, line: 1 }, { unique: true });
+
 /*------------------------------------------------------------------*/
 
 keySchema.pre<IKey>('save', function (next: Function) {

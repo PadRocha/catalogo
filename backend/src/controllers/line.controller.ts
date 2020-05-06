@@ -162,7 +162,7 @@ export function listLineTotalKeyRegexPage(req: Request, res: Response) {
 
 export function getLine(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
-    Line.findById(req.params.id).exec((err, line) => {
+    Line.findOne({ 'identifier': req.params.id }).exec((err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: line });
@@ -186,7 +186,7 @@ export function updateLine(req: Request, res: Response) {
 
 export function deleteLine(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
-    Line.findByIdAndDelete(req.params.id, async (err, lineDeleted) => {
+    Line.findOneAndDelete({ 'identifier': req.params.id }, async (err, lineDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineDeleted) return res.status(404).send({ message: 'Document not found' });
         const query: MongooseFilterQuery<IKey> = { 'line': lineDeleted.identifier };
@@ -201,7 +201,7 @@ export function deleteLine(req: Request, res: Response) {
 
 export function forceUpdateLine(req: Request, res: Response) {
     if (!req.params.id || !req.body) return res.status(400).send({ message: 'Client has not sent params' });
-    Line.findByIdAndUpdate(req.params.id, req.body, (err, lineUpdated) => {
+    Line.findOneAndUpdate({ 'identifier': req.params.id }, req.body, (err, lineUpdated) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineUpdated) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: lineUpdated });
@@ -210,7 +210,7 @@ export function forceUpdateLine(req: Request, res: Response) {
 
 export function forceDeleteLine(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
-    Line.findByIdAndDelete(req.params.id, (err, lineDeleted) => {
+    Line.findOneAndDelete({ 'identifier': req.params.id }, (err, lineDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineDeleted) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: lineDeleted });

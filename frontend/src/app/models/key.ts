@@ -8,11 +8,11 @@ import { Image } from './image';
 
 export class Key {
     constructor(
-        public identifier: String,
-        public code: String,
-        public line: String,
-        public desc: String,
+        public _id: string,
+        public code: string,
+        public line: string,
+        public desc: string,
         public image: Array<Image>,
-        public config: Boolean
+        public config: boolean
     ) { }
 };

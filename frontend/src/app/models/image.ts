@@ -6,9 +6,9 @@
 
 export class Image {
     constructor(
-        public idN: Number,
-        public img: String,
-        public publicId: String,
-        public status: Number
+        public idN: number,
+        public img: string,
+        public publicId: string,
+        public status: number
     ) { }
 };

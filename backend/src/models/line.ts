@@ -15,6 +15,7 @@ export interface ILine extends Document {
 const lineSchema = new Schema({
     identifier: {
         type: String,
+        unique: true,
         trim: true,
         minlength: 6,
         maxlength: 6,

@@ -206,7 +206,7 @@ export class HomeComponent implements OnInit {
 
   private getKeyCode = (id: String) => this._arrivals.getKey(id).subscribe(async res => {
     if (res.data) {
-      this.codeImageModal = await res.data['line'].identifier + res.data.code;
+      this.codeImageModal = await res.data['line']._id + res.data.code;
       let cont = new Array();
       res.data['image'].forEach(e => {
         if (e.status === 5) cont[e.idN] = e;
@@ -215,15 +215,15 @@ export class HomeComponent implements OnInit {
     }
   }, err => console.error(<any>err));
 
-  private getKeyLineSelected(identifier: String): void {
+  private getKeyLineSelected(_id: String): void {
     document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
-    this._arrivals.getKeysLinePage(identifier, this.actualKeyPage).subscribe(async res => {
+    this._arrivals.getKeysLinePage(_id, this.actualKeyPage).subscribe(async res => {
       await this.waitKey.nativeElement.classList.add('d-none');
       await document.body.classList.remove('wait');
       if (res.data.docs) this.Keys = this.Keys.concat(res.data.docs);
-      this.LineSelected = identifier;
-      this.search.nativeElement.value = identifier;
+      this.LineSelected = _id;
+      this.search.nativeElement.value = _id;
       delete res.data.docs;
       this.KeysInfo = res.data;
     }, err => console.error(<any>err));
@@ -282,14 +282,14 @@ export class HomeComponent implements OnInit {
     !menu.classList.contains('hide_menu') ? menu.classList.add('hide_menu') : menu.classList.remove('hide_menu');
   }
 
-  public clickConfig(identifier, text): void {
-    this.idKey = identifier;
+  public clickConfig(_id, text): void {
+    this.idKey = _id;
     this.codeImageModal = text
     this.currentModal = this._modal.open(this.deleteModal, () => { }, () => { }, { size: 'sm'/* , backdrop: 'static', keyboard: false */ });
   }
 
-  public clickSpan(identifier): void {
-    this.idKey = identifier;
+  public clickSpan(_id): void {
+    this.idKey = _id;
     if (!this.showSearched) {
       this.getKeyCode(this.idKey);
       this.showSearched = true;
@@ -309,12 +309,12 @@ export class HomeComponent implements OnInit {
     this.nBeforeClass = select.classList[2];
   }
 
-  public changeSelect(select, identifier): void {
+  public changeSelect(select, _id): void {
     if ((this.nBeforeImage === '' || select.value !== '') && select.value !== '5') {
       document.body.classList.add('wait');
       this.Image.idN = Number(select.name);
       this.Image.status = Number(select.value);
-      this._exchanges.updateStatus(identifier, this.Image).subscribe(async res => {
+      this._exchanges.updateStatus(_id, this.Image).subscribe(async res => {
         await document.body.classList.remove('wait');
         if (select.value === '5') select.disabled = true;
         const color = select.options[select.selectedIndex].className;
@@ -322,7 +322,7 @@ export class HomeComponent implements OnInit {
         if (this.nBeforeImage !== '') --this.KeysInfo.status[c];
         select.className = 'form-control btn-sm ' + color;
         ++this.KeysInfo.status[color];
-        alertify.success(`Status ${this.Image.status}, Image ${+this.Image.idN + 1} - key ${identifier}`);
+        alertify.success(`Status ${this.Image.status}, Image ${++this.Image.idN} - key ${_id}`);
         this.nBeforeImage = select.value;
       }, err => {
         document.body.classList.remove('wait');
@@ -330,12 +330,12 @@ export class HomeComponent implements OnInit {
       });
     } else if (select.value !== '5') {
       document.body.classList.add('wait');
-      this._exchanges.deleteStatus(identifier, Number(select.name)).subscribe(async res => {
+      this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(async res => {
         await document.body.classList.remove('wait');
         let c: any = this.nBeforeClass;
         --this.KeysInfo.status[c];
         select.className = 'form-control btn-sm white';
-        alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${identifier}`);
+        alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${_id}`);
       }, err => {
         document.body.classList.remove('wait');
         alertify.error('Error Status<br/>[reload]');
@@ -344,9 +344,9 @@ export class HomeComponent implements OnInit {
     select.blur();
   }
 
-  public blurSelect(select, identifier, text): void {
+  public blurSelect(select, _id, text): void {
     if (select.value === '5') {
-      this.idKey = identifier;
+      this.idKey = _id;
       this.codeImageModal = text;
       this.currentHTML = select;
       this.nImage = Number(this.currentHTML.name) + 1;
@@ -499,11 +499,11 @@ export class HomeComponent implements OnInit {
   }
 
   public confirmDeleteImg(): void {
-    let identifier = this.idKey;
+    let _id = this.idKey;
     let idN = this.imageId;
     let code = this.codeImageModal;
     document.body.classList.add('wait');
-    this._exchanges.deleteImage(identifier, idN).subscribe(async res => {
+    this._exchanges.deleteImage(_id, idN).subscribe(async res => {
       await document.body.classList.remove('wait');
       let cont = new Array();
       await res.data['image'].forEach(e => {
@@ -515,7 +515,7 @@ export class HomeComponent implements OnInit {
         await this.currentModal.close();
         this.setPercentage(false);
       } else await this.confirmModalService.close();
-      let select = this._f.findChidlren(this.tr.toArray(), 'id', identifier).querySelector(`select[name='${idN}']`);
+      let select = this._f.findChidlren(this.tr.toArray(), 'id', _id).querySelector(`select[name='${idN}']`);
       select.className = 'form-control btn-sm white';
       select.value = '';
       select.disabled = false;
