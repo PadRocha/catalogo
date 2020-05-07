@@ -114,8 +114,8 @@ export function listKeyRegex(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
     const id = req.params.id;
     let query: MongooseFilterQuery<IKey> = id.length < 7
-        ? { 'line': { $regex: '^' + id, $options: 'i' } }
-        : { 'line': id.slice(0, 6), 'code': { $regex: '^' + id.slice(6), $options: 'i' } };
+        ? { 'line': { $regex: `^${id}`, $options: 'i' } }
+        : { 'line': id.slice(0, 6), 'code': { $regex: `^${id.slice(6)}`, $options: 'i' } };
     Key.find(query).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!key) return res.status(404).send({ message: 'Key Not Found' });
@@ -127,8 +127,8 @@ export function listKeyRegexPage(req: Request, res: Response) {
     if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
     const id = req.params.id;
     const query: MongooseFilterQuery<IKey> = id.length < 7
-        ? { 'line': { $regex: '^' + id, $options: 'i' } }
-        : { 'line': id.slice(0, 6), 'code': { $regex: '^' + id.slice(6), $options: 'i' } };
+        ? { 'line': { $regex: `^${id}`, $options: 'i' } }
+        : { 'line': id.slice(0, 6), 'code': { $regex: `^${id.slice(6)}`, $options: 'i' } };
     const options: PaginateOptions = {
         page: Number(req.params.page),
         limit: perPage,

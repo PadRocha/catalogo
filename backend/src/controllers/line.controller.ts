@@ -91,7 +91,7 @@ export function listLineRegex(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
         'identifier': {
-            $regex: '^' + req.params.id,
+            $regex: `^${req.params.id}`,
             $options: 'i'
         }
     };
@@ -106,7 +106,7 @@ export function listLineTotalKeyRegex(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
         'identifier': {
-            $regex: '^' + req.params.id,
+            $regex: `^${req.params.id}`,
             $options: 'i'
         }
     };
@@ -122,7 +122,7 @@ export function listLineRegexPage(req: Request, res: Response) {
     if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
         'identifier': {
-            $regex: '^' + req.params.id,
+            $regex: `^${req.params.id}`,
             $options: 'i'
         }
     };
@@ -142,7 +142,7 @@ export function listLineTotalKeyRegexPage(req: Request, res: Response) {
     if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
         'identifier': {
-            $regex: '^' + req.params.id,
+            $regex: `^${req.params.id}`,
             $options: 'i'
         }
     };
