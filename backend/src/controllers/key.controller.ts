@@ -43,11 +43,7 @@ function infoStatus(query: MongooseFilterQuery<IKey>) {
 
 export function saveKey(req: Request, res: Response) {
     if (!req.body) return res.status(400).send({ message: 'Client has not sent params' });
-    const newKey = new Key({
-        code: req.body.code,
-        line: req.body.line,
-        desc: req.body.desc
-    });
+    const newKey = new Key(req.body);
     const query: MongooseFilterQuery<ILine> = { 'identifier': newKey.line };
     Line.findOne(query).select('identifier').exec((err: Error, line: IKey) => {
         if (err) return res.status(500).send({ message: 'Line Internal Server Error' });
