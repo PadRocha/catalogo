@@ -32,10 +32,10 @@ function infoStatus(query: MongooseFilterQuery<IKey>) {
                     case 2: ++status.brown; break;
                     case 3: ++status.blue; break;
                     case 4: ++status.purple; break;
-                    case 5: ++status.green
+                    case 5: ++status.green; break;
                 }
             });
-            for (let i of image) if (5 === i.status) { ++percentage; break }
+            for (let i of image) if (5 === i.status) { ++percentage; break; }
         });
         resolve([status, 100 * percentage / key.length])
     }));
@@ -58,11 +58,7 @@ export function saveKey(req: Request, res: Response) {
 
 export function saveKeyStatus(req: Request, res: Response) {
     if (!req.body || !req.body.status) return res.status(400).send({ message: 'Client has not sent params' });
-    const newKey = new Key({
-        code: req.body.code,
-        line: req.body.line,
-        desc: req.body.desc
-    });
+    const newKey = new Key(req.body);
     for (let idN = 0; idN < 3; idN++) newKey.image.push(<IImage>{
         idN,
         status: req.body.status
@@ -188,12 +184,10 @@ export function updateKey(req: Request, res: Response) {
 
 export function deleteKey(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
-    Key.findByIdAndDelete(req.params.id, (err, keyDeleted) => {
+    Key.findByIdAndDelete(req.params.id, async (err, keyDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!keyDeleted) return res.status(404).send({ message: 'Key Not Found' });
-        keyDeleted.image.forEach(async e => {
-            await v2.uploader.destroy(<string>e.publicId);
-        });
+        await Promise.all(keyDeleted.image.map(async e => await v2.uploader.destroy(<string>e.publicId)));
         return res.status(200).send({ data: keyDeleted });
     });
 }

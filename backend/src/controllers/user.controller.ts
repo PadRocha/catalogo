@@ -3,7 +3,6 @@
 /*------------------------------------------------------------------*/
 
 import { Request, Response } from 'express';
-import { Secret, verify } from 'jsonwebtoken';
 
 import User, { IUser } from '../models/user';
 
@@ -12,9 +11,7 @@ import createToken from '../services/jwt';
 export function registerUser(req: Request, res: Response) {
     if (!req.body) return res.status(400).send({ message: 'Client has not sent params' });
     const newUser = new User(req.body);
-    console.log("registerUser -> newUser", newUser)
     newUser.save((err, userStored: IUser) => {
-        console.log("registerUser -> userStored", userStored)
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!userStored) return res.status(204).send({ message: 'Saved and is not returning any content' });
         delete userStored.password;

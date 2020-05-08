@@ -56,6 +56,20 @@ const router = Router();
  */
 
 /**
+ * @apiDefine BodyKey
+ * @apiParam (body) {String} code Key identification code
+ * @apiParam (body) {String} line Line Identifier of the line to which the product belongs
+ * @apiParam (body) {String} desc Product description
+ * 
+ * @apiParamExample  {json} Request-E:
+ *      {
+ *          "code": "1",
+ *          "line": "ACCSEH",
+ *          "desc": "Agarradera puerta Combi"
+ *      }
+ */
+
+/**
  * @apiDefine SuccessToken
  * @apiSuccess {json} token User Token identificaction
  * 
@@ -68,6 +82,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLines
+ * @apiParam (Success 200 [Array])  {String} _id Line´s _id
  * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
@@ -77,6 +92,7 @@ const router = Router();
  *      {
  *          "data": [   
  *              {
+ *                  "_id": "5eb3153570f6e647a499dac8",
  *                  "identifier": "ACCSEH",
  *                  "name": "Accesorios (SEH)",
  *                  "started": "2020-04-21T20:25:10.395Z",
@@ -88,6 +104,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLinesPaged
+ * @apiParam (Success 200 [Array])  {String} _id Line´s _id
  * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
@@ -109,6 +126,7 @@ const router = Router();
  *          "data": {
  *              "docs": [
  *                  {
+ *                      "_id": "5eb3153570f6e647a499dac8",
  *                      "identifier": "ACCSEH",
  *                      "name": "Accesorios (SEH)",
  *                      "started": "2020-04-21T20:25:10.395Z",
@@ -129,6 +147,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLinesTotalKey
+ * @apiParam (Success 200 [Array])  {String} _id Line´s _id
  * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
@@ -139,6 +158,7 @@ const router = Router();
  *      {
  *          "data": [
  *              {
+ *                  "_id": "5eb3153570f6e647a499dac8",
  *                  "identifier": "ACCSEH",
  *                  "name": "Accesorios (SEH)",
  *                  "started": "2020-04-21T20:25:10.395Z",
@@ -150,6 +170,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLinesTotalKeyPaged
+ * @apiParam (Success 200 [Array])  {String} _id Line´s _id
  * @apiParam (Success 200 [Array])  {String} identifier Line identifier
  * @apiParam (Success 200 [Array])  {String} name Line name
  * @apiParam (Success 200 [Array])  {Date} started Line creation date
@@ -172,6 +193,7 @@ const router = Router();
  *          "data": {
  *              "docs": [
  *                  {
+ *                      "_id": "5eb3153570f6e647a499dac8",
  *                      "identifier": "ACCSEH",
  *                      "name": "Accesorios (SEH)",
  *                      "started": "2020-04-21T20:25:10.395Z",
@@ -193,6 +215,7 @@ const router = Router();
 
 /**
  * @apiDefine SuccessLine
+ * @apiSuccess {String} _id Line´s _id
  * @apiSuccess {String} identifier Line identifier
  * @apiSuccess {String} name Line name
  * @apiSuccess {Date} started Line creation date
@@ -201,9 +224,60 @@ const router = Router();
  *      HTTP/1.1 200 OK
  *      {
  *          "data": {
+ *              "_id": "5eb3153570f6e647a499dac8",
  *              "identifier": "ACCSEH",
  *              "name": "Accesorios (SEH)",
  *              "started": "2020-04-21T20:25:10.395Z",
+ *              "__v": 0
+ *          }
+ *      }
+ */
+
+/**
+ * @apiDefine SuccessKeys
+ * @apiSuccess {String} _id Key´s _id
+ * @apiSuccess {String} code Key identification code
+ * @apiSuccess {String} line Line Identifier of the line to which the product belongs
+ * @apiSuccess {String} desc Product description
+ * @apiSuccess {Array} image Image Array
+ * @apiSuccess {Date} createdAt Key creation date
+ * 
+ * @apiSuccessExample  {json} Success-R:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": [
+ *              {
+ *                  "_id": "5eb46acb6ef103586032739e",
+ *                  "code": "0001",
+ *                  "line": "ACCSEH",
+ *                  "desc": "Agarradera puerta Combi",
+ *                  "image": [],
+ *                  "createdAt": "2020-05-07T20:08:43.212Z",
+ *                  "__v": 0
+ *              }
+ *          ]
+ *      }
+ */
+
+/**
+ * @apiDefine SuccessKey
+ * @apiSuccess {String} _id Key´s _id
+ * @apiSuccess {String} code Key identification code
+ * @apiSuccess {String} line Line Identifier of the line to which the product belongs
+ * @apiSuccess {String} desc Product description
+ * @apiSuccess {Array} image Image Array
+ * @apiSuccess {Date} createdAt Key creation date
+ * 
+ * @apiSuccessExample  {json} Success-R:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "data": {
+ *              "_id": "5eb46acb6ef103586032739e",
+ *              "code": "0001",
+ *              "line": "ACCSEH",
+ *              "desc": "Agarradera puerta Combi",
+ *              "image": [],
+ *              "createdAt": "2020-05-07T20:08:43.212Z",
  *              "__v": 0
  *          }
  *      }
@@ -285,26 +359,6 @@ const router = Router();
  *      HTTP/1.1 404 The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible.
  *      {
  *          "message": "Document not found"
- *      }
- */
-
-/**
- * @apiDefine SuccessKeys
- * @apiParam (Success 200 [Array])  {identifier} identifier Line identifier
- * @apiParam (Success 200 [Array])  {String} name Line name
- * @apiParam (Success 200 [Array])  {Date} started Line creation date
- * 
- * @apiSuccessExample  {json} Success-R:
- *      HTTP/1.1 200 OK
- *      {
- *          "data": [   
- *              {
- *                  "identifier": "ACCSEH",
- *                  "name": "Accesorios (SEH)",
- *                  "started": "2020-04-21T20:25:10.395Z",
- *                  "__v": 0
- *              }
- *          ]
  *      }
  */
 
@@ -421,6 +475,14 @@ router.route('/register')
  * 
  * @apiuse NotFound
  * 
+ * @apiError Unauthorized[U] User are not allowed
+ * 
+ * @apiErrorExample {json} U-R:
+ *      HTTP/1.1 401 The user does not have valid authentication credentials for the target resource.
+ *      {
+ *          "message": "Unauthorized"
+ *      }
+ * 
  */
 
 router.route('/login')
@@ -433,7 +495,7 @@ router.route('/login')
 /**
  * 
  * @api {get} /line List Line
- * @apiName ListLine
+ * @apiName listLine
  * @apiDescription Show all *Line documents*
  * @apiGroup Line
  * @apiVersion  0.1.0
@@ -457,7 +519,7 @@ router.route('/login')
 /**
  * 
  * @api {post} /line Save Line
- * @apiName SaveLine
+ * @apiName saveLine
  * @apiDescription Save a *Line document* in the database
  * @apiGroup Line
  * @apiVersion  0.1.0
@@ -868,9 +930,61 @@ router.route('/line/force/:id')
 // Key routes
 /*------------------------------------------------------------------*/
 
+/**
+ * 
+ * @api {post} /key Save Key
+ * @apiName saveKey
+ * @apiDescription Save a *Key document* in the database
+ * @apiGroup Key
+ * @apiVersion  0.1.0
+ * @apiPermission admin
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/key
+ * 
+ * 
+ * @apiuse header
+ * 
+ * @apiuse BodyKey
+ * 
+ * @apiuse SuccessKey
+ * 
+ * @apiuse BadRequest
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NoContent
+ * 
+ * @apiuse HeaderErrors
+ * 
+ */
+
+/**
+ * 
+ * @api {get} /key List Key
+ * @apiName listKey
+ * @apiDescription Show all *Key document*
+ * @apiGroup Key
+ * @apiVersion  0.1.0
+ * @apiPermission admin
+ * @apiExample {url} Example usage:
+ *     http://localhost:4000/api/key
+ * 
+ * 
+ * @apiuse header
+ * 
+ * @apiuse SuccessKeys
+ * 
+ * @apiuse Conflict
+ * 
+ * @apiuse NotFound
+ * 
+ * @apiuse HeaderErrors
+ * 
+ */
+
 router.route('/key')
-    .get(keyController.listKey)
-    .post(keyController.saveKey);
+    .get(authAdmin, keyController.listKey)
+    .post(authAdmin, keyController.saveKey);
 
 router.route('/key/:id')
     .get(authorized, keyController.getKey) //* User
@@ -899,14 +1013,14 @@ router.route('/key/status/:id')
     .post(keyController.saveStatus)
     .put(authorized, keyController.updateStatus); //* User
 
-router.route('/key/status/:identifier/delete/:idN')
+router.route('/key/status/:_id/delete/:idN')
     .delete(keyController.deleteStatus);
 
 router.route('/key/image/:id')
     .post(keyController.saveImage)
     .put(keyController.updateImage);
 
-router.route('/key/image/:identifier/delete/:idN')
+router.route('/key/image/:_id/delete/:idN')
     .delete(keyController.deleteImage);
 
 /*------------------------------------------------------------------*/

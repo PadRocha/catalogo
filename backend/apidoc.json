@@ -6,8 +6,8 @@
     "order": [
         "User",
         "Line",
-        "SaveLine",
-        "ListLine",
+        "saveLine",
+        "listLine",
         "getLine",
         "updateLine",
         "deleteLine",
@@ -19,6 +19,8 @@
         "listLineTotalKeyRegex",
         "listLineTotalKeyRegexPage",
         "forceUpdateLine",
-        "forceDeleteLine"
+        "forceDeleteLine",
+        "saveKey",
+        "listKey"
     ]
 }
