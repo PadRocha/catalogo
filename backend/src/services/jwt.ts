@@ -13,7 +13,7 @@ export interface Token {
     exp: number
 }
 
-export default function* createToken(user: IUser) {
+export default function createToken(user: IUser) {
     var payload: Token = {
         sub: user._id,
         nickname: user.nickname,

@@ -187,13 +187,18 @@ export function deleteKey(req: Request, res: Response) {
     Key.findByIdAndDelete(req.params.id, async (err, keyDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!keyDeleted) return res.status(404).send({ message: 'Key Not Found' });
-        await Promise.all(keyDeleted.image.map(async e => await v2.uploader.destroy(<string>e.publicId)));
+        await Promise.all(keyDeleted.image.map(async i => await v2.uploader.destroy(<string>i.publicId)));
         return res.status(200).send({ data: keyDeleted });
     });
 }
 
 export function saveStatus(req: Request, res: Response) {
-    if (!req.params.id || !req.body || isNaN(req.body.idN) || isNaN(req.body.status)) return res.status(400).send({ message: 'Client has not sent params' });
+    if (
+        !req.params.id ||
+        !req.body ||
+        isNaN(req.body.idN) ||
+        isNaN(req.body.status)
+    ) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
         'image.idN': { $ne: req.body.idN }
@@ -216,7 +221,12 @@ export function saveStatus(req: Request, res: Response) {
 }
 
 export function updateStatus(req: Request, res: Response) {
-    if (!req.params.id || !req.body || isNaN(req.body.idN) || isNaN(req.body.status)) return res.status(400).send({ message: 'Client has not sent params' });
+    if (
+        !req.params.id ||
+        !req.body ||
+        isNaN(req.body.idN) ||
+        isNaN(req.body.status)
+    ) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
         'image.idN': req.body.idN
@@ -254,7 +264,12 @@ export function deleteStatus(req: Request, res: Response) {
 }
 
 export async function saveImage(req: Request, res: Response) {
-    if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file) return res.status(400).send({ message: 'Client has not sent params' });
+    if (
+        !req.params.id ||
+        !req.body ||
+        isNaN(req.body.idN) ||
+        !req.file
+    ) return res.status(400).send({ message: 'Client has not sent params' });
     const result = await v2.uploader.upload(req.file.path);
     //TODO: Check  'image.status': { $ne: null }, 
     const query: MongooseFilterQuery<IKey> = {
@@ -281,7 +296,12 @@ export async function saveImage(req: Request, res: Response) {
 }
 
 export async function updateImage(req: Request, res: Response) {
-    if (!req.params.id || !req.body || isNaN(req.body.idN) || !req.file) return res.status(400).send({ message: 'Client has not sent params' });
+    if (
+        !req.params.id ||
+        !req.body ||
+        isNaN(req.body.idN) ||
+        !req.file
+    ) return res.status(400).send({ message: 'Client has not sent params' });
     const result = await v2.uploader.upload(req.file.path);
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,

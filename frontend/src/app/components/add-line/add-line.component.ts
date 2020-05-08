@@ -35,7 +35,7 @@ export class AddLineComponent implements OnInit {
     private _router: Router
   ) {
     this.actualLinePage = 1;
-    this.Line = new Line(void 0, void 0, void 0, void 0);
+    this.Line = new Line(void 0, void 0, void 0);
     this.Lines = new Array();
     this.newLines = new Array();
     this.LinesInfo = '';
