@@ -206,7 +206,7 @@ export class HomeComponent implements OnInit {
 
   private getKeyCode = (id: String) => this._arrivals.getKey(id).subscribe(async res => {
     if (res.data) {
-      this.codeImageModal = await res.data['line']._id + res.data.code;
+      this.codeImageModal = await res.data.line + res.data.code;
       let cont = new Array();
       res.data['image'].forEach(e => {
         if (e.status === 5) cont[e.idN] = e;

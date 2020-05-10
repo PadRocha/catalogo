@@ -2,7 +2,7 @@
     "name": "Ts REST API",
     "version": "0.1.0",
     "description": "REST API using TypeScript, node, mongodb",
-    "title": "TS API",
+    "title": "TS API Catálogo",
     "order": [
         "User",
         "Line",
@@ -21,6 +21,20 @@
         "forceUpdateLine",
         "forceDeleteLine",
         "saveKey",
-        "listKey"
+        "listKey",
+        "getKey",
+        "updateKey",
+        "deleteKey",
+        "listKeyPage",
+        "listKeyRegex",
+        "listKeyRegexPage",
+        "listKeyLine",
+        "listKeyLinePage",
+        "saveKeyStatus",
+        "saveStatus",
+        "updateStatus",
+        "deleteStatus",
+        "saveImage",
+        "updateImage"
     ]
 }

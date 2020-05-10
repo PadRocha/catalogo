@@ -57,7 +57,7 @@ const keySchema = new Schema({
                 required: true
             }
         }],
-        identifier: false,
+        _id: false,
         idN: true
     },
     createdAt: {
@@ -67,11 +67,15 @@ const keySchema = new Schema({
     }
 });
 
-keySchema.virtual('identifier', {
-    ref: 'Lines',
+keySchema.virtual('LineInfo', {
+    ref: 'Line',
     localField: 'line',
-    foreignField: 'identifier'
-})
+    foreignField: 'identifier',
+    justOne: true,
+});
+
+// keySchema.set('toObject', { virtuals: true }); > Schema, { toJSON: { virtuals: true } }
+keySchema.set('toJSON', { virtuals: true });
 
 keySchema.index({ code: 1, line: 1 }, { unique: true });
 
@@ -80,7 +84,6 @@ keySchema.index({ code: 1, line: 1 }, { unique: true });
 keySchema.pre<IKey>('save', function (next: Function) {
     const key = this;
     const length = key.code.length;
-    let code = '';
     for (let i = 0; i < (4 - length); i++) key.code = '0' + key.code;
     return next();
 });

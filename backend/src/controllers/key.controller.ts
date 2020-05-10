@@ -46,11 +46,11 @@ export function saveKey(req: Request, res: Response) {
     const newKey = new Key(req.body);
     const query: MongooseFilterQuery<ILine> = { 'identifier': newKey.line };
     Line.findOne(query).select('identifier').exec((err: Error, line: IKey) => {
-        if (err) return res.status(500).send({ message: 'Line Internal Server Error' });
-        if (!line) return res.status(404).send({ message: 'Line Not Found' });
+        if (err) return res.status(500).send({ message: 'Internal error, probably error with params' });
+        if (!line) return res.status(404).send({ message: 'Document not found' });
         newKey.save((err, keyStored) => {
             if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-            if (!keyStored) return res.status(204).send({ message: 'Key No Content' });
+            if (!keyStored) return res.status(204).send({ message: 'Saved and is not returning any content' });
             return res.status(200).send({ data: keyStored });
         });
     });
@@ -65,11 +65,11 @@ export function saveKeyStatus(req: Request, res: Response) {
     });
     const query: MongooseFilterQuery<ILine> = { 'identifier': newKey.line };
     Line.findOne(query).select('identifier').exec((err: Error, line: IKey) => {
-        if (err) return res.status(500).send({ message: 'Line Internal Server Error' });
-        if (!line) return res.status(404).send({ message: 'Line Not Found' });
+        if (err) return res.status(500).send({ message: 'Internal error, probably error with params' });
+        if (!line) return res.status(404).send({ message: 'Document not found' });
         newKey.save((err, keyStored) => {
             if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-            if (!keyStored) return res.status(204).send({ message: 'Key No Content' });
+            if (!keyStored) return res.status(204).send({ message: 'Saved and is not returning any content' });
             return res.status(200).send({ data: keyStored });
         });
     });
@@ -79,7 +79,7 @@ export function listKey(req: Request, res: Response) {
     const query: MongooseFilterQuery<IKey> = {}
     Key.find(query).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!key) return res.status(404).send({ message: 'Key Not Found' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: key });
     });
 }
@@ -94,7 +94,7 @@ export function listKeyPage(req: Request, res: Response) {
     };
     Key.paginate(query, options, async (err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!key) return res.status(404).send({ message: 'Key Not Found' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
         const [status, percentage] = await infoStatus(query);
         key.status = status;
         key.percentage = percentage;
@@ -110,7 +110,7 @@ export function listKeyRegex(req: Request, res: Response) {
         : { 'line': id.slice(0, 6), 'code': { $regex: `^${id.slice(6)}`, $options: 'i' } };
     Key.find(query).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!key) return res.status(404).send({ message: 'Key Not Found' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: key });
     });
 }
@@ -128,7 +128,7 @@ export function listKeyRegexPage(req: Request, res: Response) {
     };
     Key.paginate(query, options, async (err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!key) return res.status(404).send({ message: 'Key Not Found' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
         const [status, percentage] = await infoStatus(query);
         key.status = status;
         key.percentage = percentage;
@@ -141,7 +141,7 @@ export function listKeyLine(req: Request, res: Response) {
     const query: MongooseFilterQuery<IKey> = { 'line': req.params.line };
     Key.find(query).sort('code').exec((err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!key) return res.status(404).send({ message: 'Key Not Found' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: key });
     });
 }
@@ -156,7 +156,7 @@ export function listKeyLinePage(req: Request, res: Response) {
     };
     Key.paginate(query, options, async (err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!key) return res.status(404).send({ message: 'Key Not Found' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
         const [status, percentage] = await infoStatus(query);
         key.status = status;
         key.percentage = percentage;
@@ -166,9 +166,9 @@ export function listKeyLinePage(req: Request, res: Response) {
 
 export function getKey(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
-    Key.findById(req.params.id).populate('line').exec((err, key) => {
+    Key.findById(req.params.id).exec((err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!key) return res.status(404).send({ message: 'Key Not Found' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: key });
     });
 }
@@ -177,7 +177,7 @@ export function updateKey(req: Request, res: Response) {
     if (!req.params.id || !req.body) return res.status(400).send({ message: 'Client has not sent params' });
     Key.findByIdAndUpdate(req.params.id, req.body, (err, keyUpdated) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!keyUpdated) return res.status(404).send({ message: 'Key Not Found' });
+        if (!keyUpdated) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: keyUpdated });
     });
 }
@@ -186,7 +186,7 @@ export function deleteKey(req: Request, res: Response) {
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
     Key.findByIdAndDelete(req.params.id, async (err, keyDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!keyDeleted) return res.status(404).send({ message: 'Key Not Found' });
+        if (!keyDeleted) return res.status(404).send({ message: 'Document not found' });
         await Promise.all(keyDeleted.image.map(async i => await v2.uploader.destroy(<string>i.publicId)));
         return res.status(200).send({ data: keyDeleted });
     });
@@ -215,7 +215,7 @@ export function saveStatus(req: Request, res: Response) {
     };
     Key.findOneAndUpdate(query, update, (err, statusStored) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!statusStored) return res.status(404).send({ message: 'Key Not Found' });
+        if (!statusStored) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: statusStored });
     });
 }
@@ -240,7 +240,7 @@ export function updateStatus(req: Request, res: Response) {
 }
 
 export function deleteStatus(req: Request, res: Response) {
-    if (!req.params._id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!req.params.id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
     const id: any = Number(req.params.idN);
     const update: UpdateQuery<IKey> = {
         $pull: {
@@ -250,9 +250,9 @@ export function deleteStatus(req: Request, res: Response) {
             }
         }
     };
-    Key.findByIdAndUpdate(req.params._id, update, (err, statusDeleted: any) => {
+    Key.findByIdAndUpdate(req.params.id, update, (err, statusDeleted: any) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!statusDeleted) return res.status(404).send({ message: 'Key Not Found' });
+        if (!statusDeleted) return res.status(404).send({ message: 'Document not found' });
         try {
             const deleted = statusDeleted.image.find((x: IImage) => x.idN === id).status;
             if (deleted == 5) return res.status(404).send({ message: 'Key -> image Not Found' });
@@ -289,7 +289,7 @@ export async function saveImage(req: Request, res: Response) {
             await fs.unlink(req.file.path)
         }
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!imageStored) return res.status(404).send({ message: 'Key Not Found' });
+        if (!imageStored) return res.status(404).send({ message: 'Document not found' });
         await fs.unlink(req.file.path);
         return res.status(200).send({ data: imageStored });
     });
@@ -322,7 +322,7 @@ export async function updateImage(req: Request, res: Response) {
             await fs.unlink(req.file.path)
         }
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!imageUpdated) return res.status(404).send({ message: 'Key Not Found' });
+        if (!imageUpdated) return res.status(404).send({ message: 'Document not found' });
         await v2.uploader.destroy(imageUpdated.image.find((x: IImage) => x.idN === req.body.idN).publicId);
         await fs.unlink(req.file.path);
         return res.status(200).send({ data: imageUpdated });
@@ -330,7 +330,7 @@ export async function updateImage(req: Request, res: Response) {
 }
 
 export function deleteImage(req: Request, res: Response) {
-    if (!req.params._id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!req.params.id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
     const id: any = Number(req.params.idN);
     const update: UpdateQuery<IKey> = {
         $pull: {
@@ -340,9 +340,9 @@ export function deleteImage(req: Request, res: Response) {
             }
         }
     };
-    Key.findByIdAndUpdate(req.params._id, update, async (err, imageDeleted: any) => {
+    Key.findByIdAndUpdate(req.params.id, update, async (err, imageDeleted: any) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
-        if (!imageDeleted) return res.status(404).send({ message: 'Key Not Found' });
+        if (!imageDeleted) return res.status(404).send({ message: 'Document not found' });
         await v2.uploader.destroy(imageDeleted.image.find((x: IImage) => x.idN === id).publicId);
         return res.status(200).send({ data: imageDeleted });
     });

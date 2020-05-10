@@ -175,7 +175,7 @@ export function updateLine(req: Request, res: Response) {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!lineUpdated) return res.status(404).send({ message: 'Document not found' });
         if (req.params.id !== lineUpdated.id) await Key.updateMany({ 'line': req.params.id }, { 'line': lineUpdated.identifier }).exec(err => {
-            if (err) return res.status(500).send({ message: 'Key Internal Server Error' });
+            if (err) return res.status(409).send({ message: 'Batch update process has failed' });
         });
         return res.status(200).send({ data: lineUpdated });
     });

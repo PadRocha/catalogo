@@ -16,25 +16,29 @@ export class ExchangeService {
     this.url = environment.url;
   }
 
-  updateStatus(id: String, status: Image): Observable<any> {
+  updateStatus(_id: String, status: Image): Observable<any> {
     const params = JSON.stringify(status),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.put(this.url + 'key/status/' + id, params, { headers: headers });
+    return this._http.put(`${this.url}key/${_id}/status`, params, { headers: headers });
   }
 
-  deleteStatus(identifier: String, idN: Number): Observable<any> {
-    return this._http.delete(this.url + 'key/status/' + identifier + '/delete/' + idN);
+  deleteStatus(_id: String, idN: Number): Observable<any> {
+    // return this._http.delete(this.url + 'key/status/' + _id + '/delete/' + idN);
+    return this._http.delete(`${this.url}key/${_id}/status/${idN}`);
   }
 
-  deleteImage(identifier: String, idN: Number): Observable<any> {
-    return this._http.delete(this.url + 'key/image/' + identifier + '/delete/' + idN);
+  deleteImage(_id: String, idN: Number): Observable<any> {
+    // return this._http.delete(this.url + 'key/image/' + _id + '/delete/' + idN);
+    return this._http.delete(`${this.url}key/${_id}/image/${idN}`);
   }
 
-  deleteKey(identifier: String): Observable<any> {
-    return this._http.delete(this.url + 'key/' + identifier);
+  deleteKey(_id: String): Observable<any> {
+    // return this._http.delete(this.url + 'key/' + _id);
+    return this._http.delete(`${this.url}key/${_id}`);
   }
 
   deleteLine(identifier: String): Observable<any> {
-    return this._http.delete(this.url + 'line/' + identifier)
+    // return this._http.delete(this.url + 'line/' + identifier)
+    return this._http.delete(`${this.url}line/${identifier}`);
   }
 }

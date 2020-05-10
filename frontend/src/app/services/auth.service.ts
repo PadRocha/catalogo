@@ -27,7 +27,7 @@ export class AuthService {
   public loginUser(user: User): Observable<any> {
     let params = JSON.stringify(user),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(this.url + 'login', params, { headers: headers });
+    return this._http.post(`${this.url}login`, params, { headers: headers });
   }
 
   logoutUser() {
@@ -63,6 +63,6 @@ export class AuthService {
   // }
 
   public getUser(): Observable<any> {
-    return this._http.get(this.url + '');
+    return this._http.get(`${this.url}`);
   }
 }

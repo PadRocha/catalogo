@@ -18,14 +18,14 @@ export class ShippingService {
     this.url = environment.url;
   }
 
-  updateImage(id: String, image: FormData): Observable<any> {
-    return this._http.post(this.url + 'key/image/' + id, image);
+  updateImage(_id: String, image: FormData): Observable<any> {
+    return this._http.post(`${this.url}key/${_id}/image`, image);
   }
 
   sendKey(Key: Key): Observable<any> {
     let params = JSON.stringify(Key),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(this.url + 'key', params, { headers: headers });
+    return this._http.post(`${this.url}key`, params, { headers: headers });
   }
 
   sendKeyStatus(Key: Key, status: Number): Observable<any> {
@@ -33,12 +33,12 @@ export class ShippingService {
     obj.status = status
     let params = JSON.stringify(obj),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(this.url + 'key/status', params, { headers: headers });
+    return this._http.post(`${this.url}key/status`, params, { headers: headers });
   }
 
   sendLine(Key: Line): Observable<any> {
     let params = JSON.stringify(Line),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(this.url + 'line', params, { headers: headers });
+    return this._http.post(`${this.url}line`, params, { headers: headers });
   }
 }

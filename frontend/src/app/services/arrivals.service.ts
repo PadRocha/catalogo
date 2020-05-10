@@ -16,66 +16,66 @@ export class ArrivalsService {
   }
 
   getKeys(): Observable<any> {
-    return this._http.get(this.url + 'key');
+    return this._http.get(`${this.url}key`);
   }
 
   getKeysPage(page: Number): Observable<any> {
-    return this._http.get(this.url + 'key/page/' + page);
+    return this._http.get(`${this.url}key/page/${page}`);
   }
 
-  getKey(id: String): Observable<any> {
-    return this._http.get(this.url + 'key/' + id);
+  getKey(_id: String): Observable<any> {
+    return this._http.get(`${this.url}key/${_id}`);
   }
 
-  getKeysLine(id: String): Observable<any> {
-    return this._http.get(this.url + 'key/line/' + id);
+  getKeysLine(identifier: String): Observable<any> {
+    return this._http.get(`${this.url}key/line/${identifier}`);
   }
 
-  getKeysLinePage(id: String, page: Number): Observable<any> {
-    return this._http.get(this.url + 'key/line/' + id + '/page/' + page);
+  getKeysLinePage(identifier: String, page: Number): Observable<any> {
+    return this._http.get(`${this.url}key/line/${identifier}/page/${page}`);
   }
 
-  getKeysRegex(id: String): Observable<any> {
-    return this._http.get(this.url + 'key/regex/' + id);
+  getKeysRegex(_id: String): Observable<any> {
+    return this._http.get(`${this.url}key/regex/${_id}`);
   }
 
-  getKeysRegexPage(id: String, page: Number): Observable<any> {
-    return this._http.get(this.url + 'key/regex/' + id + '/page/' + page);
+  getKeysRegexPage(_id: String, page: Number): Observable<any> {
+    return this._http.get(`${this.url}key/regex/${_id}/page/${page}`);
   }
 
   getLines(): Observable<any> {
-    return this._http.get(this.url + 'line');
+    return this._http.get(`${this.url}line`);
   }
 
   getLinesTotalKey(): Observable<any> {
-    return this._http.get(this.url + 'line/total/key');
+    return this._http.get(`${this.url}line/total/key`);
   }
 
   getLinesPage(page: Number): Observable<any> {
-    return this._http.get(this.url + 'line/page/' + page);
+    return this._http.get(`${this.url}line/page/${page}`);
   }
 
   getLinesTotalKeyPage(page: Number): Observable<any> {
-    return this._http.get(this.url + 'line/total/key/page/' + page);
+    return this._http.get(`${this.url}line/total/key/page/${page}`);
   }
 
-  getLinesRegex(id: String): Observable<any> {
-    return this._http.get(this.url + 'line/regex/' + id);
+  getLinesRegex(identifier: String): Observable<any> {
+    return this._http.get(`${this.url}line/regex/${identifier}`);
   }
 
-  getLinesTotalKeyRegex(id: String): Observable<any> {
-    return this._http.get(this.url + 'line/total/key/regex/' + id);
+  getLinesTotalKeyRegex(identifier: String): Observable<any> {
+    return this._http.get(`${this.url}line/total/key/regex/${identifier}`);
   }
 
-  getLinesRegexPage(id: String, page: Number): Observable<any> {
-    return this._http.get(this.url + 'line/regex/' + id + '/page/' + page);
+  getLinesRegexPage(identifier: String, page: Number): Observable<any> {
+    return this._http.get(`${this.url}line/regex/${identifier}/page/${page}`);
   }
 
-  getLinesTotalKeyRegexPage(id: String, page: Number): Observable<any> {
-    return this._http.get(this.url + 'line/total/key/regex/' + id + '/page/' + page);
+  getLinesTotalKeyRegexPage(identifier: String, page: Number): Observable<any> {
+    return this._http.get(`${this.url}line/total/key/regex/${identifier}/page/${page}`);
   }
 
   createPDF(): Observable<any> {
-    return this._http.get(this.url + 'pdf', { responseType: 'blob' });
+    return this._http.get(`${this.url}pdf`, { responseType: 'blob' });
   }
 }
