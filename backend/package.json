@@ -5,11 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "SET NODE_ENV=production && grunt && node dist/index.js",
-    "updated": "ncu",
-    "upgrate": "ncu -u",
-    "watch:tsc": "tsc-watch --onSuccess \"node dist/index.js\"",
-    "watch:grunt": "grunt watch",
-    "watch:all": "concurrently \"npm run watch:tsc\" \"npm run watch:grunt\"",
+    "upd": "ncu",
+    "upg": "ncu -u",
+    "dev": "tsc-watch --onSuccess \"node dist/index.js\"",
     "docs": "apidoc -i src/ -o docs/",
     "build": "tsc"
   },
@@ -57,7 +55,6 @@
     "@types/socket.io": "^2.1.4",
     "@types/uuid": "^7.0.3",
     "apidoc": "^0.22.0",
-    "concurrently": "^5.2.0",
     "grunt": "^1.1.0",
     "grunt-cli": "^1.3.2",
     "grunt-contrib-uglify": "^4.0.1",

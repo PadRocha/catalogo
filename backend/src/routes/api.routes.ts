@@ -666,7 +666,7 @@ router.route('/login')
  */
 
 router.route('/line')
-    .get(authAdmin, lineController.listLine)
+    .get(lineController.listLine)
     .post(authAdmin, lineController.saveLine);
 
 /**

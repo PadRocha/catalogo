@@ -18,7 +18,7 @@ export async function createPdf(req: Request, res: Response) {
     res.setHeader('Content-type', 'application/pdf');
     doc.fontSize(8);
     // doc.image(path.join(__dirname, '../assets/pdf-header.png'), 24, 24, { width: 564 });
-    let img: Buffer | string, header = path.join(__dirname, '../assets/pdf-header.png'), imgDefault = path.join(__dirname, '../assets/pdf-default.jpg'),
+    let img: Buffer | string, header = path.join(__dirname, '../../assets/pdf-header.png'), imgDefault = path.join(__dirname, '../../assets/pdf-default.jpg'),
         spaceX = (doc.page.width - 48) / 5, spaceY = 130.3, xl = 24, yl = 84, pagination: any = 0;
     const lines = await Line.find({}).sort('identifier');
     await Promise.all(lines.map(async line => {
