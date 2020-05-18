@@ -1662,6 +1662,9 @@ router.route('/pdf')
     .get(pdfController.createPdf)
     .post(pdfController.personalizePdf);
 
+router.route('/pdf/data')
+    .get(pdfController.pdfData)
+
 /*------------------------------------------------------------------*/
 
 export default router;

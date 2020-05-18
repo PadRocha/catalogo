@@ -15,7 +15,7 @@ export interface IKey extends Document {
     readonly image: Array<IImage>;
     readonly config: boolean;
     readonly createdAt: Date;
-    readonly img?: Buffer | string
+    readonly img?: Buffer | IImage | string
 }
 
 const keySchema = new Schema({

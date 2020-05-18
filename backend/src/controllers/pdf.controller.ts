@@ -3,6 +3,7 @@
 /*------------------------------------------------------------------*/
 
 import { Request, Response } from 'express';
+import { MongooseFilterQuery } from 'mongoose';
 import path from 'path';
 import pdfkit from 'pdfkit';
 import fetch from 'node-fetch';
@@ -20,15 +21,16 @@ export async function createPdf(req: Request, res: Response) {
     // doc.image(path.join(__dirname, '../assets/pdf-header.png'), 24, 24, { width: 564 });
     let img: Buffer | string, header = path.join(__dirname, '../../assets/pdf-header.png'), imgDefault = path.join(__dirname, '../../assets/pdf-default.jpg'),
         spaceX = (doc.page.width - 48) / 5, spaceY = 130.3, xl = 24, yl = 84, pagination: any = 0;
-    const lines = await Line.find({}).sort('identifier');
+    const lines = await Line.find().sort('identifier');
     await Promise.all(lines.map(async line => {
-        let keys: Array<IKey> = await Key.find({ 'line': line.identifier }).sort('code');
+        const query: MongooseFilterQuery<ILine> = { 'line': line.identifier };
+        let keys: Array<IKey> = await Key.find(query).sort('code');
         keys = await Promise.all(keys.map(async (key: IKey) => {
             const index = key.image.sort((a, b) => a.idN - b.idN).findIndex(k => k.img != null);
             try {
                 if (index != -1) img = await fetch(v2.url(<string>key.image[index].publicId, { width: 113, crop: "scale" }), { method: 'GET' }).then(res => res.buffer());
                 else throw new Error('No image Found');
-            } catch (error) {
+            } catch {
                 img = imgDefault;
             } finally {
                 return <IKey>{
@@ -95,5 +97,34 @@ export async function createPdf(req: Request, res: Response) {
 }
 
 export async function personalizePdf(req: Request, res: Response) {
+
+}
+
+export async function pdfData(req: Request, res: Response) {
+    const lines = await Line.find().sort('identifier');
+    return res.status(200).send({
+        data: await Promise.all(lines.map(async line => {
+            const query: MongooseFilterQuery<ILine> = { 'line': line.identifier };
+            let keys: Array<IKey> = await Key.find(query).sort('code');
+            keys = await Promise.all(keys.map(async (key: IKey) => {
+                const img = key.image.sort((a, b) => a.idN - b.idN).find(k => k.img != null);
+                return <IKey>{
+                    _id: key._id,
+                    code: key.code,
+                    line: key.line,
+                    desc: key.desc,
+                    img
+                };
+            }));
+            return <ILine>{
+                identifier: line.identifier,
+                name: line.name,
+                started: line.started,
+                keys
+            };
+        }))
+    })
+}
+export async function personalizePdfData(req: Request, res: Response) {
 
 }

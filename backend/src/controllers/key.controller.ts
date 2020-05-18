@@ -76,8 +76,7 @@ export function saveKeyStatus(req: Request, res: Response) {
 }
 
 export function listKey(req: Request, res: Response) {
-    const query: MongooseFilterQuery<IKey> = {}
-    Key.find(query).sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
+    Key.find().sort({ 'line': 1, 'code': 1 }).exec((err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!key) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: key });
@@ -256,7 +255,7 @@ export function deleteStatus(req: Request, res: Response) {
         try {
             const deleted = statusDeleted.image.find((x: IImage) => x.idN === id).status;
             if (deleted == 5) return res.status(404).send({ message: 'Key -> image Not Found' });
-        } catch (message) {
+        } catch {
             return res.status(404).send({ message: 'Key -> image Not Found' });
         }
         return res.status(200).send({ data: statusDeleted });

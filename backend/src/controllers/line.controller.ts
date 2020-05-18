@@ -37,8 +37,7 @@ export async function saveLine(req: Request, res: Response) {
 }
 
 export function listLine(req: Request, res: Response) {
-    const query: MongooseFilterQuery<ILine> = {};
-    Line.find(query).sort('identifier').exec((err, line) => {
+    Line.find().sort('identifier').exec((err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: line });
@@ -46,8 +45,7 @@ export function listLine(req: Request, res: Response) {
 }
 
 export function listLineTotalKey(req: Request, res: Response) {
-    const query: MongooseFilterQuery<ILine> = {};
-    Line.find(query).sort('identifier').exec(async (err, line) => {
+    Line.find().sort('identifier').exec(async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         const data = await Promise.all(line.map(l => totalKey(l)))
