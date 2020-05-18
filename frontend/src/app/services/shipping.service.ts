@@ -36,7 +36,7 @@ export class ShippingService {
     return this._http.post(`${this.url}key/status`, params, { headers: headers });
   }
 
-  sendLine(Key: Line): Observable<any> {
+  sendLine(Line: Line): Observable<any> {
     let params = JSON.stringify(Line),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this._http.post(`${this.url}line`, params, { headers: headers });

@@ -39,9 +39,9 @@ const app: Routes = [
     { path: 'line', component: AddLineComponent, canActivate: [AuthGuard] },
     {
         path: 'edit', children: [
-            { path: 'key/:key', component: EditKeyComponent, canActivate: [AuthGuard] },
             { path: 'line/:line', component: EditLineComponent, canActivate: [AuthGuard] },
-            { path: 'image/image', component: EditImageComponent, canActivate: [AuthGuard] }
+            { path: 'key/:key', component: EditKeyComponent, canActivate: [AuthGuard] },
+            { path: 'key/:key/image/:image', component: EditImageComponent, canActivate: [AuthGuard] }
         ]
     },
     { path: 'pdf', component: CreatePDFComponent, canActivate: [AuthGuard] },

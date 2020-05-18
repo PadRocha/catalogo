@@ -59,7 +59,7 @@
     <span class="container">Total: {{LinesInfo.totalDocs}}</span>
     <ul #lineList infiniteScroll [infiniteScrollDistance]="1" (scrolled)="onScrollLine(searchLine)"
         [scrollWindow]="false">
-        <li *ngFor="let line of Lines" (click)="clickConfig(line)">
+        <li #li *ngFor="let line of Lines" (click)="clickConfig(line)" [id]="line.identifier">
             {{line.identifier}}
             <div class="badge badge-light">{{line.countKeys}}</div>
             <span>{{line.name}}</span>
@@ -86,9 +86,8 @@
             <div class="input-group-prepend">
                 <div class="input-group-text">Nombre de la línea</div>
             </div>
-            <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()" #name="ngModel"
-                [(ngModel)]="Line.name" name="name" autocomplete="off" spellcheck="false" autocorrect="off"
-                placeholder="Nombre..." />
+            <input type="text" class="form-control" #name="ngModel" [(ngModel)]="Line.name" name="name"
+                autocomplete="off" spellcheck="false" autocorrect="off" placeholder="Nombre..." />
         </div>
         <div class="form-group text-right">
             <button type="submit" class="btn-info btn">Crear</button>
@@ -101,7 +100,9 @@
             </div>
             <div class="card-body keys">
                 <ul class="list-group list-group-flush">
-                    <li *ngFor="let k of newLines" class="list-group-item">
+                    <li *ngFor="let l of newLines" class="list-group-item">
+                        <span style="color: purple;">Clave:</span> {{l.identifier}}
+                        <span style="color:red;">Nombre:</span> {{l.name}}
                     </li>
                 </ul>
             </div>

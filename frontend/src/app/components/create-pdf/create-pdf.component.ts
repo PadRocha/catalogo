@@ -31,7 +31,9 @@ export class CreatePDFComponent implements OnInit {
   // }
 
   public createPDF(): void {
-    this._arrival.createPDF().subscribe(res => {
+    document.body.classList.add('wait');
+    this._arrival.createPDF().subscribe(async res => {
+      await document.body.classList.remove('wait');
       let file: File = <File>res;
       this.content = URL.createObjectURL(file);
     }, err => console.error(<any>err));

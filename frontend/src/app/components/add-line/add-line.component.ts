@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { FunctionsService } from 'src/app/services/functions.service';
@@ -6,6 +6,8 @@ import { ModalService } from 'src/app/services/modal.service';
 import { ShippingService } from 'src/app/services/shipping.service';
 import { Line } from 'src/app/models/line';
 import { ExchangeService } from 'src/app/services/exchange.service';
+
+declare const alertify: any;
 
 @Component({
   selector: 'app-add-line',
@@ -25,6 +27,7 @@ export class AddLineComponent implements OnInit {
   @ViewChild('waitLine', { static: true }) waitLine !: ElementRef;
   @ViewChild('ifExistLine') ifExistLine: ElementRef;
   @ViewChild('deleteModal') deleteModal: ElementRef;
+  @ViewChildren('li') li !: QueryList<ElementRef>;
 
   constructor(
     private _arrivals: ArrivalsService,
@@ -36,8 +39,8 @@ export class AddLineComponent implements OnInit {
   ) {
     this.actualLinePage = 1;
     this.Line = new Line(void 0, void 0, void 0);
-    this.Lines = new Array();
-    this.newLines = new Array();
+    this.Lines = new Array<Line>();
+    this.newLines = new Array<Line>();
     this.LinesInfo = '';
     this.actualLine = '';
   }
@@ -120,12 +123,12 @@ export class AddLineComponent implements OnInit {
 
   public editLine(): void {
     this.currentModal.close();
-    this._router.navigate([`/edit/line/${this.actualLine}`]);
+    this._router.navigate(['edit/line', this.actualLine]);
   }
 
   public viewLine(): void {
     this.currentModal.close();
-    this._router.navigate([`/home/${this.actualLine}`]);
+    this._router.navigate(['home', this.actualLine]);
   }
 
   public confirmDisplay(confirm): void {
@@ -141,8 +144,13 @@ export class AddLineComponent implements OnInit {
     document.body.classList.add('wait');
     this._exchange.deleteLine(this.actualLine).subscribe(async res => {
       await document.body.classList.remove('wait');
+      await this.currentModal.close();
+      this._f.findChidlren(this.li.toArray(), 'id', this.actualLine).remove();
+      --this.LinesInfo.totalDocs;
+      alertify.success(`${res.data.identifier}<br/>[Removido con éxito]`);
     }, err => {
-
+      document.body.classList.remove('wait');
+      alertify.error(`${this.actualLine}<br/>[Error]`);
     });
   }
 
@@ -151,9 +159,12 @@ export class AddLineComponent implements OnInit {
     this._shipping.sendLine(this.Line).subscribe(async res => {
       await document.body.classList.remove('wait');
       await form.reset();
+      await this.newLines.unshift(res.data);
+      this.Lines = new Array<Line>();
+      this.getLines();
     }, err => {
-
+      document.body.classList.remove('wait');
+      alertify.error(err.message);
     });
-    // form.reset();
   }
 }

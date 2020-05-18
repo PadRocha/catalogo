@@ -40,9 +40,9 @@ export class AddKeyComponent implements OnInit {
   ) {
     _type.showHint = true;
     this.LineArray = new Array();
-    this.Key = new Array();
+    this.Key = new Array<Key>();
     this.Errors = new Array();
-    this.Keys = new Array();
+    this.Keys = new Array<Key>();
   }
 
   public ngOnInit(): void {
@@ -137,7 +137,7 @@ export class AddKeyComponent implements OnInit {
   public resetLineCode(): void {
     this.line.nativeElement.disabled = false;
     this.code.nativeElement.disabled = false;
-    this.Key = new Array();
+    this.Key = new Array<Key>();
   }
 
   public resetForm(): void {
@@ -154,7 +154,7 @@ export class AddKeyComponent implements OnInit {
 
   public onSubmitKey(warning, warning2, danger): void {
     /* , backdrop: 'static', keyboard: false */
-    let line = this.line.nativeElement.value;
+    const line = this.line.nativeElement.value;
     if (line !== '') {
       warning.classList.add('d-none')
       if (this.LineArray.includes(line)) {
@@ -205,7 +205,7 @@ export class AddKeyComponent implements OnInit {
           await document.body.classList.remove('wait');
           await this.resetForm();
         }
-        this.Errors.unshift(`Error saving ${k.line}${k.code} because: ${err.error.message}`);
+        this.Errors.unshift(`Error saving ${k.line + k.code} because: ${err.error.message}`);
       })
       : this._shipping.sendKeyStatus(k, Number(this.select.nativeElement.value)).subscribe(async res => {
         let ke: Key = res.data;
@@ -219,7 +219,7 @@ export class AddKeyComponent implements OnInit {
           await document.body.classList.remove('wait');
           await this.resetForm();
         }
-        this.Errors.unshift(`Error saving ${k.line}${k.code} because: ${err.error.message}`);
+        this.Errors.unshift(`Error saving ${k.line + k.code} because: ${err.error.message}`);
       }));
   }
 

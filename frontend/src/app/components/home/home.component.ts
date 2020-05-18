@@ -91,11 +91,11 @@ export class HomeComponent implements OnInit {
     private _modal: ModalService
   ) {
     this.Image = new Image(void 0, void 0, void 0, void 0);
-    this.Keys = new Array();
+    this.Keys = new Array<Key>();
     this.KeyRegex = '';
     this.LineSelected = '';
     this.actualLinePage = 1;
-    this.Lines = new Array();
+    this.Lines = new Array<Line>();
     this.LinesInfo = '';
     this.actualKeyPage = 1;
     this.LineRegex = false;
@@ -122,7 +122,7 @@ export class HomeComponent implements OnInit {
   public ngAfterViewInit(): void {
     this._f.event(this.every, 'click', e => {
       this.actualKeyPage = 1;
-      this.Keys = new Array();
+      this.Keys = new Array<Key>();
       this.LineSelected = '';
       this.search.nativeElement.value = '';
       this.getKeys();
@@ -143,13 +143,13 @@ export class HomeComponent implements OnInit {
         const regex = e.target.value;
         if (regex !== '') {
           this.actualKeyPage = 1;
-          this.Keys = new Array();
+          this.Keys = new Array<Key>();
           this.KeyRegex = '';
           this.getKeyRegex(regex);
         } else {
           this.ifExistKey.nativeElement.className = 'd-none';
           this.actualKeyPage = 1;
-          this.Keys = new Array();
+          this.Keys = new Array<Key>();
           this.KeyRegex = '';
           this.getKeys();
         }
@@ -162,13 +162,13 @@ export class HomeComponent implements OnInit {
         const regex = e.target.value;
         if (regex !== '') {
           this.actualLinePage = 1;
-          this.Lines = new Array();
+          this.Lines = new Array<Line>();
           this.LineRegex = true;
           this.getLinesRegex(regex);
         } else {
           this.ifExistLine.nativeElement.className = 'd-none';
           this.actualLinePage = 1;
-          this.Lines = new Array();
+          this.Lines = new Array<Line>();
           this.LineRegex = false;
           this.getLines();
         }
@@ -185,7 +185,7 @@ export class HomeComponent implements OnInit {
   }, err => {
     if (err instanceof HttpErrorResponse) {
       if (err.status === 423) {
-        this._router.navigate(['/home']);
+        this._router.navigate(['home']);
       } else if (err.status === 403 || err.status === 409) {
         this._auth.logoutUser();
       }
@@ -369,7 +369,7 @@ export class HomeComponent implements OnInit {
 
   public clickLine(line): void {
     this.actualKeyPage = 1;
-    this.Keys = new Array();
+    this.Keys = new Array<Key>();
     this.getKeyLineSelected(line)
   }
 
@@ -486,7 +486,9 @@ export class HomeComponent implements OnInit {
   }
 
   public editImg(): void {
-
+    this.confirmModalService.close();
+    this.currentModal.close();
+    this._router.navigate(['edit/key', this.idKey, 'image', this.imageId]);
   }
 
   public confirmDisplay(confirm): void {
@@ -527,7 +529,8 @@ export class HomeComponent implements OnInit {
   }
 
   public editKey(): void {
-
+    this.currentModal.close();
+    this._router.navigate(['edit/key', this.idKey]);
   }
 
   public confirmDeleteKey(): void {
@@ -545,7 +548,7 @@ export class HomeComponent implements OnInit {
       this.currentModal.close();
     }, err => {
       document.body.classList.remove('wait');
-      alertify.error(`${this.idKey}<br/> [Error]`);
+      alertify.error(`${this.idKey}<br/>[Error]`);
     });
   }
 }

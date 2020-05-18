@@ -57,7 +57,7 @@ export function saveKey(req: Request, res: Response) {
 }
 
 export function saveKeyStatus(req: Request, res: Response) {
-    if (!req.body || !req.body.status) return res.status(400).send({ message: 'Client has not sent params' });
+    if (!req.body || !req.body.status || req.body.status > 4) return res.status(400).send({ message: 'Client has not sent params' });
     const newKey = new Key(req.body);
     for (let idN = 0; idN < 3; idN++) newKey.image.push(<IImage>{
         idN,
@@ -187,7 +187,7 @@ export function deleteKey(req: Request, res: Response) {
     Key.findByIdAndDelete(req.params.id, async (err, keyDeleted) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!keyDeleted) return res.status(404).send({ message: 'Document not found' });
-        await Promise.all(keyDeleted.image.map(async i => await v2.uploader.destroy(<string>i.publicId)));
+        await Promise.all(keyDeleted.image.map(async i => i.publicId && await v2.uploader.destroy(<string>i.publicId)));
         return res.status(200).send({ data: keyDeleted });
     });
 }
@@ -270,7 +270,7 @@ export async function saveImage(req: Request, res: Response) {
         isNaN(req.body.idN) ||
         !req.file
     ) return res.status(400).send({ message: 'Client has not sent params' });
-    const result = await v2.uploader.upload(req.file.path);
+    const result = await v2.uploader.upload(req.file.path, { folder: 'products' });
     //TODO: Check  'image.status': { $ne: null }, 
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
@@ -302,7 +302,7 @@ export async function updateImage(req: Request, res: Response) {
         isNaN(req.body.idN) ||
         !req.file
     ) return res.status(400).send({ message: 'Client has not sent params' });
-    const result = await v2.uploader.upload(req.file.path);
+    const result = await v2.uploader.upload(req.file.path, { folder: 'products' });
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
         'image.idN': req.body.idN,
