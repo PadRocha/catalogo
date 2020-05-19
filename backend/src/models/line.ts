@@ -4,12 +4,12 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 import { IKey } from '../models/key';
 
 export interface ILine extends Document {
-    readonly identifier: string,
-    readonly name: string,
-    readonly started: Date,
-    readonly ended: Date,
-    readonly countKeys: number,
-    readonly keys: Array<IKey>
+    identifier: string,
+    name: string,
+    started: Date,
+    ended: Date,
+    countKeys: number,
+    keys: Array<IKey>
 }
 
 const lineSchema = new Schema({

@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Observable } from 'rxjs';
 import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { Key } from 'src/app/models/key';
+import * as xlsx from 'xlsx'
+import { Key, IKey } from 'src/app/models/key';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { FunctionsService } from 'src/app/services/functions.service';
 import { ShippingService } from 'src/app/services/shipping.service';
@@ -29,7 +30,12 @@ export class AddKeyComponent implements OnInit {
   @ViewChild('invalid1') invalid1: ElementRef;
   @ViewChild('invalid2') invalid2: ElementRef;
   @ViewChild('select') select: ElementRef;
+  @ViewChild('excelCheckbox') excelCheckbox: ElementRef;
+  @ViewChild('excel') excel: ElementRef;
+  @ViewChild('excelField') excelField: ElementRef;
+  @ViewChild('excelInvalid') excelInvalid: ElementRef;
   @ViewChild('descModal') descModal: ElementRef;
+  @ViewChild('selective') selective: ElementRef;
 
   constructor(
     private _type: NgbTypeaheadConfig,
@@ -114,24 +120,38 @@ export class AddKeyComponent implements OnInit {
     }, 500);
   }
 
-  public clickCheckbox(lote): void {
-    if (this.checkbox.nativeElement.checked) {
-      lote.classList.remove('d-none');
-      this.code.nativeElement.value = '';
-      this.code.nativeElement.disabled = true;
-      this.n1.nativeElement.value = '';
-      this.n2.nativeElement.value = '';
-      this.select.nativeElement.value = '';
-      this.n1.nativeElement.classList.remove('is-invalid');
-      this.n2.nativeElement.classList.remove('is-invalid');
-      this.invalid1.nativeElement.classList.add('d-none');
-      this.invalid2.nativeElement.classList.add('d-none');
-      this.n1.nativeElement.focus();
-    } else {
+  public selectivo(param = true) {
+    this.select.nativeElement.value = '';
+    this.lote.nativeElement.classList.add('d-none')
+    this.excel.nativeElement.classList.add('d-none');
+    if (param) {
       this.code.nativeElement.disabled = false;
       this.code.nativeElement.focus();
-      lote.classList.add('d-none');
+    } else {
+      this.code.nativeElement.value = '';
+      this.code.nativeElement.disabled = true;
     }
+  }
+
+  public clickLote(): void {
+    this.selectivo(false);
+    this.lote.nativeElement.classList.remove('d-none');
+    this.n1.nativeElement.value = '';
+    this.n2.nativeElement.value = '';
+    this.n1.nativeElement.classList.remove('is-invalid');
+    this.n2.nativeElement.classList.remove('is-invalid');
+    this.invalid1.nativeElement.classList.add('d-none');
+    this.invalid2.nativeElement.classList.add('d-none');
+    this.excelInvalid.nativeElement.classList.add('d-none');
+    this.n1.nativeElement.focus();
+  }
+
+  public clickExcel(): void {
+    this.selectivo(false);
+    this.excel.nativeElement.classList.remove('d-none');
+    this.excelField.nativeElement.value = '';
+    this.excelInvalid.nativeElement.classList.add('d-none');
+    this.excelField.nativeElement.focus();
   }
 
   public resetLineCode(): void {
@@ -145,11 +165,20 @@ export class AddKeyComponent implements OnInit {
     this.currentModal.close();
     this.line.nativeElement.value = '';
     this.code.nativeElement.value = '';
-    this.checkbox.nativeElement.checked = false;
-    this.n1.nativeElement.value = '';
-    this.n2.nativeElement.value = '';
+    this.selective.nativeElement.checked = true;
     this.select.nativeElement.value = '';
     this.lote.nativeElement.classList.add('d-none');
+    this.excel.nativeElement.classList.add('d-none');
+  }
+
+  private completeCode(l): IKey {
+    for (let i = (4 - l.code.length); i > 0; i--) l.code = '0' + l;
+    return l;
+  }
+
+  private openModal(): void {
+    if (this.Key.length > 0)
+      this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
   }
 
   public onSubmitKey(warning, warning2, danger): void {
@@ -159,29 +188,46 @@ export class AddKeyComponent implements OnInit {
       warning.classList.add('d-none')
       if (this.LineArray.includes(line)) {
         danger.classList.add('d-none');
-        if (!this.checkbox.nativeElement.checked) {
-          this.line.nativeElement.disabled = true;
-          this.code.nativeElement.disabled = true;
-          [...new Set(
-            this.code.nativeElement.value.split(",").map(l => l.trim()).filter(e => e.length < 5 && "" !== e).map(l => {
-              for (let i = (4 - l.length); i > 0; i--) l = '0' + l;
-              return l;
-            })
-          )].forEach((e: string) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !!0)));
-          if (this.Key.length > 0)
-            this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
-        } else {
+        if (this.excelCheckbox.nativeElement.checked) {
+          // console.log(this.excelField.nativeElement.files);
+          const file = this.excelField.nativeElement.files[0];
+          if (file) {
+            const fileReader = new FileReader();
+            fileReader.readAsArrayBuffer(file);
+            fileReader.onload = () => {
+              const arrayBuffer: any = fileReader.result;
+              const data = new Uint8Array(arrayBuffer);
+              const arr = new Array<string>();
+              data.forEach(data => arr.push(String.fromCharCode(data)));
+              const bstr = arr.join("");
+              const workbook = xlsx.read(bstr, { type: "binary" });
+              const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+              xlsx.utils.sheet_to_json<IKey>(worksheet, { raw: true })
+                .map(k => Object.keys(k).reduce((acc, cur) => (acc[cur] = k[cur].trim(), acc), <IKey>{}))
+                .filter(f => f.desc && f?.code.length < 5 && f?.line.length < 7 && f.line === line)
+                .map(l => this.completeCode(l))
+                .forEach(k => this.Key.push(new Key(void 0, k.code, k.line, k.desc, void 0, !1)));
+              this.openModal();
+            }
+          } else this.excelInvalid.nativeElement.classList.remove('d-none');
+        } else if (this.checkbox.nativeElement.checked) {
           let n1 = Number(this.n1.nativeElement.value);
           let n2 = Number(this.n2.nativeElement.value);
           if (n1 > 0 && n2 > 0 && n1 < n2 && n2 < 9999) {
             for (let i: any = n1; i <= n2; i++) {
               i = i.toString();
               for (let j = (4 - i.length); j > 0; j--) i = '0' + i;
-              this.Key.push(new Key(void 0, i, line, void 0, void 0, !!0));
+              this.Key.push(new Key(void 0, i, line, void 0, void 0, !1));
             }
-            if (this.Key.length > 0)
-              this.currentModal = this._modal.open(this.descModal, result => (result !== 'cancel' || this.resetLineCode()), () => this.resetLineCode(), { size: 'lg' });
+            this.openModal();
           } else warning2.classList.remove('d-none');
+        } else {
+          this.line.nativeElement.disabled = true;
+          this.code.nativeElement.disabled = true;
+          [...new Set(
+            this.code.nativeElement.value.split(",").map(l => l.trim()).filter(e => e.length < 5 && "" !== e).map(l => this.completeCode(l))
+          )].forEach((e: string) => this.Key.push(new Key(void 0, e, line, void 0, void 0, !1)));
+          this.openModal();
         }
       } else danger.classList.remove('d-none');
     } else warning.classList.remove('d-none');

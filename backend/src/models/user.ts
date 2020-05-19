@@ -4,9 +4,10 @@ import bcryptjs from 'bcryptjs';
 import config from '../config/config';
 
 export interface IUser extends Document {
-    nickname: string,
+    readonly nickname: string,
+    readonly sub?: string,
     password: string,
-    role: string,
+    readonly role: string,
     comparePassword: Function
 }
 

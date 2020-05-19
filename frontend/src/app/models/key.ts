@@ -2,6 +2,22 @@
 
 import { Image } from './image';
 
+export interface IImage {
+    idN: number,
+    publicId: string | null,
+    img: string | null,
+    status: number
+}
+
+export interface IKey extends Document {
+    code: string;
+    line: string;
+    desc: string;
+    image: Array<IImage>;
+    // readonly config: boolean;
+    createdAt: Date;
+}
+
 /*------------------------------------------------------------------*/
 // Modelo de key.ts
 /*------------------------------------------------------------------*/

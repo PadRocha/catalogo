@@ -7,8 +7,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { SwiperModule, SwiperConfigInterface, SWIPER_CONFIG } from 'ngx-swiper-wrapper';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+// import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
 
 import { routing, appRoutingProviders } from './app.routing';
 import { AppComponent } from './app.component';
@@ -58,7 +59,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     routing,
     SwiperModule,
     InfiniteScrollModule,
-    NgxExtendedPdfViewerModule
+    NgxExtendedPdfViewerModule,
+    BackButtonDisableModule.forRoot()
   ],
   providers: [
     {

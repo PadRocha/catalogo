@@ -293,6 +293,9 @@ export class HomeComponent implements OnInit {
     if (!this.showSearched) {
       this.getKeyCode(this.idKey);
       this.showSearched = true;
+      setTimeout(() => {
+        this.showSearched = false;
+      }, 1000);
     }
     if (this.showImage.length > 0) {
       this.showSearched = false;
@@ -422,18 +425,22 @@ export class HomeComponent implements OnInit {
     this.resimageModal = false;
   }
 
-  public setPercentage(set: Boolean): void {
-    let aux = Math.round(this.KeysInfo.percentage * this.KeysInfo.totalDocs / 100);
-    this.KeysInfo.percentage = (set ? ++aux : --aux) * 100 / this.KeysInfo.totalDocs;
+  public setPercentage(set: Boolean, one, two, three): void {
+    if (
+      (one != '5' && two != '5' && three != '5') ||
+      (one == '5' && two != '5' && three != '5') ||
+      (one != '5' && two == '5' && three != '5') ||
+      (one != '5' && two != '5' && three == '5')
+    ) {
+      let aux = Math.round(this.KeysInfo.percentage * this.KeysInfo.totalDocs / 100);
+      this.KeysInfo.percentage = (set ? ++aux : --aux) * 100 / this.KeysInfo.totalDocs;
+    }
   }
 
   public lowPercentage(one, two, three): void {
     let aux = Math.round(this.KeysInfo.percentage * this.KeysInfo.totalDocs / 100);
-    if (one == '5') --aux;
-    else if (two == '5') --aux;
-    else if (three == '5') --aux;
+    if (one == '5' || two == '5' || three == '5') --aux;
     this.KeysInfo.percentage = aux * 100 / --this.KeysInfo.totalDocs;
-
   }
 
   public onSubmitImage(file, warning, danger, success, submit): void {
@@ -448,7 +455,12 @@ export class HomeComponent implements OnInit {
       this._shippings.updateImage(this.idKey, fd).subscribe(async res => {
         await document.body.classList.remove('wait');
         await success.classList.remove('d-none');
-        this.setPercentage(true);
+        let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
+        this.setPercentage(true,
+          select.querySelector('select[name="0"]').value,
+          select.querySelector('select[name="1"]').value,
+          select.querySelector('select[name="2"]').value
+        );
         warning.classList.add('d-none');
         danger.classList.add('d-none');
         this.currentHTML.disabled = true;
@@ -501,9 +513,9 @@ export class HomeComponent implements OnInit {
   }
 
   public confirmDeleteImg(): void {
-    let _id = this.idKey;
-    let idN = this.imageId;
-    let code = this.codeImageModal;
+    const _id = this.idKey;
+    const idN = this.imageId;
+    const code = this.codeImageModal;
     document.body.classList.add('wait');
     this._exchanges.deleteImage(_id, idN).subscribe(async res => {
       await document.body.classList.remove('wait');
@@ -515,7 +527,12 @@ export class HomeComponent implements OnInit {
       if (cont.length <= 1) {
         await this.confirmModalService.close();
         await this.currentModal.close();
-        this.setPercentage(false);
+        const select = this._f.findChidlren(this.tr.toArray(), 'id', _id);
+        this.setPercentage(false,
+          select.querySelector('select[name="0"]').value,
+          select.querySelector('select[name="1"]').value,
+          select.querySelector('select[name="2"]').value
+        );
       } else await this.confirmModalService.close();
       let select = this._f.findChidlren(this.tr.toArray(), 'id', _id).querySelector(`select[name='${idN}']`);
       select.className = 'form-control btn-sm white';

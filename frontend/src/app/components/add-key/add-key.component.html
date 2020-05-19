@@ -4,18 +4,18 @@
     </div>
     <form (ngSubmit)="onSubmitDesc()" #descForm="ngForm">
         <div class="modal-body">
-            <div *ngFor="let k of Key" class="form-group input-group">
+            <div *ngFor="let k of Key; let i = index" class="form-group input-group">
                 <div class="input-group-append">
                     <div class="input-group-text">
-                        {{k.line}}{{k.code}}
+                        {{k.line + k.code}}
                     </div>
                 </div>
-                <input type="text" class="form-control" name="desc" #desc="ngModel" [(ngModel)]="k.desc"
-                    autocomplete="off" spellcheck="false" autocorrect="off" required />
+                <input type="text" class="form-control" name="desc{{i}}" [(ngModel)]="k.desc" autocomplete="off"
+                    spellcheck="false" autocorrect="off" required />
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <div class="pretty p-icon p-toggle">
-                            <input type="checkbox" name="config" #config="ngModel" [(ngModel)]="k.config" />
+                            <input type="checkbox" name="config{{i}}" [(ngModel)]="k.config" />
                             <div class="state p-success-o p-on">
                                 <i class="fas fa-times"></i>
                             </div>
@@ -73,12 +73,28 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group input-group col-lg-3">
-                    <div class="col-auto my-1">
+                <div class="form-group input-group">
+                    <div class="col-auto">
                         <div class="pretty p-default p-thick p-pulse">
-                            <input #checkbox type="checkbox" (click)="clickCheckbox(lote)" />
-                            <div class="state p-warning-o">
+                            <input #selective type="radio" name="stack" (click)="selectivo()" checked />
+                            <div class="state p-info-o">
+                                <label>Selectivo</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="pretty p-default p-thick p-pulse">
+                            <input #checkbox type="radio" name="stack" (click)="clickLote()" />
+                            <div class="state p-danger-o">
                                 <label>Por lotes</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="pretty p-default p-thick p-pulse">
+                            <input #excelCheckbox type="radio" name="stack" (click)="clickExcel()" />
+                            <div class="state p-success-o">
+                                <label>Excel</label>
                             </div>
                         </div>
                     </div>
@@ -107,6 +123,16 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <strong>¡Ten cuidado!</strong> Uno de los dos campos anteriores está vacío.
+                </div>
+                <div #excel class="form-group input-group d-none">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text rounded-0">Inserte un archivo en Excel</div>
+                    </div>
+                    <input #excelField type="file" class="border border-primary p-3 form-control-file"
+                        accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                    <div #excelInvalid class="invalid-feedback order-last d-none">
+                        Hoja de Excel invalida
+                    </div>
                 </div>
                 <div *ngIf="Errors.length !== 0" class="container err">
                     <div class="card text-center">

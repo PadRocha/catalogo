@@ -1664,6 +1664,7 @@ router.route('/pdf')
 
 router.route('/pdf/data')
     .get(pdfController.pdfData)
+    .post(pdfController.personalizePdfData);
 
 /*------------------------------------------------------------------*/
 

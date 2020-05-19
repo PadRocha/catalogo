@@ -2,20 +2,20 @@ import { model, Schema, PaginateModel, Document } from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 export interface IImage {
-    readonly idN: number,
-    readonly publicId: string | null,
-    readonly img: string | null,
-    readonly status: number
+    idN: number,
+    publicId: string | null,
+    img: string | null,
+    status: number
 }
 
 export interface IKey extends Document {
     code: string;
-    readonly line: string;
-    readonly desc: string;
-    readonly image: Array<IImage>;
-    readonly config: boolean;
-    readonly createdAt: Date;
-    readonly img?: Buffer | IImage | string
+    line: string;
+    desc: string;
+    image: Array<IImage>;
+    // readonly config: boolean;
+    createdAt: Date;
+    img?: Buffer | IImage | string
 }
 
 const keySchema = new Schema({

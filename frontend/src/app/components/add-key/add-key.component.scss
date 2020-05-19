@@ -6,7 +6,7 @@ main {
   height: auto;
 }
 
-.keys .card-body {
+.keys {
   max-height: 75vh;
   overflow: auto;
 }
@@ -19,7 +19,7 @@ main {
 
   .card-body {
     background-color: #000;
-    max-height: 38vh;
+    max-height: 35vh;
     overflow: auto;
 
     ul li {
