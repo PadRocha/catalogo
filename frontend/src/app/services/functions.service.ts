@@ -64,4 +64,13 @@ export class FunctionsService {
   public onlyNumeric(element: any, keypress: Function = () => Boolean): void {
     this.event(element, 'keypress', e => this.keypress(e, /^[0-9]+$/, keypress));
   }
+
+  createImageFromBlob(image: Blob): Promise<string | ArrayBuffer> {
+    const reader = new FileReader();
+    let img = null;
+    if (image) reader.readAsDataURL(image);
+    return new Promise<string | ArrayBuffer>(resolve => {
+      reader.addEventListener("load", () => resolve(reader.result), false);
+    })
+  }
 }

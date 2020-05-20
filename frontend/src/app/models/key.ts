@@ -18,6 +18,14 @@ export interface IKey extends Document {
     createdAt: Date;
 }
 
+export interface Dkey {
+    data: IKey
+}
+
+export interface AKey {
+    data: Array<IKey>
+}
+
 /*------------------------------------------------------------------*/
 // Modelo de key.ts
 /*------------------------------------------------------------------*/

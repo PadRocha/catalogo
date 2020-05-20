@@ -155,24 +155,6 @@ main {
   }
 }
 
-.swiper-container {
-  width: 100%;
-  padding-top: 50px;
-  padding-bottom: 50px;
-
-  .swiper-slide {
-    background-position: center !important;
-    background-size: cover !important;
-    width: 424.8px !important;
-    height: 300px !important;
-
-    img {
-      width: 424.8px;
-      height: 300px;
-    }
-  }
-}
-
 @media screen and (max-width: 1580px) {
   body {
     padding-left: 0;

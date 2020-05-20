@@ -1,0 +1,14 @@
+main {
+    top: 80px;
+    padding-bottom: 30px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+@media screen and (max-width: 770px) {
+    .key {
+        margin-top: 60px;
+    }
+}
