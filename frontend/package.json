@@ -30,6 +30,7 @@
     "ngx-extended-pdf-viewer": "^3.2.0",
     "ngx-infinite-scroll": "^8.0.1",
     "ngx-swiper-wrapper": "^9.0.1",
+    "ngx-tui-image-editor": "^7.0.2",
     "popper.js": "^1.16.1",
     "pretty-checkbox": "^3.0.3",
     "rxjs": "~6.5.4",

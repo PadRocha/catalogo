@@ -10,6 +10,7 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 // import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
+import { ToastUiImageEditorModule } from "ngx-tui-image-editor";
 
 import { routing, appRoutingProviders } from './app.routing';
 import { AppComponent } from './app.component';
@@ -60,7 +61,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SwiperModule,
     InfiniteScrollModule,
     NgxExtendedPdfViewerModule,
-    BackButtonDisableModule.forRoot()
+    BackButtonDisableModule.forRoot(),
+    ToastUiImageEditorModule
   ],
   providers: [
     {

@@ -25,6 +25,7 @@ export class EditImageComponent implements OnInit {
     this.newImage = new Image(void 0, void 0, void 0, void 0)
   }
 
+  public
   ngOnInit(): void {
     this._route.paramMap.subscribe(params => {
       this.getLine(params.get('key'))
@@ -32,24 +33,9 @@ export class EditImageComponent implements OnInit {
     });
   }
 
-  createImageFromBlob(image: Blob) {
-    const reader = new FileReader();
-    let img = null;
-    if (image) reader.readAsDataURL(image);
-    return new Promise<string | ArrayBuffer>(resolve => {
-      reader.addEventListener("load", () => resolve(reader.result), false);
-    })
-  }
-
   private getLine = (_id: string) => this._arrivals.getKey(_id).subscribe(async (res: Dkey) => {
-    const img = res.data.image.find(i => i.idN === this.idN);
-    this.oldImage = new Image(img.idN, img.img, img.publicId, img.status);
-    console.log(await this._external.loadImg64(img.img));
-
-    // this._external.imgLoad(img.img).subscribe(async (res: Blob) => {
-    //   console.log("EditImageComponent -> privategetLine -> res", await this.createImageFromBlob(res))
-    //   // this.editorComponent.editorInstance.addImageObject = await this.createImageFromBlob(res);
-
-    // });
+    const image = res.data.image.find(i => i.idN === this.idN);
+    this.oldImage = new Image(image.idN, image.img, image.publicId, image.status);
+    console.log(await this._external.loadImg64(image.img));
   }, err => this._router.navigate(['home']));
 }
