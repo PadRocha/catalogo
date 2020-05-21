@@ -3,19 +3,19 @@
 import { Image } from './image';
 
 export interface IImage {
-    idN: number,
-    publicId: string | null,
-    img: string | null,
-    status: number
+    readonly idN: number,
+    readonly publicId: string | null,
+    readonly img: string | null,
+    readonly status: number
 }
 
 export interface IKey extends Document {
-    code: string;
-    line: string;
-    desc: string;
-    image: Array<IImage>;
-    // readonly config: boolean;
-    createdAt: Date;
+    readonly _id: string;
+    readonly code: string;
+    readonly line: string;
+    readonly desc: string;
+    readonly image: Array<IImage>;
+    readonly createdAt: Date;
 }
 
 export interface Dkey {

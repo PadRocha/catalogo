@@ -1,5 +1,20 @@
-<main class="container">
-    <div style="height: 500px; width: 100%">
-        <tui-image-editor></tui-image-editor>
+<main class="container-fluid">
+    <div class="row pt-3">
+        <div class="col-xl-6">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="title">Editar imagen {{Key.line + Key.code}} | {{oldImage.idN}}</h1>
+                </div>
+                <div class="col-12">
+                    <img src="{{oldImage.img}}" alt="{{Key.line + Key.code}}" title="{{Key.line + Key.code}}"
+                        width="100%">
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div style="height: 700px; width: 100%">
+                <tui-image-editor [options]="config"></tui-image-editor>
+            </div>
+        </div>
     </div>
 </main>
