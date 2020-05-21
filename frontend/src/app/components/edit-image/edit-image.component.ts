@@ -57,24 +57,28 @@ export class EditImageComponent implements OnInit {
   // Query Functions
   /*------------------------------------------------------------------*/
 
-  private getLine = (_id: string) => this._arrivals.getKey(_id).subscribe(async (res: Dkey) => {
-    this.Key = new Key(res.data._id, res.data.code, res.data.line, res.data.desc, res.data.image, void 0);
-    const image = await this.Key.image.find(i => i.idN === this.idN);
-    this.oldImage = new Img(image.idN, image.img, image.publicId, image.status);
-    this.editorComponent.editorInstance.loadImageFromURL(image.img, res.data.line + res.data.code);
-    this.editorComponent.editorInstance.ui.activeMenuEvent();
-    const i = new Image();
-    i.src = image.img;
-    i.onload = () => {
-      this.imageElement.width = i.width;
-      this.imageElement.height = i.height;
-      this.imageElement.format = i.src.split('.').pop();
-    }
-    this.pre = this.Key.image.filter(i => i.img).find(i => i.idN === this.idN - 1)?.idN.toString();
-    this.next = this.Key.image.filter(i => i.img).find(i => i.idN === this.idN + 1)?.idN.toString();
-    // console.log(this.editorComponent.editorInstance.toDataURL({ format: 'jpeg', width: 708, height: 500, quality: 1 }));
-    // this.editorComponent.editorInstance.ui.resizeEditor();
-  }, err => this._router.navigate(['home']));
+  private getLine(_id: string): void {
+    document.body.classList.add('wait');
+    this._arrivals.getKey(_id).subscribe(async (res: Dkey) => {
+      await document.body.classList.remove('wait');
+      this.Key = new Key(res.data._id, res.data.code, res.data.line, res.data.desc, res.data.image, void 0);
+      const image = await this.Key.image.find(i => i.idN === this.idN);
+      this.oldImage = new Img(image.idN, image.img, image.publicId, image.status);
+      this.editorComponent.editorInstance.loadImageFromURL(image.img, res.data.line + res.data.code);
+      this.editorComponent.editorInstance.ui.activeMenuEvent();
+      const i = new Image();
+      i.src = image.img;
+      i.onload = () => {
+        this.imageElement.width = i.width;
+        this.imageElement.height = i.height;
+        this.imageElement.format = i.src.split('.').pop();
+      }
+      this.pre = this.Key.image.filter(i => i.img).find(i => i.idN === this.idN - 1)?.idN.toString();
+      this.next = this.Key.image.filter(i => i.img).find(i => i.idN === this.idN + 1)?.idN.toString();
+      // console.log(this.editorComponent.editorInstance.toDataURL({ format: 'jpeg', width: 708, height: 500, quality: 1 }));
+      // this.editorComponent.editorInstance.ui.resizeEditor();
+    }, err => this._router.navigate(['home']));
+  }
 
   /*------------------------------------------------------------------*/
   // Event Functions

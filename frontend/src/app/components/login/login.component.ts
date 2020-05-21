@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
     private _auth: AuthService,
     private _router: Router
   ) {
-    this.user = new User('', '', '', '');
+    this.user = new User(void 0, void 0, void 0, void 0);
     this.status = true;
   }
 

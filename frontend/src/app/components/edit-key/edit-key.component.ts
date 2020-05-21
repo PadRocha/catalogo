@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
-import { Key } from 'src/app/models/key';
+import { Key, Dkey } from 'src/app/models/key';
 
 @Component({
   selector: 'app-edit-key',
@@ -49,14 +49,14 @@ export class EditKeyComponent implements OnInit {
   // Query Functions
   /*------------------------------------------------------------------*/
 
-  private getLine = (_id: string) => this._arrivals.getKey(_id).subscribe(async res => (this.oldKey = new Key(
+  private getLine = (_id: string) => this._arrivals.getKey(_id).subscribe(async (res: Dkey) => (this.oldKey = new Key(
     res.data._id,
     res.data.code,
     res.data.line,
     res.data.desc,
     res.data.image.filter(i => i.img),
     void 0
-  ), this.newKey = this.oldKey), err => this._router.navigate(['home']));
+  ), this.newKey = this.oldKey), () => this._router.navigate(['home']));
 
   /*------------------------------------------------------------------*/
   // Event Functions

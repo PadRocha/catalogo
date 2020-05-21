@@ -3,11 +3,12 @@ import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import * as xlsx from 'xlsx'
-import { Key, IKey } from 'src/app/models/key';
+import { Key, Ikey, Dkey } from 'src/app/models/key';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { FunctionsService } from 'src/app/services/functions.service';
 import { ShippingService } from 'src/app/services/shipping.service';
 import { ModalService } from 'src/app/services/modal.service';
+import { Aline } from 'src/app/models/line';
 
 @Component({
   selector: 'app-add-key',
@@ -75,7 +76,7 @@ export class AddKeyComponent implements OnInit {
   // Query Functions
   /*------------------------------------------------------------------*/
 
-  private getLines = () => this._arrivals.getLines().subscribe(res => {
+  private getLines = () => this._arrivals.getLines().subscribe((res: Aline) => {
     if (res.data) res.data.forEach(e => this.LineArray.push(e.identifier));
   }, err => console.error(<any>err));
 
@@ -171,7 +172,7 @@ export class AddKeyComponent implements OnInit {
     this.excel.nativeElement.classList.add('d-none');
   }
 
-  private completeCode(l): IKey {
+  private completeCode(l): Ikey {
     for (let i = (4 - l.code.length); i > 0; i--) l.code = '0' + l;
     return l;
   }
@@ -202,8 +203,8 @@ export class AddKeyComponent implements OnInit {
               const bstr = arr.join("");
               const workbook = xlsx.read(bstr, { type: "binary" });
               const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-              xlsx.utils.sheet_to_json<IKey>(worksheet, { raw: true })
-                .map(k => Object.keys(k).reduce((acc, cur) => (acc[cur] = k[cur].trim(), acc), <IKey>{}))
+              xlsx.utils.sheet_to_json<Ikey>(worksheet, { raw: true })
+                .map(k => Object.keys(k).reduce((acc, cur) => (acc[cur] = k[cur].trim(), acc), <Ikey>{}))
                 .filter(f => f.desc && f?.code.length < 5 && f?.line.length < 7 && f.line === line)
                 .map(l => this.completeCode(l))
                 .forEach(k => this.Key.push(new Key(void 0, k.code, k.line, k.desc, void 0, !1)));
@@ -239,7 +240,7 @@ export class AddKeyComponent implements OnInit {
     this.Key = this.Key.filter(e => !1 === e.config);
     this.Key.forEach(e => e.desc || (valid = !1));
     if (valid) this.Key.map(e => (delete e.config, e)).forEach((k: Key, index, array) => this.select.nativeElement.value == ''
-      ? this._shipping.sendKey(k).subscribe(async res => {
+      ? this._shipping.sendKey(k).subscribe(async (res: Dkey) => {
         let ke: Key = res.data;
         await this.Keys.unshift(ke);
         if (index === await array.length - 1) {
@@ -253,7 +254,7 @@ export class AddKeyComponent implements OnInit {
         }
         this.Errors.unshift(`Error saving ${k.line + k.code} because: ${err.error.message}`);
       })
-      : this._shipping.sendKeyStatus(k, Number(this.select.nativeElement.value)).subscribe(async res => {
+      : this._shipping.sendKeyStatus(k, Number(this.select.nativeElement.value)).subscribe(async (res: Dkey) => {
         let ke: Key = res.data;
         await this.Keys.unshift(ke);
         if (index === await array.length - 1) {

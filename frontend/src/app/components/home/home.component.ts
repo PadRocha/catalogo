@@ -6,12 +6,12 @@ import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { ShippingService } from 'src/app/services/shipping.service';
 import { ExchangeService } from 'src/app/services/exchange.service';
 import { ModalService } from 'src/app/services/modal.service';
-import { User } from 'src/app/models/user';
+import { User, Iuser } from 'src/app/models/user';
 import { Image } from 'src/app/models/image';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FunctionsService } from 'src/app/services/functions.service';
-import { Key } from 'src/app/models/key';
-import { Line } from 'src/app/models/line';
+import { Key, Dkey, DAkey } from 'src/app/models/key';
+import { Line, DAline } from 'src/app/models/line';
 
 declare const alertify: any;
 
@@ -180,7 +180,7 @@ export class HomeComponent implements OnInit {
   // Query Functions
   /*------------------------------------------------------------------*/
 
-  private getUser = () => this._auth.getUser().subscribe(res => {
+  private getUser = () => this._auth.getUser().subscribe((res: Iuser) => {
     this.User = res;
   }, err => {
     if (err instanceof HttpErrorResponse) {
@@ -195,7 +195,7 @@ export class HomeComponent implements OnInit {
   private getKeys(): void {
     document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
-    this._arrivals.getKeysPage(this.actualKeyPage).subscribe(async res => {
+    this._arrivals.getKeysPage(this.actualKeyPage).subscribe(async (res: DAkey) => {
       await this.waitKey.nativeElement.classList.add('d-none');
       await document.body.classList.remove('wait');
       if (res.data) this.Keys = this.Keys.concat(res.data.docs);
@@ -204,7 +204,7 @@ export class HomeComponent implements OnInit {
     }, err => console.error(<any>err));
   }
 
-  private getKeyCode = (id: String) => this._arrivals.getKey(id).subscribe(async res => {
+  private getKeyCode = (id: String) => this._arrivals.getKey(id).subscribe(async (res: Dkey) => {
     if (res.data) {
       this.codeImageModal = await res.data.line + res.data.code;
       let cont = new Array();
@@ -218,7 +218,7 @@ export class HomeComponent implements OnInit {
   private getKeyLineSelected(_id: String): void {
     document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
-    this._arrivals.getKeysLinePage(_id, this.actualKeyPage).subscribe(async res => {
+    this._arrivals.getKeysLinePage(_id, this.actualKeyPage).subscribe(async (res: DAkey) => {
       await this.waitKey.nativeElement.classList.add('d-none');
       await document.body.classList.remove('wait');
       if (res.data.docs) this.Keys = this.Keys.concat(res.data.docs);
@@ -232,7 +232,7 @@ export class HomeComponent implements OnInit {
   private getKeyRegex(regex: String): void {
     document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
-    this._arrivals.getKeysRegexPage(regex, this.actualKeyPage).subscribe(async res => {
+    this._arrivals.getKeysRegexPage(regex, this.actualKeyPage).subscribe(async (res: DAkey) => {
       await document.body.classList.remove('wait');
       await this.waitKey.nativeElement.classList.add('d-none');
       await this.search.nativeElement.blur();
@@ -250,7 +250,7 @@ export class HomeComponent implements OnInit {
   private getLines(): void {
     document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
-    this._arrivals.getLinesPage(this.actualLinePage).subscribe(async res => {
+    this._arrivals.getLinesPage(this.actualLinePage).subscribe(async (res: DAline) => {
       await this.waitLine.nativeElement.classList.add('d-none');
       await document.body.classList.remove('wait');
       if (res.data) this.Lines = this.Lines.concat(res.data.docs);
@@ -262,7 +262,7 @@ export class HomeComponent implements OnInit {
   private getLinesRegex(regex: String): void {
     document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
-    this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(async res => {
+    this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(async (res: DAline) => {
       await document.body.classList.remove('wait');
       await this.waitLine.nativeElement.classList.add('d-none');
       await this.searchLine.nativeElement.blur();
@@ -317,7 +317,7 @@ export class HomeComponent implements OnInit {
       document.body.classList.add('wait');
       this.Image.idN = Number(select.name);
       this.Image.status = Number(select.value);
-      this._exchanges.updateStatus(_id, this.Image).subscribe(async res => {
+      this._exchanges.updateStatus(_id, this.Image).subscribe(async (res: Dkey) => {
         await document.body.classList.remove('wait');
         if (select.value === '5') select.disabled = true;
         const color = select.options[select.selectedIndex].className;
@@ -333,7 +333,7 @@ export class HomeComponent implements OnInit {
       });
     } else if (select.value !== '5') {
       document.body.classList.add('wait');
-      this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(async res => {
+      this._exchanges.deleteStatus(_id, Number(select.name)).subscribe(async (res: Dkey) => {
         await document.body.classList.remove('wait');
         let c: any = this.nBeforeClass;
         --this.KeysInfo.status[c];
@@ -452,7 +452,7 @@ export class HomeComponent implements OnInit {
       fd.append('idN', idN);
       fd.append('image', file, file.name);
       submit.disabled = true;
-      this._shippings.updateImage(this.idKey, fd).subscribe(async res => {
+      this._shippings.updateImage(this.idKey, fd).subscribe(async (res: Dkey) => {
         await document.body.classList.remove('wait');
         await success.classList.remove('d-none');
         let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
@@ -517,7 +517,7 @@ export class HomeComponent implements OnInit {
     const idN = this.imageId;
     const code = this.codeImageModal;
     document.body.classList.add('wait');
-    this._exchanges.deleteImage(_id, idN).subscribe(async res => {
+    this._exchanges.deleteImage(_id, idN).subscribe(async (res: Dkey) => {
       await document.body.classList.remove('wait');
       let cont = new Array();
       await res.data['image'].forEach(e => {
@@ -552,7 +552,7 @@ export class HomeComponent implements OnInit {
 
   public confirmDeleteKey(): void {
     document.body.classList.add('wait');
-    this._exchanges.deleteKey(this.idKey).subscribe(async res => {
+    this._exchanges.deleteKey(this.idKey).subscribe(async (res: Dkey) => {
       await document.body.classList.remove('wait');
       let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
       await select.remove();

@@ -1,24 +1,28 @@
 'use strict'
 
 import { Image, IImage } from './image';
+import { PaginateResult } from './paged';
 
-
-
-export interface IKey extends Document {
+export interface Ikey {
     readonly _id: string;
     readonly code: string;
     readonly line: string;
     readonly desc: string;
     readonly image: Array<IImage>;
     readonly createdAt: Date;
+    readonly config: boolean;
 }
 
-export interface Dkey {
-    data: IKey
+export interface Dkey extends Promise<Ikey> {
+    data: Ikey
 }
 
-export interface AKey {
-    data: Array<IKey>
+export interface Akey {
+    data: Array<Ikey>;
+}
+
+export interface DAkey {
+    data: PaginateResult<Ikey>
 }
 
 /*------------------------------------------------------------------*/

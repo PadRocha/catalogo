@@ -4,7 +4,7 @@ import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { FunctionsService } from 'src/app/services/functions.service';
 import { ModalService } from 'src/app/services/modal.service';
 import { ShippingService } from 'src/app/services/shipping.service';
-import { Line } from 'src/app/models/line';
+import { Line, Dline, DAline } from 'src/app/models/line';
 import { ExchangeService } from 'src/app/services/exchange.service';
 
 declare const alertify: any;
@@ -79,7 +79,7 @@ export class AddLineComponent implements OnInit {
   private getLines(): void {
     document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
-    this._arrivals.getLinesTotalKeyPage(this.actualLinePage).subscribe(async res => {
+    this._arrivals.getLinesTotalKeyPage(this.actualLinePage).subscribe(async (res: DAline) => {
       await this.waitLine.nativeElement.classList.add('d-none');
       await document.body.classList.remove('wait');
       if (res.data) this.Lines = this.Lines.concat(res.data.docs);
@@ -91,7 +91,7 @@ export class AddLineComponent implements OnInit {
   private getLinesRegex(regex: String): void {
     document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
-    this._arrivals.getLinesTotalKeyRegexPage(regex, this.actualLinePage).subscribe(async res => {
+    this._arrivals.getLinesTotalKeyRegexPage(regex, this.actualLinePage).subscribe(async (res: DAline) => {
       await document.body.classList.remove('wait');
       await this.waitLine.nativeElement.classList.add('d-none');
       await this.searchLine.nativeElement.blur();
@@ -142,7 +142,7 @@ export class AddLineComponent implements OnInit {
 
   public confirmDeleteLine(): void {
     document.body.classList.add('wait');
-    this._exchange.deleteLine(this.actualLine).subscribe(async res => {
+    this._exchange.deleteLine(this.actualLine).subscribe(async (res: Dline) => {
       await document.body.classList.remove('wait');
       await this.currentModal.close();
       this._f.findChidlren(this.li.toArray(), 'id', this.actualLine).remove();
@@ -156,7 +156,7 @@ export class AddLineComponent implements OnInit {
 
   public onSubmitLine(form): void {
     document.body.classList.add('wait');
-    this._shipping.sendLine(this.Line).subscribe(async res => {
+    this._shipping.sendLine(this.Line).subscribe(async (res: Dline) => {
       await document.body.classList.remove('wait');
       await form.reset();
       await this.newLines.unshift(res.data);

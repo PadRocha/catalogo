@@ -1,5 +1,30 @@
 'use strict'
 
+import { Ikey } from './key';
+import { PaginateResult } from './paged';
+
+export interface Iline {
+    readonly _id: string,
+    readonly identifier: string,
+    readonly name: string,
+    readonly started: Date,
+    readonly ended: Date,
+    readonly countKeys: number,
+    readonly keys?: Array<Ikey>
+}
+
+export interface Dline {
+    data: Iline
+}
+
+export interface Aline {
+    data: Array<Iline>
+}
+
+export interface DAline {
+    data: PaginateResult<Iline>
+}
+
 /*------------------------------------------------------------------*/
 // Modelo de line.ts
 /*------------------------------------------------------------------*/
