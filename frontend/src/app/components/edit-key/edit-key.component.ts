@@ -45,6 +45,10 @@ export class EditKeyComponent implements OnInit {
     this._route.paramMap.subscribe(params => this.getLine(params.get('key')));
   }
 
+  /*------------------------------------------------------------------*/
+  // Query Functions
+  /*------------------------------------------------------------------*/
+
   private getLine = (_id: string) => this._arrivals.getKey(_id).subscribe(async res => (this.oldKey = new Key(
     res.data._id,
     res.data.code,
@@ -52,7 +56,11 @@ export class EditKeyComponent implements OnInit {
     res.data.desc,
     res.data.image.filter(i => i.img),
     void 0
-  ), this.newKey = new Key(void 0, res.data.code, res.data.line, res.data.desc, void 0, void 0)), err => this._router.navigate(['home']));
+  ), this.newKey = this.oldKey), err => this._router.navigate(['home']));
+
+  /*------------------------------------------------------------------*/
+  // Event Functions
+  /*------------------------------------------------------------------*/
 
   public onSubmit(form): void {
     form.reset();

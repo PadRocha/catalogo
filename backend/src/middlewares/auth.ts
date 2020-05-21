@@ -8,7 +8,7 @@ import { Token } from '../services/jwt';
 
 import config from '../config/config';
 
-export async function authorized(req: Request | any, res: Response, next: Function) {
+export async function authorized(req: Request, res: Response, next: Function) {
     if (!req.headers.authorization) return res.status(400).send({ message: 'Client has not sent Token' });
 
     const token = req.headers.authorization.replace(/['"]+/g, '').split(' ')[1];
@@ -24,19 +24,23 @@ export async function authorized(req: Request | any, res: Response, next: Functi
             user.nickname !== payload.nickname ||
             payload.exp <= moment().unix()
         ) return res.status(423).send({ message: 'Access denied' });
-    } catch {
+    } catch (e) {
         return res.status(409).send({ message: 'Error decrypting token' });
     }
 
     delete payload.iat;
     delete payload.exp;
 
-    req.user = payload;
+    req.user = <IUser>{
+        _id: payload.sub,
+        nickname: payload.nickname,
+        role: payload.role
+    };
 
     return next();
 }
 
-export async function authAdmin(req: Request | any, res: Response, next: Function) {
+export async function authAdmin(req: Request, res: Response, next: Function) {
     if (!req.headers.authorization) return res.status(400).send({ message: 'Client has not sent Token' });
 
     const token = req.headers.authorization.replace(/['"]+/g, '').split(' ')[1];
@@ -53,14 +57,18 @@ export async function authAdmin(req: Request | any, res: Response, next: Functio
             payload.role !== 'admin' || user.role !== 'admin' ||
             payload.exp <= moment().unix()
         ) return res.status(423).send({ message: 'Access denied' });
-    } catch {
+    } catch (e) {
         return res.status(409).send({ message: 'Error decrypting token' });
     }
 
     delete payload.iat;
     delete payload.exp;
 
-    req.user = payload;
+    req.user = <IUser>{
+        _id: payload.sub,
+        nickname: payload.nickname,
+        role: payload.role
+    };
 
     return next();
 }

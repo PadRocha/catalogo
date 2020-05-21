@@ -1,5 +1,12 @@
 'use strict'
 
+export interface IImage {
+    readonly idN: number,
+    readonly publicId: string | null,
+    readonly img: string | null,
+    readonly status: number
+}
+
 /*------------------------------------------------------------------*/
 // Modelo de image.ts
 /*------------------------------------------------------------------*/

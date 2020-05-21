@@ -255,7 +255,7 @@ export function deleteStatus(req: Request, res: Response) {
         try {
             const deleted = statusDeleted.image.find((x: IImage) => x.idN === id).status;
             if (deleted == 5) return res.status(404).send({ message: 'Key -> image Not Found' });
-        } catch {
+        } catch (e) {
             return res.status(404).send({ message: 'Key -> image Not Found' });
         }
         return res.status(200).send({ data: statusDeleted });

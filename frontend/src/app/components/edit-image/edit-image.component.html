@@ -1,19 +1,55 @@
 <main class="container-fluid">
-    <div class="row pt-3">
-        <div class="col-xl-6">
+    <div class="row">
+        <div class="col-xl-6 pt-3 pb-4">
             <div class="row">
                 <div class="col-12">
                     <h1 class="title">Editar imagen {{Key.line + Key.code}} | {{oldImage.idN}}</h1>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-12">
-                    <img src="{{oldImage.img}}" alt="{{Key.line + Key.code}}" title="{{Key.line + Key.code}}"
+                    <img #img src="{{oldImage.img}}" alt="{{Key.line + Key.code}}" title="{{Key.line + Key.code}}"
                         width="100%">
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12 text-center border border-secondary border-bottom-0">
+                    Descripción: <span class="text-secondary">{{Key.desc}}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-4 text-center border border-secondary">
+                    Anchura: <span class="text-primary">{{imageElement.width}}</span>
+                </div>
+                <div class="col-4 text-center border border-secondary">
+                    Altura: <span class="text-primary">{{imageElement.height}}</span>
+                </div>
+                <div class="col-4 text-center border border-secondary">
+                    Formato: <span class="text-success">{{imageElement.format}}</span>
+                </div>
+            </div>
         </div>
-        <div class="col-xl-6">
-            <div style="height: 700px; width: 100%">
-                <tui-image-editor [options]="config"></tui-image-editor>
+        <div class="col-xl-6 pb-4">
+            <div class="row">
+                <div style="height: 700px; width: 100%">
+                    <tui-image-editor [options]="config"></tui-image-editor>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group input-group">
+                    <button *ngIf="pre" type="button" class="col-2 form-control btn btn-outline-info btn-lg rounded-0"
+                        title="Imagen previa" (click)="preImage()">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button type="button" class="form-control btn btn-outline-success btn-lg btn-block rounded-0"
+                        title="Actualizar la imagen">
+                        Actualizar imagen
+                    </button>
+                    <button *ngIf="next" type="button" class="col-2 form-control btn btn-outline-info btn-lg rounded-0"
+                        title="Siguiente imagen" (click)="nextImage()">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

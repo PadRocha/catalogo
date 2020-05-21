@@ -1,13 +1,8 @@
 'use strict'
 
-import { Image } from './image';
+import { Image, IImage } from './image';
 
-export interface IImage {
-    readonly idN: number,
-    readonly publicId: string | null,
-    readonly img: string | null,
-    readonly status: number
-}
+
 
 export interface IKey extends Document {
     readonly _id: string;
