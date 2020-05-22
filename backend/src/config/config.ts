@@ -14,5 +14,9 @@ export default {
         C_NAME: process.env.C_NAME,
         C_KEY: process.env.C_KEY,
         C_SECRET: process.env.C_SECRET
+    },
+    limit: {
+        KEY: 15,
+        LINE: 20
     }
 }

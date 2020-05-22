@@ -12,7 +12,7 @@ import Key, { IKey, IImage } from '../models/key';
 
 import config from '../config/config';
 
-const perPage = 15;
+const limit = config.limit.KEY;
 
 v2.config({
     cloud_name: config.CDB.C_NAME,
@@ -24,8 +24,8 @@ function infoStatus(query: MongooseFilterQuery<IKey>) {
     const status = { white: 0, gray: 0, brown: 0, blue: 0, purple: 0, green: 0 };
     var percentage = 0;
     return new Promise<Array<object | number>>(resolve => Key.find(query).exec((err: Error, key: Array<IKey>) => {
-        key.forEach(d => {
-            let image = d.image; image.forEach(i => {
+        key.forEach(k => {
+            k.image.forEach(i => {
                 switch (i.status) {
                     case 0: ++status.white; break;
                     case 1: ++status.gray; break;
@@ -35,7 +35,7 @@ function infoStatus(query: MongooseFilterQuery<IKey>) {
                     case 5: ++status.green; break;
                 }
             });
-            for (let i of image) if (5 === i.status) { ++percentage; break; }
+            for (let i of k.image) if (5 === i.status) { ++percentage; break; }
         });
         resolve([status, 100 * percentage / key.length])
     }));
@@ -57,12 +57,10 @@ export function saveKey(req: Request, res: Response) {
 }
 
 export function saveKeyStatus(req: Request, res: Response) {
-    if (!req.body || !req.body.status || req.body.status > 4) return res.status(400).send({ message: 'Client has not sent params' });
+    const status = Number(req?.body?.status);
+    if (status > 4) return res.status(400).send({ message: 'Client has not sent params' });
     const newKey = new Key(req.body);
-    for (let idN = 0; idN < 3; idN++) newKey.image.push(<IImage>{
-        idN,
-        status: req.body.status
-    });
+    for (let idN = 0; idN < 3; idN++) newKey.image.push(<IImage>{ idN, status });
     const query: MongooseFilterQuery<ILine> = { 'identifier': newKey.line };
     Line.findOne(query).select('identifier').exec((err: Error, line: IKey) => {
         if (err) return res.status(500).send({ message: 'Internal error, probably error with params' });
@@ -84,13 +82,10 @@ export function listKey(req: Request, res: Response) {
 }
 
 export function listKeyPage(req: Request, res: Response) {
-    if (!req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
+    const page = Number(req.params.page);
+    if (page < 1) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {};
-    const options: PaginateOptions = {
-        page: Number(req.params.page),
-        limit: perPage,
-        sort: { 'line': 1, 'code': 1 }
-    };
+    const options: PaginateOptions = { page, limit, sort: { 'line': 1, 'code': 1 } };
     Key.paginate(query, options, async (err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!key) return res.status(404).send({ message: 'Document not found' });
@@ -102,8 +97,8 @@ export function listKeyPage(req: Request, res: Response) {
 }
 
 export function listKeyRegex(req: Request, res: Response) {
-    if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
     const id = req.params.id;
+    if (!id) return res.status(400).send({ message: 'Client has not sent params' });
     let query: MongooseFilterQuery<IKey> = id.length < 7
         ? { 'line': { $regex: `^${id}`, $options: 'i' } }
         : { 'line': id.slice(0, 6), 'code': { $regex: `^${id.slice(6)}`, $options: 'i' } };
@@ -115,16 +110,13 @@ export function listKeyRegex(req: Request, res: Response) {
 }
 
 export function listKeyRegexPage(req: Request, res: Response) {
-    if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
     const id = req.params.id;
+    const page = Number(req.params.page);
+    if (!id || page < 1) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = id.length < 7
         ? { 'line': { $regex: `^${id}`, $options: 'i' } }
         : { 'line': id.slice(0, 6), 'code': { $regex: `^${id.slice(6)}`, $options: 'i' } };
-    const options: PaginateOptions = {
-        page: Number(req.params.page),
-        limit: perPage,
-        sort: { 'line': 1, 'code': 1 }
-    };
+    const options: PaginateOptions = { page, limit, sort: { 'line': 1, 'code': 1 } };
     Key.paginate(query, options, async (err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!key) return res.status(404).send({ message: 'Document not found' });
@@ -146,13 +138,10 @@ export function listKeyLine(req: Request, res: Response) {
 }
 
 export function listKeyLinePage(req: Request, res: Response) {
-    if (!req.params.line || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
+    const page = Number(req.params.page);
+    if (!req.params.line || page < 1) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = { 'line': req.params.line };
-    const options: PaginateOptions = {
-        page: Number(req.params.page),
-        limit: perPage,
-        sort: 'code'
-    };
+    const options: PaginateOptions = { page, limit, sort: 'code' };
     Key.paginate(query, options, async (err, key) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!key) return res.status(404).send({ message: 'Document not found' });
@@ -192,21 +181,18 @@ export function deleteKey(req: Request, res: Response) {
 }
 
 export function saveStatus(req: Request, res: Response) {
-    if (
-        !req.params.id ||
-        !req.body ||
-        isNaN(req.body.idN) ||
-        isNaN(req.body.status)
-    ) return res.status(400).send({ message: 'Client has not sent params' });
+    const idN = Number(req?.body?.idN);
+    const status = Number(req?.body?.status);
+    if (!req.params.id || idN > 3 || status > 4) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
-        'image.idN': { $ne: req.body.idN }
+        'image.idN': { $ne: idN }
     };
     const update: UpdateQuery<IKey> = {
         $push: {
             'image': {
-                'idN': req.body.idN,
-                'status': req.body.status,
+                idN,
+                status,
                 'publicId': null,
                 'img': null
             }
@@ -220,12 +206,9 @@ export function saveStatus(req: Request, res: Response) {
 }
 
 export function updateStatus(req: Request, res: Response) {
-    if (
-        !req.params.id ||
-        !req.body ||
-        isNaN(req.body.idN) ||
-        isNaN(req.body.status)
-    ) return res.status(400).send({ message: 'Client has not sent params' });
+    const idN = Number(req?.body?.idN);
+    const status = Number(req?.body?.status);
+    if (!req.params.id || idN > 3 || status > 4) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
         'image.idN': req.body.idN
@@ -239,21 +222,18 @@ export function updateStatus(req: Request, res: Response) {
 }
 
 export function deleteStatus(req: Request, res: Response) {
-    if (!req.params.id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
-    const id: any = Number(req.params.idN);
+    const idN: any = Number(req.params.idN);
+    if (!req.params.id || idN > 3) return res.status(400).send({ message: 'Client has not sent params' });
     const update: UpdateQuery<IKey> = {
         $pull: {
-            'image': {
-                'idN': id,
-                'status': { $gte: 0, $lte: 4 }
-            }
+            'image': { idN, 'status': { $gte: 0, $lte: 4 } }
         }
     };
     Key.findByIdAndUpdate(req.params.id, update, (err, statusDeleted: any) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!statusDeleted) return res.status(404).send({ message: 'Document not found' });
         try {
-            const deleted = statusDeleted.image.find((x: IImage) => x.idN === id).status;
+            const deleted = statusDeleted.image.find((x: IImage) => x.idN === idN).status;
             if (deleted == 5) return res.status(404).send({ message: 'Key -> image Not Found' });
         } catch (e) {
             return res.status(404).send({ message: 'Key -> image Not Found' });
@@ -263,17 +243,13 @@ export function deleteStatus(req: Request, res: Response) {
 }
 
 export async function saveImage(req: Request, res: Response) {
-    if (
-        !req.params.id ||
-        !req.body ||
-        isNaN(req.body.idN) ||
-        !req.file
-    ) return res.status(400).send({ message: 'Client has not sent params' });
+    const idN = Number(req?.body?.idN);
+    if (!req.params.id || idN > 3 || !req.file) return res.status(400).send({ message: 'Client has not sent params' });
     const result = await v2.uploader.upload(req.file.path, { folder: 'products' });
     //TODO: Check  'image.status': { $ne: null }, 
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
-        'image.idN': req.body.idN
+        'image.idN': idN
     };
     const update: UpdateQuery<IKey> = {
         $set: {
@@ -295,16 +271,12 @@ export async function saveImage(req: Request, res: Response) {
 }
 
 export async function updateImage(req: Request, res: Response) {
-    if (
-        !req.params.id ||
-        !req.body ||
-        isNaN(req.body.idN) ||
-        !req.file
-    ) return res.status(400).send({ message: 'Client has not sent params' });
+    const idN = Number(req?.body?.idN);
+    if (!req.params.id || idN > 3 || !req.file) return res.status(400).send({ message: 'Client has not sent params' });
     const result = await v2.uploader.upload(req.file.path, { folder: 'products' });
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
-        'image.idN': req.body.idN,
+        'image.idN': idN,
         'image.status': 5,
         'image.img': { $ne: null },
         'image.publicId': { $ne: null }
@@ -329,14 +301,12 @@ export async function updateImage(req: Request, res: Response) {
 }
 
 export function deleteImage(req: Request, res: Response) {
-    if (!req.params.id || !req.params.idN) return res.status(400).send({ message: 'Client has not sent params' });
+    const idN = Number(req?.body?.idN);
+    if (!req.params.id || idN > 3) return res.status(400).send({ message: 'Client has not sent params' });
     const id: any = Number(req.params.idN);
     const update: UpdateQuery<IKey> = {
         $pull: {
-            'image': {
-                'idN': id,
-                'status': 5
-            }
+            'image': { idN, 'status': 5 }
         }
     };
     Key.findByIdAndUpdate(req.params.id, update, async (err, imageDeleted: any) => {

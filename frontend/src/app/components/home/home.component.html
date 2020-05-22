@@ -107,7 +107,7 @@
     <div class="modal-body">
         <swiper class="swiper-container" [config]="config">
             <div *ngFor="let image of showImage" class="swiper-slide">
-                <img [src]="image.img" title="Image N° {{image.idN}}" alt="Image N° {{image.idN}}"
+                <img [src]="image.img" title="Image N° {{image.idN + 1}}" alt="Image N° {{image.idN + 1}}"
                     (click)="configImg(image.idN)">
             </div>
         </swiper>

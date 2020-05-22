@@ -73,8 +73,11 @@ export class EditImageComponent implements OnInit {
         this.imageElement.height = i.height;
         this.imageElement.format = i.src.split('.').pop();
       }
-      this.pre = this.Key.image.filter(i => i.img).find(i => i.idN === this.idN - 1)?.idN.toString();
-      this.next = this.Key.image.filter(i => i.img).find(i => i.idN === this.idN + 1)?.idN.toString();
+      const filter = this.Key.image.filter(i => i.img);
+      this.pre = filter.find(i => i.idN === this.idN - 1)?.idN.toString();
+      if (!this.pre && (this.idN - 1) == 1) this.pre = filter.find(i => i.idN === this.idN - 2)?.idN.toString();
+      this.next = filter.find(i => i.idN === this.idN + 1)?.idN.toString();
+      if (!this.next && (this.idN + 1) == 1) this.next = filter.find(i => i.idN === this.idN + 2)?.idN.toString();
       // console.log(this.editorComponent.editorInstance.toDataURL({ format: 'jpeg', width: 708, height: 500, quality: 1 }));
       // this.editorComponent.editorInstance.ui.resizeEditor();
     }, err => this._router.navigate(['home']));

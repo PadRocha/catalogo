@@ -1,9 +1,11 @@
 import { IUser } from '../models/user'
+import { IKey } from '../models/key';
+import { ILine } from '../models/line';
 
 declare global {
     namespace Express {
         interface Request {
-            user?: IUser
+            user?: IUser;
         }
     }
 }

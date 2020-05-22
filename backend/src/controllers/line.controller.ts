@@ -11,7 +11,7 @@ import Key, { IKey } from '../models/key';
 
 import config from '../config/config';
 
-const perPage = 20;
+const limit = config.limit.LINE;
 
 v2.config({
     cloud_name: config.CDB.C_NAME,
@@ -19,7 +19,7 @@ v2.config({
     api_secret: config.CDB.C_SECRET
 });
 
-const totalKey = (line: ILine) => new Promise<ILine>((resolve) => Key.countDocuments({ 'line': line.identifier }, async (err, countKeys: number) => resolve(<ILine>{
+const totalKey = (line: ILine) => new Promise<ILine>((resolve) => Key.countDocuments({ 'line': line.identifier }, async (err, countKeys) => resolve(<ILine>{
     identifier: line.identifier,
     name: line.name,
     started: line.started,
@@ -54,13 +54,10 @@ export function listLineTotalKey(req: Request, res: Response) {
 }
 
 export function listLinePage(req: Request, res: Response) {
-    if (!req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
+    const page = Number(req.params.page);
+    if (page < 1) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {};
-    const options: PaginateOptions = {
-        page: Number(req.params.page),
-        limit: perPage,
-        sort: 'identifier'
-    };
+    const options: PaginateOptions = { page, limit, sort: 'identifier' };
     Line.paginate(query, options, (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
@@ -69,13 +66,10 @@ export function listLinePage(req: Request, res: Response) {
 }
 
 export function listLineTotalKeyPage(req: Request, res: Response) {
-    if (!req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
+    const page = Number(req.params.page);
+    if (page < 1) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {};
-    const options: PaginateOptions = {
-        page: Number(req.params.page),
-        limit: perPage,
-        sort: 'identifier'
-    };
+    const options: PaginateOptions = { page, limit, sort: 'identifier' };
     Line.paginate(query, options, async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
@@ -117,18 +111,15 @@ export function listLineTotalKeyRegex(req: Request, res: Response) {
 }
 
 export function listLineRegexPage(req: Request, res: Response) {
-    if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
+    const page = Number(req.params.page);
+    if (!req.params.id || page < 1) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
         'identifier': {
             $regex: `^${req.params.id}`,
             $options: 'i'
         }
     };
-    const options: PaginateOptions = {
-        page: Number(req.params.page),
-        limit: perPage,
-        sort: 'identifier'
-    };
+    const options: PaginateOptions = { page, limit, sort: 'identifier' };
     Line.paginate(query, options, (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
@@ -137,18 +128,15 @@ export function listLineRegexPage(req: Request, res: Response) {
 }
 
 export function listLineTotalKeyRegexPage(req: Request, res: Response) {
-    if (!req.params.id || !req.params.page) return res.status(400).send({ message: 'Client has not sent params' });
+    const page = Number(req.params.page);
+    if (!req.params.id || page < 1) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<ILine> = {
         'identifier': {
             $regex: `^${req.params.id}`,
             $options: 'i'
         }
     };
-    const options: PaginateOptions = {
-        page: Number(req.params.page),
-        limit: perPage,
-        sort: 'identifier'
-    };
+    const options: PaginateOptions = { page, limit, sort: 'identifier' };
     Line.paginate(query, options, async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
