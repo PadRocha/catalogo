@@ -24,7 +24,7 @@ export async function authorized(req: Request, res: Response, next: Function) {
             user.nickname !== payload.nickname ||
             payload.exp <= moment().unix()
         ) return res.status(423).send({ message: 'Access denied' });
-    } catch (e) {
+    } catch {
         return res.status(409).send({ message: 'Error decrypting token' });
     }
 
@@ -57,7 +57,7 @@ export async function authAdmin(req: Request, res: Response, next: Function) {
             payload.role !== 'admin' || user.role !== 'admin' ||
             payload.exp <= moment().unix()
         ) return res.status(423).send({ message: 'Access denied' });
-    } catch (e) {
+    } catch {
         return res.status(409).send({ message: 'Error decrypting token' });
     }
 

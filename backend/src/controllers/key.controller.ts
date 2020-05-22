@@ -12,7 +12,7 @@ import Key, { IKey, IImage } from '../models/key';
 
 import config from '../config/config';
 
-const limit = config.limit.KEY;
+const limit = config.LIMIT.KEY;
 
 v2.config({
     cloud_name: config.CDB.C_NAME,
@@ -235,7 +235,7 @@ export function deleteStatus(req: Request, res: Response) {
         try {
             const deleted = statusDeleted.image.find((x: IImage) => x.idN === idN).status;
             if (deleted == 5) return res.status(404).send({ message: 'Key -> image Not Found' });
-        } catch (e) {
+        } catch {
             return res.status(404).send({ message: 'Key -> image Not Found' });
         }
         return res.status(200).send({ data: statusDeleted });
@@ -294,7 +294,7 @@ export async function updateImage(req: Request, res: Response) {
         }
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!imageUpdated) return res.status(404).send({ message: 'Document not found' });
-        await v2.uploader.destroy(imageUpdated.image.find((x: IImage) => x.idN === req.body.idN).publicId);
+        await v2.uploader.destroy(imageUpdated.image.find((x: IImage) => x.idN == idN).publicId);
         await fs.unlink(req.file.path);
         return res.status(200).send({ data: imageUpdated });
     });

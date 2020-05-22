@@ -65,12 +65,21 @@ export class FunctionsService {
     this.event(element, 'keypress', e => this.keypress(e, /^[0-9]+$/, keypress));
   }
 
-  createImageFromBlob(image: Blob): Promise<string | ArrayBuffer> {
+  public createImageFromBlob(image: Blob): Promise<string | ArrayBuffer> {
     const reader = new FileReader();
     let img = null;
     if (image) reader.readAsDataURL(image);
     return new Promise<string | ArrayBuffer>(resolve => {
       reader.addEventListener("load", () => resolve(reader.result), false);
     })
+  }
+
+  public dataURItoBlob(dataURI): Blob {
+    let byteString = atob(dataURI.split(',')[1]);
+    let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    let ab = new ArrayBuffer(byteString.length);
+    let ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+    return new Blob([ab], { type: mimeString });
   }
 }

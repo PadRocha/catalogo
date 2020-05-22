@@ -15,13 +15,13 @@ declare const alertify: any;
   styleUrls: ['./add-line.component.scss']
 })
 export class AddLineComponent implements OnInit {
-  private actualLinePage: Number;
+  private actualLinePage: number;
   public Line: Line;
   public Lines: Array<Line>;
   public newLines: Array<Line>;
-  private LineRegex: Boolean;
+  private LineRegex: boolean;
   public LinesInfo: any;
-  public actualLine: String;
+  public actualLine: string;
   private currentModal: any;
   @ViewChild('searchLine') searchLine: ElementRef;
   @ViewChild('waitLine', { static: true }) waitLine !: ElementRef;
@@ -88,7 +88,7 @@ export class AddLineComponent implements OnInit {
     }, err => console.error(<any>err));
   }
 
-  private getLinesRegex(regex: String): void {
+  private getLinesRegex(regex: string): void {
     document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
     this._arrivals.getLinesTotalKeyRegexPage(regex, this.actualLinePage).subscribe(async (res: DAline) => {

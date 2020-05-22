@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginComponent implements OnInit {
   public user: User;
-  public status: Boolean;
+  public status: boolean;
 
   constructor(
     private _auth: AuthService,

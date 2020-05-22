@@ -18,7 +18,7 @@ export class ShippingService {
     this.url = environment.url;
   }
 
-  updateImage(_id: String, image: FormData): Observable<any> {
+  sendImage(_id: String, image: FormData): Observable<any> {
     return this._http.post(`${this.url}key/${_id}/image`, image);
   }
 

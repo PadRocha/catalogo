@@ -11,7 +11,7 @@ import Key, { IKey } from '../models/key';
 
 import config from '../config/config';
 
-const limit = config.limit.LINE;
+const limit = config.LIMIT.LINE;
 
 v2.config({
     cloud_name: config.CDB.C_NAME,

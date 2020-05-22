@@ -23,22 +23,22 @@ export class ExchangeService {
   }
 
   deleteStatus(_id: String, idN: Number): Observable<any> {
-    // return this._http.delete(this.url + 'key/status/' + _id + '/delete/' + idN);
     return this._http.delete(`${this.url}key/${_id}/status/${idN}`);
   }
 
   deleteImage(_id: String, idN: Number): Observable<any> {
-    // return this._http.delete(this.url + 'key/image/' + _id + '/delete/' + idN);
     return this._http.delete(`${this.url}key/${_id}/image/${idN}`);
   }
 
   deleteKey(_id: String): Observable<any> {
-    // return this._http.delete(this.url + 'key/' + _id);
     return this._http.delete(`${this.url}key/${_id}`);
   }
 
   deleteLine(identifier: String): Observable<any> {
-    // return this._http.delete(this.url + 'line/' + identifier)
     return this._http.delete(`${this.url}line/${identifier}`);
+  }
+
+  updateImage(_id: String, image: FormData): Observable<any> {
+    return this._http.put(`${this.url}key/${_id}/image`, image);
   }
 }

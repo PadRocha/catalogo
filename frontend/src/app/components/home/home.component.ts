@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList, Renderer2 } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute, ChildActivationStart, Router } from '@angular/router';
 import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
 import { AuthService } from 'src/app/services/auth.service';
@@ -23,29 +23,29 @@ declare const alertify: any;
 export class HomeComponent implements OnInit {
   private User: User;
   public Keys: Array<Key>;
-  private actualKeyPage: Number;
-  private KeyRegex: String;
-  private LineSelected: String;
+  private actualKeyPage: number;
+  private KeyRegex: string;
+  private LineSelected: string;
   public KeysInfo: any;
   public Lines: Array<Line>;
-  private actualLinePage: Number;
-  private LineRegex: Boolean;
+  private actualLinePage: number;
+  private LineRegex: boolean;
   public LinesInfo: any;
   public imagePath: any;
   public imageSrc: String | ArrayBuffer;
-  public imgMessage: String;
+  public imgMessage: string;
   private Image: Image;
-  private idKey: String;
-  private nBeforeImage: String;
-  private nBeforeClass: String;
-  public nImage: Number;
-  public codeImageModal: String;
+  private idKey: string;
+  private nBeforeImage: string;
+  private nBeforeClass: string;
+  public nImage: number;
+  public codeImageModal: string;
   public showImage: Array<Image>;
   private currentHTML: any;
-  public resimageModal: Boolean;
-  public imageId: Number;
+  public resimageModal: boolean;
+  public imageId: number;
   private currentModal: any;
-  private showSearched: Boolean;
+  private showSearched: boolean;
   private confirmModalService: any;
   @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
@@ -204,7 +204,7 @@ export class HomeComponent implements OnInit {
     }, err => console.error(<any>err));
   }
 
-  private getKeyCode = (id: String) => this._arrivals.getKey(id).subscribe(async (res: Dkey) => {
+  private getKeyCode = (id: string) => this._arrivals.getKey(id).subscribe(async (res: Dkey) => {
     if (res.data) {
       this.codeImageModal = await res.data.line + res.data.code;
       let cont = new Array();
@@ -215,7 +215,7 @@ export class HomeComponent implements OnInit {
     }
   }, err => console.error(<any>err));
 
-  private getKeyLineSelected(_id: String): void {
+  private getKeyLineSelected(_id: string): void {
     document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysLinePage(_id, this.actualKeyPage).subscribe(async (res: DAkey) => {
@@ -229,7 +229,7 @@ export class HomeComponent implements OnInit {
     }, err => console.error(<any>err));
   }
 
-  private getKeyRegex(regex: String): void {
+  private getKeyRegex(regex: string): void {
     document.body.classList.add('wait');
     this.waitKey.nativeElement.classList.remove('d-none');
     this._arrivals.getKeysRegexPage(regex, this.actualKeyPage).subscribe(async (res: DAkey) => {
@@ -259,7 +259,7 @@ export class HomeComponent implements OnInit {
     }, err => console.error(<any>err));
   }
 
-  private getLinesRegex(regex: String): void {
+  private getLinesRegex(regex: string): void {
     document.body.classList.add('wait');
     this.waitLine.nativeElement.classList.remove('d-none');
     this._arrivals.getLinesRegexPage(regex, this.actualLinePage).subscribe(async (res: DAline) => {
@@ -385,16 +385,16 @@ export class HomeComponent implements OnInit {
   // init Functions
   /*------------------------------------------------------------------*/
 
-  public allowed(): Boolean {
+  public allowed(): boolean {
     return this.User.role === 'admin';
   }
 
-  public statusImage(image, id): Number {
+  public statusImage(image, id): number {
     if (!image.find(e => e.idN == id)) return 6;
     return image.find(e => e.idN == id).status;
   }
 
-  public statusClass(n: Number): String {
+  public statusClass(n: number): string {
     switch (n) {
       case 1: return 'gray';
       case 2: return 'brown';
@@ -405,7 +405,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  public disabledImage(n): Boolean {
+  public disabledImage(n): boolean {
     return n === 5;
   }
 
@@ -425,7 +425,7 @@ export class HomeComponent implements OnInit {
     this.resimageModal = false;
   }
 
-  public setPercentage(set: Boolean, one, two, three): void {
+  public setPercentage(set: boolean, one, two, three): void {
     if (
       (one != '5' && two != '5' && three != '5') ||
       (one == '5' && two != '5' && three != '5') ||
@@ -448,11 +448,11 @@ export class HomeComponent implements OnInit {
     if (!file) warning.classList.remove('d-none');
     else {
       document.body.classList.add('wait');
-      let fd: any = new FormData();
-      fd.append('idN', idN);
+      const fd: FormData = new FormData();
+      fd.append('idN', idN.toString());
       fd.append('image', file, file.name);
       submit.disabled = true;
-      this._shippings.updateImage(this.idKey, fd).subscribe(async (res: Dkey) => {
+      this._shippings.sendImage(this.idKey, fd).subscribe(async (res: Dkey) => {
         await document.body.classList.remove('wait');
         await success.classList.remove('d-none');
         let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);

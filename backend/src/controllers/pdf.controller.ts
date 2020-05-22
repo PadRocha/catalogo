@@ -33,7 +33,7 @@ export async function createPdf(req: Request, res: Response) {
                     { method: 'GET' }
                 ).then(res => res.buffer());
                 else throw new Error('No image Found');
-            } catch (e) {
+            } catch {
                 img = imgDefault;
             } finally {
                 return <IKey>{

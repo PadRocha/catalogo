@@ -1,6 +1,6 @@
 'use strict'
 
-import { Ikey } from './key';
+import { Key } from './key';
 import { PaginateResult } from './paged';
 
 export interface Iline {
@@ -10,7 +10,7 @@ export interface Iline {
     readonly started: Date,
     readonly ended: Date,
     readonly countKeys: number,
-    readonly keys?: Array<Ikey>
+    readonly keys?: Array<Key>
 }
 
 export interface Dline {

@@ -666,7 +666,7 @@ router.route('/login')
  */
 
 router.route('/line')
-    .get(lineController.listLine)
+    .get(authAdmin, lineController.listLine)
     .post(authAdmin, lineController.saveLine);
 
 /**
@@ -1521,7 +1521,7 @@ router.route('/Key/status')
  */
 
 router.route('/key/:id/status')
-    .post(keyController.saveStatus)
+    .post(authorized, keyController.saveStatus)
     .put(authorized, keyController.updateStatus);
 
 /**
@@ -1554,7 +1554,7 @@ router.route('/key/:id/status')
  */
 
 router.route('/key/:id/status/:idN')
-    .delete(keyController.deleteStatus);
+    .delete(authorized, keyController.deleteStatus);
 
 /**
  * 
@@ -1619,8 +1619,8 @@ router.route('/key/:id/status/:idN')
  */
 
 router.route('/key/:id/image')
-    .post(keyController.saveImage)
-    .put(keyController.updateImage);
+    .post(authorized, keyController.saveImage)
+    .put(authAdmin, keyController.updateImage);
 
 /**
  * 
@@ -1652,7 +1652,7 @@ router.route('/key/:id/image')
  */
 
 router.route('/key/:id/image/:idN')
-    .delete(keyController.deleteImage);
+    .delete(authAdmin, keyController.deleteImage);
 
 /*------------------------------------------------------------------*/
 // PDF

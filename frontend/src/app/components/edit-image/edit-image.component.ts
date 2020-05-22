@@ -4,6 +4,8 @@ import { IOptions, ToastUiImageEditorComponent } from 'ngx-tui-image-editor';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { Image as Img } from 'src/app/models/image';
 import { Dkey, Key } from 'src/app/models/key';
+import { ExchangeService } from 'src/app/services/exchange.service';
+import { FunctionsService } from 'src/app/services/functions.service';
 
 export interface ImgElm {
   height: number,
@@ -29,7 +31,9 @@ export class EditImageComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
-    private _arrivals: ArrivalsService
+    private _f: FunctionsService,
+    private _arrivals: ArrivalsService,
+    private _exchange: ExchangeService
   ) {
     this.Key = new Key(void 0, void 0, void 0, void 0, void 0, void 0);
     this.oldImage = new Img(void 0, void 0, void 0, void 0);
@@ -46,7 +50,7 @@ export class EditImageComponent implements OnInit {
 
   ngAfterViewInit(): void {
     this._route.paramMap.subscribe(params => {
-      this.getLine(params.get('key'))
+      this.getKey(params.get('key'))
       this.idN = Number(params.get('image'));
     });
     this.editorComponent.editorRef.nativeElement.querySelector('.tui-image-editor-header-buttons').lastElementChild.remove();
@@ -57,7 +61,7 @@ export class EditImageComponent implements OnInit {
   // Query Functions
   /*------------------------------------------------------------------*/
 
-  private getLine(_id: string): void {
+  private getKey(_id: string): void {
     document.body.classList.add('wait');
     this._arrivals.getKey(_id).subscribe(async (res: Dkey) => {
       await document.body.classList.remove('wait');
@@ -90,4 +94,17 @@ export class EditImageComponent implements OnInit {
   public preImage = (): Promise<boolean> => this._router.navigate(['edit/key', this.Key._id, 'image', this.pre]);
 
   public nextImage = (): Promise<boolean> => this._router.navigate(['edit/key', this.Key._id, 'image', this.next]);
+
+  public onSubmit(): void {
+    document.body.classList.add('wait');
+    const dataURL = this.editorComponent.editorInstance.toDataURL({ format: 'jpeg', width: 708, height: 500, quality: 1 });
+    const blob = this._f.dataURItoBlob(dataURL);
+    const fd: any = new FormData();
+    fd.append('idN', this.idN);
+    fd.append('image', blob, this.Key.line + this.Key.code + '.' + blob.type.split('/')[1]);
+    this._exchange.updateImage(this.Key._id, fd).subscribe(async (res: Dkey) => {
+      await document.body.classList.remove('wait');
+      await this.getKey(res.data._id);
+    });
+  }
 }
