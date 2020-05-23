@@ -11,7 +11,7 @@
                 <input type="text" class="form-control col-2" [value]="oldKey.code" [title]="oldKey.code" disabled />
                 <input type="text" class="form-control col-8" [value]="oldKey.desc" [title]="oldKey.desc" disabled />
             </div>
-            <swiper class="swiper-container" [config]="config">
+            <swiper *ngIf="oldKey.image.length > 0" class="swiper-container" [config]="config">
                 <div *ngFor="let image of oldKey.image" class="swiper-slide">
                     <img [src]="image.img" title="Image N° {{image.idN}}" alt="Image N° {{image.idN}}">
                 </div>

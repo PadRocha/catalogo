@@ -1654,6 +1654,13 @@ router.route('/key/:id/image')
 router.route('/key/:id/image/:idN')
     .delete(authAdmin, keyController.deleteImage);
 
+router.route('/line/reset/status')
+    .get(authAdmin, lineController.resetAllStatus)
+    .post(authAdmin, lineController.resetLineStatus);
+
+router.route('/key/:id/reset')
+    .post(authAdmin, keyController.resetKeyStatus);
+
 /*------------------------------------------------------------------*/
 // PDF
 /*------------------------------------------------------------------*/

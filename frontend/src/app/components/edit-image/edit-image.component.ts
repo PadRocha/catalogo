@@ -81,9 +81,9 @@ export class EditImageComponent implements OnInit {
       }
       const filter = this.Key.image.filter(i => i.img);
       this.pre = filter.find(i => i.idN === this.idN - 1)?.idN.toString();
-      if (!this.pre && (this.idN - 1) == 1) this.pre = filter.find(i => i.idN === this.idN - 2)?.idN.toString();
+      if (!this.pre && (this.idN - 1) == 2) this.pre = filter.find(i => i.idN === this.idN - 2)?.idN.toString();
       this.next = filter.find(i => i.idN === this.idN + 1)?.idN.toString();
-      if (!this.next && (this.idN + 1) == 1) this.next = filter.find(i => i.idN === this.idN + 2)?.idN.toString();
+      if (!this.next && (this.idN + 1) == 2) this.next = filter.find(i => i.idN === this.idN + 2)?.idN.toString();
     }, err => this._router.navigate(['home']));
   }
 

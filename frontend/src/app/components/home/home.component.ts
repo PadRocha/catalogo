@@ -326,7 +326,7 @@ export class HomeComponent implements OnInit {
         if (this.nBeforeImage !== '') --this.KeysInfo.status[c];
         select.className = 'form-control btn-sm ' + color;
         ++this.KeysInfo.status[color];
-        alertify.success(`Status ${this.Image.status}, Image ${++this.Image.idN} - key ${_id}`);
+        alertify.success(`Status ${this.Image.status}, Image ${this.Image.idN} - key ${_id}`);
         this.nBeforeImage = select.value;
       }, err => {
         document.body.classList.remove('wait');
@@ -339,7 +339,7 @@ export class HomeComponent implements OnInit {
         let c: any = this.nBeforeClass;
         --this.KeysInfo.status[c];
         select.className = 'form-control btn-sm white';
-        alertify.success(`Status removed<br/>Image ${Number(select['name']) + 1} - key ${_id}`);
+        alertify.success(`Status removed<br/>Image ${Number(select['name'])} - key ${_id}`);
       }, err => {
         document.body.classList.remove('wait');
         alertify.error('Error Status<br/>[reload]');
@@ -353,11 +353,9 @@ export class HomeComponent implements OnInit {
       this.idKey = _id;
       this.codeImageModal = text;
       this.currentHTML = select;
-      this.nImage = Number(this.currentHTML.name) + 1;
+      this.nImage = Number(this.currentHTML.name);
       let before = this.nBeforeImage;
-      this._modal.open(this.imageModal, result => {
-        this.destructImg();
-      }, dismiss => {
+      this._modal.open(this.imageModal, result => this.destructImg(), dismiss => {
         if (!this.resimageModal) this.currentHTML.value = before;
         this.destructImg();
       }, { size: 'lg', backdrop: 'static' });
@@ -458,9 +456,9 @@ export class HomeComponent implements OnInit {
         await success.classList.remove('d-none');
         let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
         this.setPercentage(true,
-          select.querySelector('select[name="0"]').value,
           select.querySelector('select[name="1"]').value,
-          select.querySelector('select[name="2"]').value
+          select.querySelector('select[name="2"]').value,
+          select.querySelector('select[name="3"]').value
         );
         warning.classList.add('d-none');
         danger.classList.add('d-none');
@@ -530,9 +528,9 @@ export class HomeComponent implements OnInit {
         await this.currentModal.close();
         const select = this._f.findChidlren(this.tr.toArray(), 'id', _id);
         this.setPercentage(false,
-          select.querySelector('select[name="0"]').value,
           select.querySelector('select[name="1"]').value,
-          select.querySelector('select[name="2"]').value
+          select.querySelector('select[name="2"]').value,
+          select.querySelector('select[name="3"]').value
         );
       } else await this.confirmModalService.close();
       let select = this._f.findChidlren(this.tr.toArray(), 'id', _id).querySelector(`select[name='${idN}']`);
@@ -558,9 +556,9 @@ export class HomeComponent implements OnInit {
       let select = this._f.findChidlren(this.tr.toArray(), 'id', this.idKey);
       await select.remove();
       this.lowPercentage(
-        select.querySelector('select[name="0"]').value,
         select.querySelector('select[name="1"]').value,
-        select.querySelector('select[name="2"]').value
+        select.querySelector('select[name="2"]').value,
+        select.querySelector('select[name="3"]').value
       );
       alertify.success(`${res.data.line + res.data.code}<br/>[Removido con éxito]`);
       this.currentModal.close();
