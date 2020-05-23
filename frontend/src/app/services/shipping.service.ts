@@ -25,7 +25,7 @@ export class ShippingService {
   sendKey(Key: Key): Observable<any> {
     let params = JSON.stringify(Key),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(`${this.url}key`, params, { headers: headers });
+    return this._http.post(`${this.url}key`, params, { headers });
   }
 
   sendKeyStatus(Key: Key, status: Number): Observable<any> {
@@ -33,12 +33,12 @@ export class ShippingService {
     obj.status = status
     let params = JSON.stringify(obj),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(`${this.url}key/status`, params, { headers: headers });
+    return this._http.post(`${this.url}key/status`, params, { headers });
   }
 
   sendLine(Line: Line): Observable<any> {
     let params = JSON.stringify(Line),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(`${this.url}line`, params, { headers: headers });
+    return this._http.post(`${this.url}line`, params, { headers });
   }
 }

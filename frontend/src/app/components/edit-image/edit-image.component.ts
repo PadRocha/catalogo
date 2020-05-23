@@ -7,6 +7,8 @@ import { Dkey, Key } from 'src/app/models/key';
 import { ExchangeService } from 'src/app/services/exchange.service';
 import { FunctionsService } from 'src/app/services/functions.service';
 
+declare const alertify: any;
+
 export interface ImgElm {
   height: number,
   width: number,
@@ -82,8 +84,6 @@ export class EditImageComponent implements OnInit {
       if (!this.pre && (this.idN - 1) == 1) this.pre = filter.find(i => i.idN === this.idN - 2)?.idN.toString();
       this.next = filter.find(i => i.idN === this.idN + 1)?.idN.toString();
       if (!this.next && (this.idN + 1) == 1) this.next = filter.find(i => i.idN === this.idN + 2)?.idN.toString();
-      // console.log(this.editorComponent.editorInstance.toDataURL({ format: 'jpeg', width: 708, height: 500, quality: 1 }));
-      // this.editorComponent.editorInstance.ui.resizeEditor();
     }, err => this._router.navigate(['home']));
   }
 
@@ -95,16 +95,22 @@ export class EditImageComponent implements OnInit {
 
   public nextImage = (): Promise<boolean> => this._router.navigate(['edit/key', this.Key._id, 'image', this.next]);
 
-  public onSubmit(): void {
+  public onSubmit(submit): void {
+    submit.disabled = true;
     document.body.classList.add('wait');
     const dataURL = this.editorComponent.editorInstance.toDataURL({ format: 'jpeg', width: 708, height: 500, quality: 1 });
     const blob = this._f.dataURItoBlob(dataURL);
-    const fd: any = new FormData();
-    fd.append('idN', this.idN);
+    const fd: FormData = new FormData();
+    fd.append('idN', this.idN.toString());
     fd.append('image', blob, this.Key.line + this.Key.code + '.' + blob.type.split('/')[1]);
     this._exchange.updateImage(this.Key._id, fd).subscribe(async (res: Dkey) => {
       await document.body.classList.remove('wait');
       await this.getKey(res.data._id);
+      submit.disabled = false;
+      alertify.success(`${res.data.line + res.data.code} [${this.idN}]<br/>[Actualiza con éxito]`);
+    }, err => {
+      document.body.classList.remove('wait');
+      alertify.error(err.error.message)
     });
   }
 }

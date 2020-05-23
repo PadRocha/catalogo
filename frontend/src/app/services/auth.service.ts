@@ -21,16 +21,16 @@ export class AuthService {
   // public registerUser(user: User): Observable<any> {
   //   let params = JSON.stringify(user),
   //     headers = new HttpHeaders().set('Content-Type', 'application/json');
-  //   return this._http.post(this.url + 'register', params, { headers: headers });
+  //   return this._http.post(this.url + 'register', params, { headers });
   // }
 
   public loginUser(user: User): Observable<any> {
-    let params = JSON.stringify(user),
+    const params = JSON.stringify(user),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.post(`${this.url}login`, params, { headers: headers });
+    return this._http.post(`${this.url}login`, params, { headers });
   }
 
-  logoutUser() {
+  public logoutUser(): void {
     localStorage.removeItem('token');
     this._router.navigate(['/login']);
   }

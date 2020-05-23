@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Image } from '../models/image';
+import { Key } from '../models/key';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class ExchangeService {
   updateStatus(_id: String, status: Image): Observable<any> {
     const params = JSON.stringify(status),
       headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this._http.put(`${this.url}key/${_id}/status`, params, { headers: headers });
+    return this._http.put(`${this.url}key/${_id}/status`, params, { headers });
   }
 
   deleteStatus(_id: String, idN: Number): Observable<any> {
@@ -40,5 +41,11 @@ export class ExchangeService {
 
   updateImage(_id: String, image: FormData): Observable<any> {
     return this._http.put(`${this.url}key/${_id}/image`, image);
+  }
+
+  updateKey(_id: String, key: Key): Observable<any> {
+    const params = JSON.stringify(key),
+      headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this._http.put(`${this.url}key/${_id}`, params, { headers });
   }
 }

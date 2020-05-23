@@ -5,7 +5,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-lg-6">
             <div class="form-group input-group">
                 <input type="text" class="form-control col-2" [value]="oldKey.line" [title]="oldKey.line" disabled />
                 <input type="text" class="form-control col-2" [value]="oldKey.code" [title]="oldKey.code" disabled />
@@ -17,14 +17,14 @@
                 </div>
             </swiper>
         </div>
-        <div class="col-md-6 key">
+        <div class="col-lg-6 key">
             <form (ngSubmit)="onSubmit(form)" #form="ngForm">
                 <div class="form-group input-group">
-                    <input type="text" class="form-control col-2" name="line" [(ngModel)]="newKey.line"
+                    <input type="text" class="form-control col-2" name="Nline" [(ngModel)]="newKey.line"
                         placeholder="Línea" />
-                    <input type="text" class="form-control col-2" name="code" [(ngModel)]="newKey.code"
+                    <input type="text" class="form-control col-2" name="Ncode" [(ngModel)]="newKey.code"
                         placeholder="Código" />
-                    <input type="text" class="form-control col-8" name="desc" [(ngModel)]="newKey.desc"
+                    <input type="text" class="form-control col-8" name="Ndesc" [(ngModel)]="newKey.desc"
                         placeholder="Descripción" />
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block">Actualizar clave</button>

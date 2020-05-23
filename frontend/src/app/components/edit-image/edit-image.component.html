@@ -36,12 +36,13 @@
                 </div>
             </div>
             <div class="row">
-                <form class="form-group input-group" (ngSubmit)="onSubmit()" #form="ngForm">
+                <form class="form-group input-group" (ngSubmit)="onSubmit(submit)" #form="ngForm">
                     <button *ngIf="pre" type="button" class="col-2 form-control btn btn-outline-info btn-lg rounded-0"
                         title="Imagen previa" (click)="preImage()">
                         <i class="fas fa-arrow-left"></i>
                     </button>
-                    <button type="submit" class="form-control btn btn-outline-success btn-lg btn-block rounded-0"
+                    <button #submit type="submit"
+                        class="form-control btn btn-outline-success btn-lg btn-block rounded-0"
                         title="Actualizar la imagen">
                         Actualizar imagen
                     </button>

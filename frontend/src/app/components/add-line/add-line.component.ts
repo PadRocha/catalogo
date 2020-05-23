@@ -164,7 +164,7 @@ export class AddLineComponent implements OnInit {
       this.getLines();
     }, err => {
       document.body.classList.remove('wait');
-      alertify.error(err.message);
+      alertify.error(err.error.message);
     });
   }
 }

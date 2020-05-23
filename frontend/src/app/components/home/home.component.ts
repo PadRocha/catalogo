@@ -47,6 +47,7 @@ export class HomeComponent implements OnInit {
   private currentModal: any;
   private showSearched: boolean;
   private confirmModalService: any;
+  public config: SwiperConfigInterface;
   @ViewChild('imageModal') imageModal: ElementRef;
   @ViewChild('showModal') showModal: ElementRef;
   @ViewChild('confirmModal') confirmModal: ElementRef;
@@ -60,25 +61,6 @@ export class HomeComponent implements OnInit {
   @ViewChild('waitKey', { static: true }) waitKey !: ElementRef;
   @ViewChild('ifExistKey') ifExistKey: ElementRef;
   @ViewChildren('tr') tr !: QueryList<ElementRef>;
-  public config: SwiperConfigInterface = {
-    effect: 'coverflow',
-    grabCursor: true,
-    centeredSlides: true,
-    slidesPerView: 'auto',
-    coverflowEffect: {
-      rotate: 50,
-      stretch: 0,
-      depth: 100,
-      modifier: 1,
-      slideShadows: true,
-    },
-    pagination: {
-      el: '.swiper-pagination',
-    }, keyboard: {
-      enabled: true,
-      onlyInViewport: false
-    }
-  };
 
   constructor(
     private _route: ActivatedRoute,
@@ -106,6 +88,25 @@ export class HomeComponent implements OnInit {
     this.resimageModal = false;
     this.showSearched = false;
     this.showImage = new Array();
+    this.config = {
+      effect: 'coverflow',
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: 'auto',
+      coverflowEffect: {
+        rotate: 50,
+        stretch: 0,
+        depth: 100,
+        modifier: 1,
+        slideShadows: true,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+      }, keyboard: {
+        enabled: true,
+        onlyInViewport: false
+      }
+    };
   }
 
   public ngOnInit(): void {
