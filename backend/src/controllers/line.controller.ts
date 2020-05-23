@@ -204,25 +204,10 @@ export function forceDeleteLine(req: Request, res: Response) {
     });
 }
 
-export async function resetAllStatus(req: Request, res: Response) {
-    const query: MongooseFilterQuery<IKey> = { 'image': { $gt: [] } };
-    const update: UpdateQuery<IKey> = { $set: { 'image': [] } };
-    Key.find(query).exec((err, key: Array<IKey>) => Key.updateMany(query, update, async err => {
-        if (err) return res.status(409).send({ message: 'Batch update process has failed' });
-        if (!key) return res.status(404).send({ message: 'Document not found' });
-        await Promise.all(
-            key.map(async k => await Promise.all(
-                k.image.filter(i => i.publicId).map(async i => await v2.uploader.destroy(<string>i.publicId))
-            ))
-        );
-        return res.status(200).send({ data: key });
-    }));
-}
-
 export async function resetLineStatus(req: Request, res: Response) {
     const status = Number(req.body.status);
-    if (!req.body.identifier) return res.status(400).send({ message: 'Client has not sent params' });
-    const query: MongooseFilterQuery<IKey> = { 'line': req.body.identifier };
+    if (!req.params.identifier) return res.status(400).send({ message: 'Client has not sent params' });
+    const query: MongooseFilterQuery<IKey> = { 'line': req.params.identifier };
     const image = new Array<IImage>();
     if (status < 5) for (let idN = 1; idN < 4; idN++) image.push(<IImage>{ idN, status });
     const update: UpdateQuery<IKey> = { $set: { image } };

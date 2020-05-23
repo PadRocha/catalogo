@@ -1654,11 +1654,13 @@ router.route('/key/:id/image')
 router.route('/key/:id/image/:idN')
     .delete(authAdmin, keyController.deleteImage);
 
-router.route('/line/reset/status')
-    .get(authAdmin, lineController.resetAllStatus)
+router.route('/reset')
+    .get(authAdmin, keyController.resetAllStatus);
+
+router.route('/reset/line/:identifier')
     .post(authAdmin, lineController.resetLineStatus);
 
-router.route('/key/:id/reset')
+router.route('/reset/key/:id')
     .post(authAdmin, keyController.resetKeyStatus);
 
 /*------------------------------------------------------------------*/

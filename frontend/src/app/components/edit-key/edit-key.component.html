@@ -5,20 +5,20 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-6 pb-xl-5">
             <div class="form-group input-group">
                 <input type="text" class="form-control col-2" [value]="oldKey.line" [title]="oldKey.line" disabled />
                 <input type="text" class="form-control col-2" [value]="oldKey.code" [title]="oldKey.code" disabled />
                 <input type="text" class="form-control col-8" [value]="oldKey.desc" [title]="oldKey.desc" disabled />
             </div>
-            <swiper *ngIf="oldKey.image.length > 0" class="swiper-container" [config]="config">
+            <swiper *ngIf="oldKey.image?.length > 0" class="swiper-container" [config]="config">
                 <div *ngFor="let image of oldKey.image" class="swiper-slide">
                     <img [src]="image.img" title="Image N° {{image.idN}}" alt="Image N° {{image.idN}}">
                 </div>
             </swiper>
         </div>
         <div class="col-lg-6 key">
-            <form (ngSubmit)="onSubmit(form)" #form="ngForm">
+            <form (ngSubmit)="onSubmit()" #form="ngForm">
                 <div class="form-group input-group">
                     <input type="text" class="form-control col-2" name="Nline" [(ngModel)]="newKey.line"
                         placeholder="Línea" />
@@ -27,7 +27,19 @@
                     <input type="text" class="form-control col-8" name="Ndesc" [(ngModel)]="newKey.desc"
                         placeholder="Descripción" />
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Actualizar clave</button>
+                <button type="submit" class="form-group btn btn-primary btn-block">Actualizar clave</button>
+                <div class="form-group input-group">
+                    <select #select class="form-control col-3 custom-select" name="status" [(ngModel)]="status">
+                        <option [value]="undefined" selected>Vacio</option>
+                        <option value="1">Encontrada</option>
+                        <option value="2">Fotografiada</option>
+                        <option value="3">Preditada</option>
+                        <option value="4">Editada</option>
+                    </select>
+                    <button type="button" class="form-control btn btn-secondary btn-block" (click)="resetImages()">
+                        Reiniciar Imágenes
+                    </button>
+                </div>
             </form>
         </div>
     </div>

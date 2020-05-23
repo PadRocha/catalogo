@@ -211,9 +211,9 @@ export function updateStatus(req: Request, res: Response) {
     if (!req.params.id || idN > 4 || status > 4) return res.status(400).send({ message: 'Client has not sent params' });
     const query: MongooseFilterQuery<IKey> = {
         '_id': req.params.id,
-        'image.idN': req.body.idN
+        'image.idN': idN
     };
-    const update: UpdateQuery<IKey> = { $set: { 'image.$.status': req.body.status } };
+    const update: UpdateQuery<IKey> = { $set: { 'image.$.status': status } };
     Key.findOneAndUpdate(query, update, (err, statusUpdated) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (statusUpdated) return res.status(200).send({ data: statusUpdated });
@@ -316,6 +316,21 @@ export function deleteImage(req: Request, res: Response) {
         return res.status(200).send({ data: imageDeleted });
     });
 }
+export async function resetAllStatus(req: Request, res: Response) {
+    const query: MongooseFilterQuery<IKey> = { 'image': { $gt: [] } };
+    const update: UpdateQuery<IKey> = { $set: { 'image': [] } };
+    Key.find(query).exec((err, key: Array<IKey>) => Key.updateMany(query, update, async err => {
+        if (err) return res.status(409).send({ message: 'Batch update process has failed' });
+        if (!key) return res.status(404).send({ message: 'Document not found' });
+        await Promise.all(
+            key.map(async k => await Promise.all(
+                k.image.filter(i => i.publicId).map(async i => await v2.uploader.destroy(<string>i.publicId))
+            ))
+        );
+        return res.status(200).send({ data: key });
+    }));
+}
+
 export async function resetKeyStatus(req: Request, res: Response) {
     const status = Number(req.body.status);
     if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });

@@ -15,6 +15,7 @@ declare const alertify: any;
 export class EditKeyComponent implements OnInit {
   public oldKey: Key;
   public newKey: Key;
+  public status: number;
   public config: SwiperConfigInterface;
 
   constructor(
@@ -64,12 +65,24 @@ export class EditKeyComponent implements OnInit {
   // Event Functions
   /*------------------------------------------------------------------*/
 
-  public onSubmit(form): void {
+  public onSubmit(): void {
     document.body.classList.add('wait');
     this._exchange.updateKey(this.oldKey._id, this.newKey).subscribe(async (res: Dkey) => {
       await document.body.classList.remove('wait');
       this.getKey(res.data._id);
       alertify.success(`${res.data.line + res.data.code}<br/>[Actualizo con éxito]`);
+    }, err => {
+      document.body.classList.remove('wait');
+      alertify.error(err.error.message)
+    });
+  }
+
+  public resetImages(): void {
+    document.body.classList.add('wait');
+    this._exchange.resetKeyImage(this.oldKey._id, this.status).subscribe(async (res: Dkey) => {
+      await document.body.classList.remove('wait');
+      this.getKey(res.data._id);
+      alertify.success(`${res.data.line + res.data.code}<br/>[Imágenes reiniciadas]`);
     }, err => {
       document.body.classList.remove('wait');
       alertify.error(err.error.message)

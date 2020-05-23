@@ -48,4 +48,20 @@ export class ExchangeService {
       headers = new HttpHeaders().set('Content-Type', 'application/json');
     return this._http.put(`${this.url}key/${_id}`, params, { headers });
   }
+
+  resetAllImage(): Observable<any> {
+    return this._http.get(`${this.url}reset`);
+  }
+
+  resetLineImage(identifier: string, status?: number): Observable<any> {
+    const params = JSON.stringify({ status }),
+      headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this._http.post(`${this.url}reset/line/${identifier}`, params, { headers });
+  }
+
+  resetKeyImage(_id: string, status?: number): Observable<any> {
+    const params = JSON.stringify({ status }),
+      headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this._http.post(`${this.url}reset/key/${_id}`, params, { headers });
+  }
 }
