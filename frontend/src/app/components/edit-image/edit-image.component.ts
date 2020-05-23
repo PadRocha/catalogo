@@ -5,7 +5,7 @@ import { ArrivalsService } from 'src/app/services/arrivals.service';
 import { Image as Img } from 'src/app/models/image';
 import { Dkey, Key } from 'src/app/models/key';
 import { ExchangeService } from 'src/app/services/exchange.service';
-import { FunctionsService } from 'src/app/services/functions.service';
+import { Functions } from '../../functions';
 
 declare const alertify: any;
 
@@ -33,7 +33,7 @@ export class EditImageComponent implements OnInit {
   constructor(
     private _route: ActivatedRoute,
     private _router: Router,
-    private _f: FunctionsService,
+    private _f: Functions,
     private _arrivals: ArrivalsService,
     private _exchange: ExchangeService
   ) {

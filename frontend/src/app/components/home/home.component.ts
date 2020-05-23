@@ -9,7 +9,7 @@ import { ModalService } from 'src/app/services/modal.service';
 import { User, Iuser } from 'src/app/models/user';
 import { Image } from 'src/app/models/image';
 import { HttpErrorResponse } from '@angular/common/http';
-import { FunctionsService } from 'src/app/services/functions.service';
+import { Functions } from '../../functions';
 import { Key, Dkey, DAkey } from 'src/app/models/key';
 import { Line, DAline } from 'src/app/models/line';
 
@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
     private _arrivals: ArrivalsService,
     private _shippings: ShippingService,
     private _exchanges: ExchangeService,
-    private _f: FunctionsService,
+    private _f: Functions,
     private _modal: ModalService
   ) {
     this.Image = new Image(void 0, void 0, void 0, void 0);

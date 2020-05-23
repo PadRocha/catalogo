@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { Router } from '@angular/router';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
-import { FunctionsService } from 'src/app/services/functions.service';
+import { Functions } from '../../functions';
 import { ModalService } from 'src/app/services/modal.service';
 import { ShippingService } from 'src/app/services/shipping.service';
 import { Line, Dline, DAline } from 'src/app/models/line';
@@ -33,7 +33,7 @@ export class AddLineComponent implements OnInit {
     private _arrivals: ArrivalsService,
     private _shipping: ShippingService,
     private _exchange: ExchangeService,
-    private _f: FunctionsService,
+    private _f: Functions,
     private _modal: ModalService,
     private _router: Router
   ) {

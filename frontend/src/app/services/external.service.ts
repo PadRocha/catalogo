@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { FunctionsService } from './functions.service';
+import { Functions } from '../functions';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class ExternalService {
 
   constructor(
     private _http: HttpClient,
-    private _f: FunctionsService
+    private _f: Functions
   ) { }
 
   loadImg64(img: string): Promise<string | ArrayBuffer> {

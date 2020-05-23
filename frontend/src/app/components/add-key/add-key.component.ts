@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import * as xlsx from 'xlsx'
 import { Key, Ikey, Dkey } from 'src/app/models/key';
 import { ArrivalsService } from 'src/app/services/arrivals.service';
-import { FunctionsService } from 'src/app/services/functions.service';
+import { Functions } from '../../functions';
 import { ShippingService } from 'src/app/services/shipping.service';
 import { ModalService } from 'src/app/services/modal.service';
 import { Aline } from 'src/app/models/line';
@@ -42,7 +42,7 @@ export class AddKeyComponent implements OnInit {
     private _type: NgbTypeaheadConfig,
     private _arrivals: ArrivalsService,
     private _shipping: ShippingService,
-    private _f: FunctionsService,
+    private _f: Functions,
     private _modal: ModalService
   ) {
     _type.showHint = true;
