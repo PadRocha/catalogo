@@ -1,1 +1,17 @@
-<p>edit-line works!</p>
+<main class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="title">Editar clave {{oldLine.identifier}}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group input-group">
+                <input type="text" class="form-control col-2" [value]="oldLine.identifier" [title]="oldLine.identifier"
+                    disabled />
+                <input type="text" class="form-control col-2" [value]="oldLine.name" [title]="oldLine.name" disabled />
+            </div>
+        </div>
+        <div class="col-6"></div>
+    </div>
+</main>

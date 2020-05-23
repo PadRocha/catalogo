@@ -10,18 +10,18 @@ export class SocketService {
     socket: io;
 
     constructor() {
-        this.socket = io(environment.socket);
+        // this.socket = io(environment.socket);
     }
 
-    listen(eventName: string): Observable<any> {
-        return new Observable((Subscriber) => {
-            this.socket.on(eventName, (data) => {
-                Subscriber.next(data);
-            });
-        });
-    }
+    // listen(eventName: string): Observable<any> {
+    //     return new Observable((Subscriber) => {
+    //         this.socket.on(eventName, (data) => {
+    //             Subscriber.next(data);
+    //         });
+    //     });
+    // }
 
-    emit(eventName: string, data: any) {
-        this.socket.emit(eventName, data);
-    }
+    // emit(eventName: string, data: any) {
+    //     this.socket.emit(eventName, data);
+    // }
 }
