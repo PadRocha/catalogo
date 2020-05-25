@@ -43,14 +43,6 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  public verify(err): void {
-    if (err instanceof HttpErrorResponse) {
-      if (err.status === 403 || err.status === 409 || err.status === 423) {
-        this.logoutUser();
-      }
-    }
-  }
-
   //? This function was removed
   // public verifyAdmin(err): void {
   //   if (err instanceof HttpErrorResponse) {

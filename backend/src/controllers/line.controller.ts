@@ -49,7 +49,7 @@ export function listLineTotalKey(req: Request, res: Response) {
     Line.find().sort('identifier').exec(async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
-        const data = await Promise.all(line.map(l => totalKey(l)))
+        const data = await Promise.all(line.map(async l => await totalKey(l)))
         return res.status(200).send({ data });
     });
 }
@@ -75,7 +75,7 @@ export function listLineTotalKeyPage(req: Request, res: Response) {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         const data = line;
-        data.docs = await Promise.all(line.docs.map(l => totalKey(l)));
+        data.docs = await Promise.all(line.docs.map(async l => await totalKey(l)));
         return res.status(200).send({ data })
     });
 }
@@ -106,7 +106,7 @@ export function listLineTotalKeyRegex(req: Request, res: Response) {
     Line.find(query).sort('identifier').exec(async (err, line) => {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
-        const data = await Promise.all(line.map(l => totalKey(l)))
+        const data = await Promise.all(line.map(async l => await totalKey(l)))
         return res.status(200).send({ data });
     });
 }
@@ -142,7 +142,7 @@ export function listLineTotalKeyRegexPage(req: Request, res: Response) {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         const data = line;
-        data.docs = await Promise.all(line.docs.map(l => totalKey(l)))
+        data.docs = await Promise.all(line.docs.map(async l => await totalKey(l)))
         return res.status(200).send({ data });
     });
 }
@@ -153,6 +153,16 @@ export function getLine(req: Request, res: Response) {
         if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
         if (!line) return res.status(404).send({ message: 'Document not found' });
         return res.status(200).send({ data: line });
+    });
+}
+
+export function getLineKey(req: Request, res: Response) {
+    if (!req.params.id) return res.status(400).send({ message: 'Client has not sent params' });
+    Line.findOne({ 'identifier': req.params.id }).exec(async (err, line) => {
+        if (err) return res.status(409).send({ message: 'Internal error, probably error with params' });
+        if (!line) return res.status(404).send({ message: 'Document not found' });
+        const data = await totalKey(line);
+        return res.status(200).send({ data });
     });
 }
 

@@ -11,6 +11,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuard } from './guards/auth.guard';
 import { LoginGuard } from './guards/login.guard';
+import { AdminGuard } from './guards/admin.guard';
 
 /*------------------------------------------------------------------*/
 // Importar componentes
@@ -35,13 +36,13 @@ const app: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
     { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'home/:line', component: HomeComponent, canActivate: [AuthGuard] },
-    { path: 'key', component: AddKeyComponent, canActivate: [AuthGuard] },
-    { path: 'line', component: AddLineComponent, canActivate: [AuthGuard] },
+    { path: 'key', component: AddKeyComponent, canActivate: [AuthGuard, AdminGuard] },
+    { path: 'line', component: AddLineComponent, canActivate: [AuthGuard, AdminGuard] },
     {
         path: 'edit', children: [
-            { path: 'line/:line', component: EditLineComponent, canActivate: [AuthGuard] },
-            { path: 'key/:key', component: EditKeyComponent, canActivate: [AuthGuard] },
-            { path: 'key/:key/image/:image', component: EditImageComponent, canActivate: [AuthGuard] }
+            { path: 'line/:line', component: EditLineComponent, canActivate: [AuthGuard, AdminGuard] },
+            { path: 'key/:key', component: EditKeyComponent, canActivate: [AuthGuard, AdminGuard] },
+            { path: 'key/:key/image/:image', component: EditImageComponent, canActivate: [AuthGuard, AdminGuard] }
         ]
     },
     { path: 'pdf', component: CreatePDFComponent, canActivate: [AuthGuard] },

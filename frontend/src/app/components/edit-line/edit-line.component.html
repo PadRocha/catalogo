@@ -1,17 +1,160 @@
 <main class="container">
     <div class="row">
         <div class="col-12">
-            <h1 class="title">Editar clave {{oldLine.identifier}}</h1>
+            <h1 class="title">Editar línea {{oldLine.identifier}}</h1>
         </div>
     </div>
     <div class="row">
-        <div class="col-6">
+        <div class="col-lg-6">
             <div class="form-group input-group">
-                <input type="text" class="form-control col-2" [value]="oldLine.identifier" [title]="oldLine.identifier"
+                <input type="text" class="form-control col-3" [value]="oldLine.identifier" [title]="oldLine.identifier"
                     disabled />
-                <input type="text" class="form-control col-2" [value]="oldLine.name" [title]="oldLine.name" disabled />
+                <input type="text" class="form-control col-9" [value]="oldLine.name" [title]="oldLine.name" disabled />
             </div>
+            Con <span class="text-primary">{{oldLine.countKeys}}</span> claves
         </div>
-        <div class="col-6"></div>
+        <form class="col-lg-6 key" (ngSubmit)="onSubmit()" #form="ngForm">
+            <div class="form-group input-group">
+                <input type="text" class="form-control col-3" name="identifier" [(ngModel)]="newLine.identifier"
+                    maxlength="6" autocomplete="off" spellcheck="false" autocorrect="off"
+                    oninput="this.value = this.value.toUpperCase()" placeholder="Identificador" />
+                <input type="text" class="form-control col-9" name="name" [(ngModel)]="newLine.name" />
+            </div>
+            <div class="form-group input-group">
+                <button type="submit" class="form-control btn btn-primary">Actualizar Línea</button>
+                <button type="button" class="form-control col-2 btn btn-danger"
+                    (click)="confirmDisplay(confirmF)">Forzar</button>
+            </div>
+            <div #confirmF class="d-none">
+                <div class="row">
+                    <div class="col-6 text-right">
+                        <div class="pretty p-icon p-toggle p-plain">
+                            <input #kf1 type="checkbox" (click)="clench(kf1, kf2, lockF)" />
+                            <div class="state p-on">
+                                <i class="fas fa-lock-open"></i>
+                                <label>Unlocked</label>
+                            </div>
+                            <div class="state p-off">
+                                <i class="fas fa-lock"></i>
+                                <label>Locked</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="pretty p-icon p-toggle p-plain">
+                            <input #kf2 type="checkbox" (click)="clench(kf1, kf2, lockF)" />
+                            <div class="state p-on">
+                                <i class="fas fa-lock-open"></i>
+                                <label>Unlocked</label>
+                            </div>
+                            <div class="state p-off">
+                                <i class="fas fa-lock"></i>
+                                <label>Locked</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button #lockF type="button" class="form-control btn btn-danger" (click)="confirmForzar()"
+                        placement="top"
+                        ngbTooltip="Esta acción actualizará unicamente a Línea, pero no a las {{oldLine.countKeys}} claves en cascada"
+                        disabled>
+                        Confirmar Forzar
+                    </button>
+                </div>
+            </div>
+            <div class="form-group input-group">
+                <select #select class="form-control col-3 custom-select" name="status" [(ngModel)]="status">
+                    <option [value]="undefined">Vacio</option>
+                    <option value="1">Encontrada</option>
+                    <option value="2">Fotografiada</option>
+                    <option value="3">Preditada</option>
+                    <option value="4">Editada</option>
+                </select>
+                <button type="button" class="form-control btn btn-secondary btn-block"
+                    (click)="confirmDisplay(confirmR)">
+                    Reiniciar Imágenes
+                </button>
+            </div>
+            <div #confirmR class="d-none">
+                <div class="row">
+                    <div class="col-6 text-right">
+                        <div class="pretty p-icon p-toggle p-plain">
+                            <input #kr1 type="checkbox" (click)="clench(kr1, kr2, lockR)" />
+                            <div class="state p-on">
+                                <i class="fas fa-lock-open"></i>
+                                <label>Unlocked</label>
+                            </div>
+                            <div class="state p-off">
+                                <i class="fas fa-lock"></i>
+                                <label>Locked</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="pretty p-icon p-toggle p-plain">
+                            <input #kr2 type="checkbox" (click)="clench(kr1, kr2, lockR)" />
+                            <div class="state p-on">
+                                <i class="fas fa-lock-open"></i>
+                                <label>Unlocked</label>
+                            </div>
+                            <div class="state p-off">
+                                <i class="fas fa-lock"></i>
+                                <label>Locked</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button #lockR type="button" class="form-control btn btn-danger" (click)="confirmResetImages()"
+                        placement="top" ngbTooltip="Esta acción reiniciará las imagenes en {{oldLine.countKeys}} claves"
+                        disabled>
+                        Confirmar Reiniciar Imágenes
+                    </button>
+                </div>
+            </div>
+            <button type="button" class="form-group form-control btn btn-danger btn-block"
+                (click)="confirmDisplay(confirmD)">
+                Forzar Eliminar Línea
+            </button>
+            <div #confirmD class="d-none">
+                <div class="row">
+                    <div class="col-6 text-right">
+                        <div class="pretty p-icon p-toggle p-plain">
+                            <input #kd1 type="checkbox" (click)="clench(kd1, kd2, lockD)" />
+                            <div class="state p-on">
+                                <i class="fas fa-lock-open"></i>
+                                <label>Unlocked</label>
+                            </div>
+                            <div class="state p-off">
+                                <i class="fas fa-lock"></i>
+                                <label>Locked</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="pretty p-icon p-toggle p-plain">
+                            <input #kd2 type="checkbox" (click)="clench(kd1, kd2, lockD)" />
+                            <div class="state p-on">
+                                <i class="fas fa-lock-open"></i>
+                                <label>Unlocked</label>
+                            </div>
+                            <div class="state p-off">
+                                <i class="fas fa-lock"></i>
+                                <label>Locked</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button #lockD type="button" class="form-control btn btn-danger" (click)="confirmDelete()"
+                        placement="top"
+                        ngbTooltip="Esta acción eliminará unicamente a Línea, pero no a las {{oldLine.countKeys}} claves en cascada"
+                        disabled>
+                        Confirmar Forzar Eliminar Línea
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </main>

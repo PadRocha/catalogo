@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
-    <div *ngIf="_authService.loggedIn()" class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+    <div *ngIf="_auth.loggedIn()" class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a class="nav-link" [routerLink]="['/line']" [routerLinkActive]="['active']">Líneas</a>
@@ -12,7 +12,7 @@
             </li>
         </ul>
     </div>
-    <div [ngClass]="{'mx-auto order-0': _authService.loggedIn()}">
+    <div [ngClass]="{'mx-auto order-0': _auth.loggedIn()}">
         <a class="navbar-brand mx-auto" [routerLink]="['/home']">
             <img src="../assets/image/simbavector.svg" width="30" height="30" class="d-inline-block align-top">
             Catalogo
@@ -21,12 +21,12 @@
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
-    <div *ngIf="_authService.loggedIn()" class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+    <div *ngIf="_auth.loggedIn()" class="navbar-collapse collapse w-100 order-3 dual-collapse2">
         <ul class="navbar-nav ml-auto">
-            <li style="cursor: pointer;" class="nav-link" (click)="_authService.logoutUser()">Salir <i
+            <li style="cursor: pointer;" class="nav-link" (click)="_auth.logoutUser()">Salir <i
                     class="fas fa-sign-out-alt"></i></li>
         </ul>
     </div>
 </nav>
-<!-- <app-chat *ngIf="_authService.loggedIn()"></app-chat> -->
+<!-- <app-chat *ngIf="_auth.loggedIn()"></app-chat> -->
 <router-outlet></router-outlet>

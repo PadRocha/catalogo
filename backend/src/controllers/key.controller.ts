@@ -316,6 +316,7 @@ export function deleteImage(req: Request, res: Response) {
         return res.status(200).send({ data: imageDeleted });
     });
 }
+
 export async function resetAllStatus(req: Request, res: Response) {
     const query: MongooseFilterQuery<IKey> = { 'image': { $gt: [] } };
     const update: UpdateQuery<IKey> = { $set: { 'image': [] } };

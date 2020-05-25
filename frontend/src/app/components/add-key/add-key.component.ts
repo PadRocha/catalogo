@@ -16,7 +16,7 @@ import { Aline } from 'src/app/models/line';
   styleUrls: ['./add-key.component.scss']
 })
 export class AddKeyComponent implements OnInit {
-  public LineArray: Array<String>;
+  public LineArray: Array<string>;
   public Key: Array<Key>;
   public Errors: Array<String>;
   public Keys: Array<Key>;
@@ -46,7 +46,7 @@ export class AddKeyComponent implements OnInit {
     private _modal: ModalService
   ) {
     _type.showHint = true;
-    this.LineArray = new Array();
+    this.LineArray = new Array<string>();
     this.Key = new Array<Key>();
     this.Errors = new Array();
     this.Keys = new Array<Key>();
@@ -212,8 +212,8 @@ export class AddKeyComponent implements OnInit {
             }
           } else this.excelInvalid.nativeElement.classList.remove('d-none');
         } else if (this.checkbox.nativeElement.checked) {
-          let n1 = Number(this.n1.nativeElement.value);
-          let n2 = Number(this.n2.nativeElement.value);
+          const n1 = Number(this.n1.nativeElement.value);
+          const n2 = Number(this.n2.nativeElement.value);
           if (n1 > 0 && n2 > 0 && n1 < n2 && n2 < 9999) {
             for (let i: any = n1; i <= n2; i++) {
               i = i.toString();

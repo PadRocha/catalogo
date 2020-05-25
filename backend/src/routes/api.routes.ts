@@ -50,9 +50,8 @@ const router = Router();
  * 
  * @apiParamExample  {json} Request-E:
  *      {
- *      	"code": "1",
- *      	"line": "ACCSEH",
- *      	"desc": "Agarradera puerta Combi"
+ *      	"identifier": "ACCSEH",
+ *      	"name": "Accesorios (SEH)"
  *      }
  */
 
@@ -870,6 +869,9 @@ router.route('/line/regex/:id')
 router.route('/line/regex/:id/page/:page')
     .get(authorized, lineController.listLineRegexPage);
 
+router.route('/line/:id/total/key')
+    .get(authAdmin, lineController.getLineKey);
+
 /**
  * 
  * @api {get} /line/total/key List Line Key
@@ -993,19 +995,21 @@ router.route('/line/total/key/regex/:id/page/:page')
 
 /**
  * 
- * @api {get} /line/force/:id Force Update Line
+ * @api {put} /line/:id/force Force Update Line
  * @apiName forceUpdateLine
  * @apiDescription Update the *Line document*. **Warning** This funcion only will update the Line but wont update the line param in the Keys
  * @apiGroup Line
  * @apiVersion  0.1.0
  * @apiPermission admin
  * @apiExample {url} Example usage:
- *     http://localhost:4000/api/line/force/ACCSEH
+ *     http://localhost:4000/api/line/ACCSEH/force
  * 
  * 
  * @apiuse header
  * 
- * @apiuse page
+ * @apiParam  (params) {string} id Line identifier.
+ * 
+ * @apiuse BodyLine
  * 
  * @apiuse SuccessLine
  * 
@@ -1021,19 +1025,19 @@ router.route('/line/total/key/regex/:id/page/:page')
 
 /**
  * 
- * @api {delete} /line/force/:id Force Delete Line
+ * @api {delete} /line/:id/force Force Delete Line
  * @apiName forceDeleteLine
  * @apiDescription Delete a *Line document*. **Warning** This funcion only will update the Line but wont delete all the Lines with this param in the Keys
  * @apiGroup Line
  * @apiVersion  0.1.0
  * @apiPermission admin
  * @apiExample {url} Example usage:
- *     http://localhost:4000/api/line/force/ACCSEH
+ *     http://localhost:4000/api/line/ACCSEH/force
  * 
  * 
  * @apiuse header
  * 
- * @apiuse page
+ * @apiParam  (params) {string} id Line identifier.
  * 
  * @apiuse SuccessLine
  * 
@@ -1047,7 +1051,7 @@ router.route('/line/total/key/regex/:id/page/:page')
  * 
  */
 
-router.route('/line/force/:id')
+router.route('/line/:id/force')
     .put(authAdmin, lineController.forceUpdateLine)
     .delete(authAdmin, lineController.forceDeleteLine);
 
@@ -1658,10 +1662,10 @@ router.route('/reset')
     .get(authAdmin, keyController.resetAllStatus);
 
 router.route('/reset/line/:identifier')
-    .post(authAdmin, lineController.resetLineStatus);
+    .put(authAdmin, lineController.resetLineStatus);
 
 router.route('/reset/key/:id')
-    .post(authAdmin, keyController.resetKeyStatus);
+    .put(authAdmin, keyController.resetKeyStatus);
 
 /*------------------------------------------------------------------*/
 // PDF

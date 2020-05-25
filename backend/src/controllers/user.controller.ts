@@ -35,5 +35,5 @@ export function loginUser(req: Request, res: Response) {
 
 export function returnUser(req: Request, res: Response) {
     if (!req.user) return res.status(400).send({ message: 'User failed to pass authentication' });
-    return res.status(200).send({ identifier: req.user.sub, nickname: req.user.nickname, role: req.user.role });
+    return res.status(200).send({ nickname: req.user.nickname, role: req.user.role });
 }

@@ -35,23 +35,20 @@
                     <tui-image-editor [options]="config"></tui-image-editor>
                 </div>
             </div>
-            <div class="row">
-                <form class="form-group input-group" (ngSubmit)="onSubmit(submit)" #form="ngForm">
-                    <button *ngIf="pre" type="button" class="col-2 form-control btn btn-outline-info btn-lg rounded-0"
-                        title="Imagen previa" (click)="preImage()">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <button #submit type="submit"
-                        class="form-control btn btn-outline-success btn-lg btn-block rounded-0"
-                        title="Actualizar la imagen">
-                        Actualizar imagen
-                    </button>
-                    <button *ngIf="next" type="button" class="col-2 form-control btn btn-outline-info btn-lg rounded-0"
-                        title="Siguiente imagen" (click)="nextImage()">
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </form>
-            </div>
+            <form class="form-group row input-group" (ngSubmit)="onSubmit(submit)" #form="ngForm">
+                <button *ngIf="pre" type="button" class="col-2 form-control btn btn-outline-info btn-lg rounded-0"
+                    title="Imagen previa" (click)="preImage()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <button #submit type="submit" class="form-control btn btn-outline-success btn-lg btn-block rounded-0"
+                    title="Actualizar la imagen">
+                    Actualizar imagen
+                </button>
+                <button *ngIf="next" type="button" class="col-2 form-control btn btn-outline-info btn-lg rounded-0"
+                    title="Siguiente imagen" (click)="nextImage()">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
         </div>
     </div>
 </main>

@@ -51,6 +51,10 @@ export class ArrivalsService {
     return this._http.get(`${this.url}line/${identifier}`)
   }
 
+  getLineTotalKey(identifier: String): Observable<any> {
+    return this._http.get(`${this.url}line/${identifier}/total/key`)
+  }
+
   getLinesTotalKey(): Observable<any> {
     return this._http.get(`${this.url}line/total/key`);
   }

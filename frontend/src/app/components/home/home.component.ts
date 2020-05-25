@@ -181,17 +181,8 @@ export class HomeComponent implements OnInit {
   // Query Functions
   /*------------------------------------------------------------------*/
 
-  private getUser = () => this._auth.getUser().subscribe((res: Iuser) => {
-    this.User = res;
-  }, err => {
-    if (err instanceof HttpErrorResponse) {
-      if (err.status === 423) {
-        this._router.navigate(['home']);
-      } else if (err.status === 403 || err.status === 409) {
-        this._auth.logoutUser();
-      }
-    }
-  });
+  private getUser = () => this._auth.getUser()
+    .subscribe((res: Iuser) => this.User = new User(void 0, res.nickname, void 0, res.role), err => console.error(<any>err));
 
   private getKeys(): void {
     document.body.classList.add('wait');
